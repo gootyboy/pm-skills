@@ -79,7 +79,7 @@ appId: com.example.app
 ```
 
 ### Visual UI & Design Verification (Mandatory per screen)
-- **Mockup Match:** Screen rendering verified against approved mockup (`.antigravity/design/mockups/[screen_id]_[ver].png`) via Playwright snapshot / Maestro visual comparison.
+- **Mockup Match:** Screen rendering verified against approved mockup (`docs/design/mockups/[screen_id]_[ver].png`) via Playwright snapshot / Maestro visual comparison.
 - **Design Token Audit:** Programmatic audit verifying spacing (multiples of 8), color tokens, typography sizes, and border-radii match `apple_design/SKILL.md` / `colors.ts`.
 - **State Visual Check:** Verified rendering for loading skeleton, error banner, and empty state against design spec.
 

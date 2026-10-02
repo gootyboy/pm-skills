@@ -173,8 +173,8 @@ export function PermissionGate({ allowedRoles, children, fallback = null }) {
 ## Output Order & Iteration Protocol
 1. **Screen Inventory** (purpose + data dependency per screen)
 2. **Visual Mockup Generation (MANDATORY GATE)**:
-   - Generate visual screen mockups (saved to `.antigravity/design/mockups/[screen_id]_v1.png`)
-   - Create/update `.antigravity/docs/DESIGN_REGISTER.md` logging mockup versions, visual specs, and status (`PROPOSED` | `REJECTED` | `APPROVED`)
+   - Generate visual screen mockups (saved to `docs/design/mockups/[screen_id]_v1.png`)
+   - Create/update `docs/DESIGN_REGISTER.md` logging mockup versions, visual specs, and status (`PROPOSED` | `REJECTED` | `APPROVED`)
    - 🛑 **PAUSE FOR USER REVIEW**: If user requests changes, increment version (`_v2.png`), log feedback in `DESIGN_REGISTER.md`, and re-render. Do NOT write component code until mockup status is `APPROVED`.
 3. **Component Tree** (ASCII, per screen)
 4. **Type Contracts** (`types.ts` per component)

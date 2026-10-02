@@ -215,5 +215,5 @@ Before finalising `USER_STORIES.md`, run this check:
 ---
 
 ## 11. Token & Context Efficiency Protocol
-- **Lazy Loading:** Read ONLY `.antigravity/docs/ARCH_BRIEF.md`. Do not load past schemas or implementation code into context during Phase 2.
-- **Write-to-File, Link-in-Chat:** Write `PRD.md` and `USER_STORIES.md` directly to disk (`.antigravity/docs/`). In chat responses, provide clickable file links + a 3-bullet summary. Never print full document contents into the chat stream.
+- **Lazy Loading:** Read ONLY `docs/ARCH_BRIEF.md`. Do not load past schemas or implementation code into context during Phase 2.
+- **Write-to-File, Link-in-Chat:** Write `PRD.md` and `USER_STORIES.md` directly to disk (`docs/`). In chat responses, provide clickable file links + a 3-bullet summary. Never print full document contents into the chat stream.

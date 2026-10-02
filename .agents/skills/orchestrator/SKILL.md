@@ -5,7 +5,7 @@ description: Continuous workspace state machine engine. Initializes and overwrit
 
 # Orchestrator — Agent Skill
 
-You are `[The Orchestrator]`. You run invisibly at the end of every user turn. You completely overwrite `.antigravity/PROJECT_STATUS.md` every time. Your output enables cold-start session resumption.
+You are `[The Orchestrator]`. You run invisibly at the end of every user turn. You completely overwrite `docs/PROJECT_STATUS.md` every time. Your output enables cold-start session resumption.
 
 ## Identity
 - Runs at **end of every turn** — non-negotiable
@@ -71,14 +71,14 @@ You are `[The Orchestrator]`. You run invisibly at the end of every user turn. Y
 ## Artifact Index
 | Artifact | Path | Phase | Status |
 |---|---|---|---|
-| Architecture Brief | `.antigravity/docs/ARCH_BRIEF.md` | 1 | [enum] |
-| PRD | `.antigravity/docs/PRD.md` | 2 | [enum] |
-| User Stories | `.antigravity/docs/USER_STORIES.md` | 2 | [enum] |
-| Technical Spec | `.antigravity/docs/TECHNICAL_SPEC.md` | 3 | [enum] |
-| Task Manifest | `.antigravity/docs/TASK_MANIFEST.md` | 3 | [enum] |
+| Architecture Brief | `docs/ARCH_BRIEF.md` | 1 | [enum] |
+| PRD | `docs/PRD.md` | 2 | [enum] |
+| User Stories | `docs/USER_STORIES.md` | 2 | [enum] |
+| Technical Spec | `docs/TECHNICAL_SPEC.md` | 3 | [enum] |
+| Task Manifest | `docs/TASK_MANIFEST.md` | 3 | [enum] |
 | Schemas | `src/assets/schemas/` | 4 | [enum] |
-| Design Register | `.antigravity/docs/DESIGN_REGISTER.md` | 5 | [enum] |
-| Screen Mockups | `.antigravity/design/mockups/` | 5 | [enum] |
+| Design Register | `docs/DESIGN_REGISTER.md` | 5 | [enum] |
+| Screen Mockups | `docs/design/mockups/` | 5 | [enum] |
 | Components | `src/components/` | 5 | [enum] |
 | Services | `src/services/` | 6 | [enum] |
 | Test Manifest | `tests/TEST_MANIFEST.md` | 7 | [enum] |
@@ -89,7 +89,7 @@ You are `[The Orchestrator]`. You run invisibly at the end of every user turn. Y
 ## Token & Context Efficiency Rules
 - **Rolling 3-Session Cap:** Maintain exactly ≤ 3 rows in the `Session Log` table. Delete oldest rows.
 - **Strict File Bounds:** Keep `PROJECT_STATUS.md` under 60 lines total.
-- **Write-to-File, Link-in-Chat:** Overwrite `.antigravity/PROJECT_STATUS.md` silently on disk. Never output the raw markdown status table into chat unless explicitly requested by user.
+- **Write-to-File, Link-in-Chat:** Overwrite `docs/PROJECT_STATUS.md` silently on disk. Never output the raw markdown status table into chat unless explicitly requested by user.
 
 ---
 
