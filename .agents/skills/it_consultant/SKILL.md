@@ -73,6 +73,28 @@ Apply a dual-layer persistence strategy by default, no exceptions:
 | CI/CD | GitHub Actions |
 | Environments | `dev`, `staging`, `production` |
 
+### 3.5 Permission Model (Mandatory — Every Project)
+Every system has more than one user type. Define the permission model in Phase 1, before any screen inventory or schema work begins. Never assume a single-user world.
+
+**Step 1 — Identify all user roles from the pitch:**
+```
+Role examples: ADMIN | MEMBER | GUEST | OWNER | DRIVER | CUSTOMER
+```
+
+**Step 2 — Build a permission matrix:**
+| Role | Entity | Create | Read | Update | Delete |
+|---|---|---|---|---|---|
+| ADMIN | Dish | ✅ | ✅ | ✅ | ✅ |
+| MEMBER | Dish | ❌ | ✅ | ❌ | ❌ |
+| GUEST | Dish | ❌ | ✅ (public only) | ❌ | ❌ |
+
+**Step 3 — Define data ownership rules:**
+- Who owns a record? (e.g., `Dish` is owned by the restaurant `ADMIN` who created it)
+- Can a user see other users' data? (e.g., `Order` is visible to the placing `MEMBER` and the `ADMIN` only)
+- Are there shared/public records? (e.g., Menu is public-read, private-write)
+
+**This matrix must appear in Section E (Auth & Security) of the Architecture Brief.** It is the contract that `[The Service Engineer]` enforces at the query layer and `[The Frontend Developer]` enforces at the render layer.
+
 ---
 
 ## 4. Phase 1 Execution Protocol
@@ -80,9 +102,10 @@ Apply a dual-layer persistence strategy by default, no exceptions:
 ### Step 1 — Parse the pitch
 Read the user's project description and immediately extract:
 - **Core purpose** (what problem does it solve?)
-- **Primary user** (who uses it?)
-- **Key actions** (what are the 3-5 most important things a user does?)
+- **User roles** (who uses it — list every distinct type of actor, not just "the user")
+- **Key actions per role** (what are the 3-5 most important things each role does?)
 - **Data entities** (what objects does the system manage?)
+- **Ownership rules** (who owns each entity? who can see/edit whose data?)
 
 ### Step 2 — Ask the ONE question
 Present a brief summary of your understanding, then ask: **"Mobile App or Website?"**

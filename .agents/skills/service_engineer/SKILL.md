@@ -204,6 +204,121 @@ async function fetchDishes(): Promise<Dish[]> {
 
 ---
 
+## 9. Multi-User & Permission Enforcement
+
+This is the most commonly skipped section. Every project has multiple user roles. Enforce the Permission Matrix from Phase 1 at the service layer — not just at the API layer.
+
+### 9.1 The Golden Rule
+> **Never trust the client for identity. Always derive `userId` and `role` from the verified JWT on the server.**
+
+The client never sends its own `userId` in the request body. The service layer extracts it from the validated token:
+```typescript
+// middleware/auth.ts
+export function requireAuth(req: Request): AuthContext {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) throw new ServiceError('UNAUTHORIZED', 'No token provided');
+  const payload = verifyJwt(token); // throws if expired or tampered
+  return { userId: payload.sub, role: payload.role };
+}
+```
+
+### 9.2 Row-Level Security on Every Query
+Every query that reads user-owned data **must** filter by `userId`. No exceptions.
+
+```typescript
+// ✅ CORRECT — user can only see their own orders
+async function getOrders(auth: AuthContext): Promise<Order[]> {
+  return db.select().from(orders)
+    .where(and(
+      eq(orders.userId, auth.userId),   // ownership filter — always
+      isNull(orders.deletedAt)
+    ));
+}
+
+// ❌ WRONG — returns all orders from all users
+async function getOrders(): Promise<Order[]> {
+  return db.select().from(orders).where(isNull(orders.deletedAt));
+}
+```
+
+For `ADMIN` roles that legitimately need cross-user reads:
+```typescript
+async function getAllOrders(auth: AuthContext): Promise<Order[]> {
+  requireRole(auth, ['ADMIN']); // explicit role check before broadening scope
+  return db.select().from(orders).where(isNull(orders.deletedAt));
+}
+```
+
+### 9.3 Permission Guard Pattern
+Every mutation must check both **role** and **ownership**:
+
+```typescript
+// services/permission.ts
+export function requireRole(auth: AuthContext, allowed: Role[]): void {
+  if (!allowed.includes(auth.role)) {
+    throw new ServiceError('FORBIDDEN', `Role ${auth.role} cannot perform this action`);
+  }
+}
+
+export async function requireOwnership(
+  auth: AuthContext,
+  entityId: string,
+  fetchOwner: (id: string) => Promise<string | null>
+): Promise<void> {
+  if (auth.role === 'ADMIN') return; // admins bypass ownership checks
+  const ownerId = await fetchOwner(entityId);
+  if (ownerId !== auth.userId) {
+    throw new ServiceError('FORBIDDEN', 'You do not own this resource');
+  }
+}
+
+// Usage in a mutation:
+async function updateDish(auth: AuthContext, dishId: string, input: UpdateDishInput) {
+  requireRole(auth, ['ADMIN', 'MEMBER']);
+  await requireOwnership(auth, dishId, (id) =>
+    db.select({ ownerId: dishes.createdBy }).from(dishes).where(eq(dishes.id, id))
+      .then(r => r[0]?.ownerId ?? null)
+  );
+  // ... safe to update
+}
+```
+
+### 9.4 The `AuthContext` Interface
+Pass `AuthContext` as the **first argument** of every service function. Never use global state or request-level singletons for identity:
+
+```typescript
+interface AuthContext {
+  userId: string;   // UUID from JWT sub claim
+  role: Role;       // enum from JWT role claim
+  sessionId: string; // for audit logging
+}
+
+type Role = 'ADMIN' | 'MEMBER' | 'GUEST'; // must match Phase 1 Permission Matrix
+```
+
+### 9.5 Base Schema Rule
+Every entity that has an owner must include a `createdBy` field pointing to the owning user's `id`:
+```typescript
+export const dishes = sqliteTable('dishes', {
+  // ...other fields
+  createdBy: text('created_by').notNull(), // foreign key to users.id
+});
+```
+And every query on that entity must filter by `createdBy = auth.userId` unless the role permits cross-user access.
+
+### 9.6 Permission Enforcement in the Sync Engine
+The sync queue replays operations against the cloud API. Each queued item must carry the `userId` and `role` at the time of the original operation — not re-evaluated at sync time:
+```typescript
+interface SyncQueueItem {
+  // ...existing fields
+  userId: string;  // captured at write time
+  role: Role;      // captured at write time
+}
+```
+This prevents permission escalation during offline-to-online replay.
+
+---
+
 ## 9. Code Quality Gates
 
 Before surfacing output to `[The Architecture Reviewer]`:

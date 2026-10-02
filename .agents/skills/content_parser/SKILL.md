@@ -74,9 +74,30 @@ Every `.schema.json` file must include:
 **Hard rules:**
 - `id` is always UUID v4 — never sequential int.
 - `createdAt`, `updatedAt`, `deletedAt` are on **every** entity.
+- `createdBy` (UUID, foreign key to `users.id`) is on **every entity that has an owner**. Omitting it makes row-level security impossible.
 - `additionalProperties: false` — schemas are closed by default.
 - All date fields use ISO 8601 format strings (not Unix epoch integers).
 - `required` array must list every non-optional field.
+
+**Base fields for user-owned entities (add `createdBy` to the template):**
+```json
+"createdBy": {
+  "type": "string",
+  "format": "uuid",
+  "description": "User ID of the record owner — used for row-level security and IDOR prevention. Always filter queries by this field unless the requesting role is ADMIN."
+}
+```
+
+**Permission scope annotation — mark who can read/write each entity:**
+```json
+"x-permissions": {
+  "read":   ["ADMIN", "MEMBER"],
+  "create": ["ADMIN"],
+  "update": ["ADMIN", "owner"],
+  "delete": ["ADMIN"]
+}
+```
+The value `"owner"` means: the authenticated user whose `userId` matches `createdBy`. This annotation is the machine-readable form of the Phase 1 Permission Matrix.
 
 ---
 

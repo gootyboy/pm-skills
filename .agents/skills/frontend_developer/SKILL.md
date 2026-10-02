@@ -248,6 +248,95 @@ Skeleton loaders must mirror the **exact shape** of the real content (not a gene
 
 ---
 
+## 9. Permission-Aware Rendering
+
+The UI is the last line of *presentation* enforcement — the service layer is the last line of *security* enforcement. Both must align with the Phase 1 Permission Matrix.
+
+### 9.1 Auth Context — Single Source of Truth
+Provide role and identity through a typed React Context. Every component reads from this — never from local state or props:
+
+```typescript
+// context/AuthContext.tsx
+interface AuthContext {
+  userId: string;
+  role: 'ADMIN' | 'MEMBER' | 'GUEST';
+  isAuthenticated: boolean;
+}
+
+export const AuthContext = createContext<AuthContext | null>(null);
+
+export function useAuth(): AuthContext {
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error('useAuth must be used within AuthProvider');
+  return ctx;
+}
+```
+
+### 9.2 Permission-Gated Components
+Never show an action to a user who cannot perform it. **Hide** unauthorized actions — don't disable them (disabled buttons invite confusion; missing buttons do not):
+
+```typescript
+// components/PermissionGate.tsx
+interface PermissionGateProps {
+  allowedRoles: Role[];
+  children: React.ReactNode;
+  fallback?: React.ReactNode; // optional "no access" state
+}
+
+export function PermissionGate({ allowedRoles, children, fallback = null }: PermissionGateProps) {
+  const { role } = useAuth();
+  return allowedRoles.includes(role) ? <>{children}</> : <>{fallback}</>;
+}
+
+// Usage:
+<PermissionGate allowedRoles={['ADMIN']}>
+  <DeleteDishButton dishId={dish.id} />
+</PermissionGate>
+```
+
+### 9.3 Protected Routes
+Every route must declare its required roles. Unauthenticated users redirect to login. Authenticated-but-unauthorized users redirect to a 403 screen — never to a blank page:
+
+```typescript
+// components/ProtectedRoute.tsx
+export function ProtectedRoute({ allowedRoles, children }: ProtectedRouteProps) {
+  const { isAuthenticated, role } = useAuth();
+
+  if (!isAuthenticated) return <Redirect href="/login" />;
+  if (!allowedRoles.includes(role)) return <Redirect href="/403" />;
+  return <>{children}</>;
+}
+```
+
+### 9.4 Ownership-Aware UI
+For records the user owns, show edit/delete controls. For records owned by others, hide them — even if the API would reject the request anyway:
+
+```typescript
+function DishCard({ dish }: { dish: Dish }) {
+  const { userId, role } = useAuth();
+  const canEdit = role === 'ADMIN' || dish.createdBy === userId;
+
+  return (
+    <Card>
+      <DishInfo dish={dish} />
+      <PermissionGate allowedRoles={['ADMIN', 'MEMBER']}>
+        {canEdit && <EditButton onPress={() => router.push(`/dish/${dish.id}/edit`)} />}
+      </PermissionGate>
+    </Card>
+  );
+}
+```
+
+### 9.5 Rules
+- ❌ Never derive permissions from the data payload (e.g., `dish.isEditable`). The service layer sets that — it is not a UI concern.
+- ❌ Never check permissions in a `useEffect`. Permission checks are synchronous render decisions.
+- ✅ The `PermissionGate` component is the only place permission logic lives in the UI. No inline `role === 'ADMIN'` conditions scattered through JSX.
+- ✅ Every protected screen must be wrapped in `ProtectedRoute` at the route level, even if individual components also gate their controls.
+
+
+
+---
+
 ## 9. Code Quality Gates
 
 Before surfacing any output to `[The Architecture Reviewer]`:

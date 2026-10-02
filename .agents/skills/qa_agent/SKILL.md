@@ -122,6 +122,50 @@ appId: com.example.app
 - Color contrast ≥ 4.5:1 for body text (checked via `jest-axe`)
 - `prefers-reduced-motion` behavior verified in component tests
 
+### 3.6 Permission Boundary Tests (Mandatory for every protected resource)
+These tests must exist for every entity that has ownership or role restrictions. Missing them is a P1 QA gap.
+
+**IDOR Tests — can User A access User B's data?**
+```typescript
+it('US-NNN/SECURITY: IDOR — user cannot read another user\'s order', async () => {
+  const userA = await createTestUser('MEMBER');
+  const userB = await createTestUser('MEMBER');
+  const orderByB = await createOrder(userB.authCtx, { ... });
+
+  // userA attempts to read userB's order
+  await expect(
+    getOrder(userA.authCtx, orderByB.id)
+  ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+});
+```
+
+**Role Boundary Tests — can a lower role perform an admin action?**
+```typescript
+it('US-NNN/SECURITY: MEMBER cannot delete a dish they do not own', async () => {
+  const admin = await createTestUser('ADMIN');
+  const member = await createTestUser('MEMBER');
+  const dish = await createDish(admin.authCtx, { ... });
+
+  await expect(
+    deleteDish(member.authCtx, dish.id)
+  ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+});
+```
+
+**Unauthenticated Access Tests — no token = no data**
+```typescript
+it('US-NNN/SECURITY: unauthenticated request returns 401', async () => {
+  await expect(
+    getOrders(null) // no auth context
+  ).rejects.toMatchObject({ code: 'UNAUTHORIZED' });
+});
+```
+
+**Rules:**
+- Every entity with `createdBy` in its schema needs at least one IDOR test.
+- Every mutation tagged `[ROLE: ADMIN]` in USER_STORIES.md needs a role boundary test with a `MEMBER` attempting it.
+- These tests run in CI. They are not optional security-review tasks.
+
 ---
 
 ## 4. `tests/TEST_MANIFEST.md` Structure

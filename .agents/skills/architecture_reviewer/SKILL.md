@@ -74,6 +74,7 @@ Every review uses this template:
 - [ ] Screen inventory covers the full user journey with no obvious gaps
 - [ ] No single point of failure in the proposed architecture
 - [ ] Risk flags are present and actionable
+- [ ] **Permission Matrix is defined** — all user roles are listed, CRUD permissions per entity are specified, and data ownership rules are explicit. If this is missing, BLOCK.
 
 ### Phase 2 — Product Owner PRD & User Stories
 
@@ -96,6 +97,10 @@ Every review uses this template:
 - [ ] No SQL injection vectors in raw query patterns
 - [ ] No N+1 query patterns in list endpoints
 - [ ] Rate limiting strategy is defined for all public endpoints
+- [ ] **Every user-owned entity has a `createdBy` field** in the schema
+- [ ] **Every list query filters by `userId` or `createdBy`** — no unbounded cross-user reads for non-admin roles
+- [ ] **`requireRole()` and `requireOwnership()` guards are specified** for every mutation in the task manifest
+- [ ] **`AuthContext` is passed as first argument** to all service functions — no global identity singletons
 
 ### Phase 4 — Data Schemas & Contracts
 
@@ -131,6 +136,9 @@ Every review uses this template:
 - [ ] Minimum 44×44pt touch targets
 - [ ] Loading, error, and empty states all implemented
 - [ ] Skeleton loaders mirror content shape
+- [ ] **`PermissionGate` wraps all role-restricted UI elements** — no scattered inline `role === 'ADMIN'` conditions
+- [ ] **`ProtectedRoute` used on all authenticated screens** — unauthenticated redirect to login, unauthorized redirect to 403
+- [ ] **Ownership-aware UI** — edit/delete controls only shown when `role === ADMIN || record.createdBy === userId`
 
 ### Phase 6 — Service Engineering & Business Logic
 
@@ -155,6 +163,11 @@ Every review uses this template:
 - [ ] UI never calls cloud API directly — all reads/writes go through local DB
 - [ ] Hook return shapes match typed contracts from Phase 2
 - [ ] No business logic inside React components
+- [ ] **`userId` is never accepted from the client request body** — always extracted from the verified JWT
+- [ ] **Every service function that touches owned data accepts `AuthContext` as its first argument**
+- [ ] **`requireRole()` called before every role-restricted mutation**
+- [ ] **`requireOwnership()` called before every owner-restricted mutation**
+- [ ] **Sync queue items carry `userId` and `role` captured at write time** — not re-evaluated at sync time
 
 ### Phase 7 — QA & Production Signoff
 
@@ -167,6 +180,9 @@ Every review uses this template:
 - [ ] Build succeeds on CI without warnings
 - [ ] No known high/critical severity dependency vulnerabilities (`npm audit`)
 - [ ] `README.md` is current and accurate
+- [ ] **IDOR tests exist** for every entity with a `createdBy` field — cross-user read/write must be rejected with `FORBIDDEN`
+- [ ] **Role boundary tests exist** for every mutation tagged `[ROLE: ADMIN]` in USER_STORIES.md
+- [ ] **Unauthenticated access tests exist** — all protected endpoints return 401 with no token
 
 ---
 
