@@ -2,6 +2,8 @@
 
 > **Build and ship enterprise-grade software as a solo founder, powered by an AI agentic swarm.**
 
+![Multi-Agent SDLC Swarm Architecture](docs/assets/sdlc_swarm_architecture.png)
+
 ---
 
 ## 💡 Core Philosophy
