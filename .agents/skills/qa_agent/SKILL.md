@@ -78,6 +78,11 @@ appId: com.example.app
 - assertVisible: { id: "dish_list_item_margherita" }
 ```
 
+### Visual UI & Design Verification (Mandatory per screen)
+- **Mockup Match:** Screen rendering verified against approved mockup (`.antigravity/design/mockups/[screen_id]_[ver].png`) via Playwright snapshot / Maestro visual comparison.
+- **Design Token Audit:** Programmatic audit verifying spacing (multiples of 8), color tokens, typography sizes, and border-radii match `apple_design/SKILL.md` / `colors.ts`.
+- **State Visual Check:** Verified rendering for loading skeleton, error banner, and empty state against design spec.
+
 ### Accessibility
 - `accessibilityLabel` on all interactive elements
 - Touch targets ≥ 44×44pt
@@ -163,6 +168,7 @@ npx vitest run --coverage
 
 **Testing**
 - [ ] All P1 ACs have passing automated tests
+- [ ] Visual UI verified against approved mockups (`DESIGN_REGISTER.md`)
 - [ ] Service layer ≥ 80% coverage
 - [ ] E2E passing on staging
 - [ ] A11y tests passing

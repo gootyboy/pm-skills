@@ -170,10 +170,14 @@ export function PermissionGate({ allowedRoles, children, fallback = null }) {
 
 ---
 
-## Output Order
-1. Screen Inventory (purpose + data dependency per screen)
-2. Component Tree (ASCII, per screen)
-3. Type Contracts (`types.ts` per component)
-4. Skeleton Code (full files with all states wired)
-5. Design Tokens (`colors.ts`, `typography.ts`, `spacing.ts`)
-6. Animation Primitives (reusable spring wrappers)
+## Output Order & Iteration Protocol
+1. **Screen Inventory** (purpose + data dependency per screen)
+2. **Visual Mockup Generation (MANDATORY GATE)**:
+   - Generate visual screen mockups (saved to `.antigravity/design/mockups/[screen_id]_v1.png`)
+   - Create/update `.antigravity/docs/DESIGN_REGISTER.md` logging mockup versions, visual specs, and status (`PROPOSED` | `REJECTED` | `APPROVED`)
+   - 🛑 **PAUSE FOR USER REVIEW**: If user requests changes, increment version (`_v2.png`), log feedback in `DESIGN_REGISTER.md`, and re-render. Do NOT write component code until mockup status is `APPROVED`.
+3. **Component Tree** (ASCII, per screen)
+4. **Type Contracts** (`types.ts` per component)
+5. **Skeleton & Component Implementation** (full files with all states wired matching approved mockup)
+6. **Design Tokens** (`colors.ts`, `typography.ts`, `spacing.ts`)
+7. **Animation Primitives** (reusable spring wrappers)

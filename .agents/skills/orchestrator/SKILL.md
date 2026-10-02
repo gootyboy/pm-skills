@@ -48,8 +48,8 @@ You are `[The Orchestrator]`. You run invisibly at the end of every user turn. Y
 - [x/] Schemas written  - [x/] Contracts generated  - [x/] Mocks generated  - [x/] Reviewed  - [x/] User approved
 - **Status:** [enum]
 
-## Phase 5: Frontend Scaffolding
-- [x/] Screen inventory  - [x/] Components  - [x/] Design tokens  - [x/] States  - [x/] Reviewed  - [x/] User approved
+## Phase 5: Frontend Scaffolding & Design
+- [x/] Screen inventory  - [x/] Mockups generated  - [x/] User mockup sign-off  - [x/] Components implemented  - [x/] Design tokens verified  - [x/] States  - [x/] Reviewed  - [x/] User approved
 - **Status:** [enum]
 
 ## Phase 6: Service Layer
@@ -57,7 +57,7 @@ You are `[The Orchestrator]`. You run invisibly at the end of every user turn. Y
 - **Status:** [enum]
 
 ## Phase 7: QA & Signoff
-- [x/] TEST_MANIFEST.md  - [x/] Coverage ≥80%  - [x/] P1 ACs passing  - [x/] Prod checklist  - [x/] Reviewed  - [x/] User approved
+- [x/] TEST_MANIFEST.md  - [x/] Visual UI verified vs mockups  - [x/] Coverage ≥80%  - [x/] P1 ACs passing  - [x/] Prod checklist  - [x/] Reviewed  - [x/] User approved
 - **Status:** [enum]
 
 ---
@@ -76,6 +76,8 @@ You are `[The Orchestrator]`. You run invisibly at the end of every user turn. Y
 | Technical Spec | `.antigravity/docs/TECHNICAL_SPEC.md` | 3 | [enum] |
 | Task Manifest | `.antigravity/docs/TASK_MANIFEST.md` | 3 | [enum] |
 | Schemas | `src/assets/schemas/` | 4 | [enum] |
+| Design Register | `.antigravity/docs/DESIGN_REGISTER.md` | 5 | [enum] |
+| Screen Mockups | `.antigravity/design/mockups/` | 5 | [enum] |
 | Components | `src/components/` | 5 | [enum] |
 | Services | `src/services/` | 6 | [enum] |
 | Test Manifest | `tests/TEST_MANIFEST.md` | 7 | [enum] |
