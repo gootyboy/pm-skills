@@ -22,22 +22,85 @@ For a **1-Person Company**, this model creates crippling coordination overhead. 
 The framework consists of specialized agent skills operating under a linear, 7-phase Software Development Life Cycle:
 
 ```mermaid
-flowchart TD
-    Pitch([Raw Project Pitch]) --> Phase1[Phase 1: IT Consultant]
-    Phase1 --> Review1{Architecture Reviewer}
-    Review1 -->|Approved| Phase2[Phase 2: Product Owner]
-    Phase2 --> Review2{Architecture Reviewer}
-    Review2 -->|Approved| Phase3[Phase 3: Tech Requirements]
-    Phase3 --> Review3{Architecture Reviewer}
-    Review3 -->|Approved| Phase4[Phase 4: Content Parser]
-    Phase4 --> Phase5[Phase 5: Frontend Developer]
-    Phase4 --> Phase6[Phase 6: Service Engineer]
-    Phase5 & Phase6 --> Review56{Architecture Reviewer}
-    Review56 -->|Approved| Phase7[Phase 7: QA Agent]
-    Phase7 --> Review7{Architecture Reviewer}
-    Review7 -->|Approved| Deploy[Deployment Playbook]
+flowchart TB
+    subgraph Control ["🎮 Orchestration & State Layer"]
+        PB["PROJECT_BUILDER_SKILL<br/>(Master Swarm Controller)"]
+        ORCH["orchestrator<br/>(State Engine)"]
+        STATUS[("docs/PROJECT_STATUS.md<br/>(Rolling 3-Session State)")]
+        PB <--> ORCH
+        ORCH -->|Overwrites every turn| STATUS
+    end
 
-    Orchestrator((Orchestrator)) -. Updates State .-> Status[docs/PROJECT_STATUS.md]
+    subgraph Phase1_3 ["💡 Discovery, Scope & Tech Spec (Phases 1–3)"]
+        ITC["it_consultant<br/>(Solutions Architect)"]
+        PO["product_owner<br/>(PRD & Story Writer)"]
+        ARCH_BRIEF[("docs/ARCH_BRIEF.md")]
+        PRD_US[("docs/PRD.md & USER_STORIES.md")]
+        SPEC[("docs/TECHNICAL_SPEC.md")]
+        
+        ITC -->|Outputs| ARCH_BRIEF
+        ARCH_BRIEF --> PO
+        PO -->|Outputs| PRD_US
+        PRD_US --> SPEC
+    end
+
+    subgraph Phase4 ["📐 Data Contracts (Phase 4)"]
+        CP["content_parser<br/>(Schema Engine)"]
+        SCHEMAS[("src/assets/schemas/<br/>JSON Schemas & Zod Contracts")]
+        SPEC --> CP
+        CP -->|Outputs| SCHEMAS
+    end
+
+    subgraph Phase5_6 ["🔨 Parallel Implementation (Phases 5 & 6)"]
+        FED["frontend_developer<br/>(UI/UX Engineer)"]
+        SVE["service_engineer<br/>(Backend/Data Engineer)"]
+        APPLE["apple_design<br/>(Design System Rules)"]
+        MOCKUPS[("docs/design/mockups/<br/>& DESIGN_REGISTER.md")]
+        UI_CODE[("src/components/ & src/screens/")]
+        SERVICE_CODE[("src/services/ & src/db/")]
+
+        APPLE --> FED
+        SCHEMAS --> FED
+        SCHEMAS --> SVE
+        FED -->|Step 0: Visual Gate| MOCKUPS
+        MOCKUPS -->|Approved| FED
+        FED -->|Outputs| UI_CODE
+        SVE -->|Outputs| SERVICE_CODE
+    end
+
+    subgraph Phase7_Deploy ["🧪 Verification & Shipping (Phase 7 & Release)"]
+        QA["qa_agent<br/>(Test Automation & Visual QA)"]
+        TEST_MAN[("tests/TEST_MANIFEST.md")]
+        DEP["deployment<br/>(EAS OTA / Native & Vercel)"]
+
+        UI_CODE & SERVICE_CODE --> QA
+        MOCKUPS -->|Visual Diff Target| QA
+        QA -->|Outputs| TEST_MAN
+        TEST_MAN --> DEP
+    end
+
+    subgraph Gatekeeper ["🛡️ Zero-Trust Security & Quality Gate"]
+        REV{"architecture_reviewer<br/>(Audit Gatekeeper)"}
+        REPORTS[("docs/reviews/")]
+        
+        Phase1_3 --> REV
+        Phase4 --> REV
+        Phase5_6 --> REV
+        Phase7_Deploy --> REV
+        REV -->|Audit Logs| REPORTS
+    end
+
+    classDef control fill:#1E293B,stroke:#38BDF8,color:#FFF,stroke-width:2px;
+    classDef phase fill:#0F172A,stroke:#A855F7,color:#FFF,stroke-width:1px;
+    classDef impl fill:#022C22,stroke:#34D399,color:#FFF,stroke-width:1px;
+    classDef gate fill:#450A0A,stroke:#F87171,color:#FFF,stroke-width:2px;
+    classDef doc fill:#18181B,stroke:#71717A,color:#FFF,stroke-dasharray: 5 5;
+
+    class PB,ORCH control;
+    class ITC,PO,CP phase;
+    class FED,SVE,QA,DEP impl;
+    class REV gate;
+    class STATUS,ARCH_BRIEF,PRD_US,SPEC,SCHEMAS,MOCKUPS,UI_CODE,SERVICE_CODE,TEST_MAN,REPORTS doc;
 ```
 
 ### 🔹 Role Directory
