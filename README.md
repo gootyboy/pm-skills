@@ -1,0 +1,101 @@
+# 🚀 Multi-Agent SDLC Swarm for 1-Person Companies
+
+> **Build and ship enterprise-grade software as a solo founder, powered by an AI agentic swarm.**
+
+---
+
+## 💡 Core Philosophy
+
+Traditional software development relies on departmental handoffs—Product Managers write specs, Designers draw mockups, Frontend/Backend engineers build separate layers, and QA tests at the end. 
+
+For a **1-Person Company**, this model creates crippling coordination overhead. This repository provides a **Multi-Agent SDLC Swarm** designed specifically for solo execution:
+
+- **Full-Stack Feature Slices:** Every user story is a complete, vertical capability—UI through database—owned and shipped end-to-end in a single pull request.
+- **Proactive Scaffolding:** Agents arrive with opinionated, production-ready defaults (TypeScript, React Native/Next.js, hybrid local-first DB, JWT auth) rather than asking endless technical questions.
+- **Zero-Trust Quality Gates:** Every phase deliverable is audited by a dedicated Architecture Reviewer before reaching the founder.
+- **Context & Token Efficiency:** Strict protocols prevent LLM context window bloat during long 30+ turn building sessions.
+
+---
+
+## 👥 The Agent Swarm
+
+The framework consists of specialized agent skills operating under a linear, 7-phase Software Development Life Cycle:
+
+```mermaid
+flowchart TD
+    Pitch([Raw Project Pitch]) --> Phase1[Phase 1: IT Consultant]
+    Phase1 --> Review1{Architecture Reviewer}
+    Review1 -->|Approved| Phase2[Phase 2: Product Owner]
+    Phase2 --> Review2{Architecture Reviewer}
+    Review2 -->|Approved| Phase3[Phase 3: Tech Requirements]
+    Phase3 --> Review3{Architecture Reviewer}
+    Review3 -->|Approved| Phase4[Phase 4: Content Parser]
+    Phase4 --> Phase5[Phase 5: Frontend Developer]
+    Phase4 --> Phase6[Phase 6: Service Engineer]
+    Phase5 & Phase6 --> Review56{Architecture Reviewer}
+    Review56 -->|Approved| Phase7[Phase 7: QA Agent]
+    Phase7 --> Review7{Architecture Reviewer}
+    Review7 -->|Approved| Deploy[Deployment Playbook]
+
+    Orchestrator((Orchestrator)) -. Updates State .-> Status[docs/PROJECT_STATUS.md]
+```
+
+### 🔹 Role Directory
+
+| Role | Agent Skill | Responsibilities |
+|---|---|---|
+| 🎮 **Master Controller** | [`PROJECT_BUILDER_SKILL.md`](.agents/skills/PROJECT_BUILDER_SKILL.md) | Coordinates the linear SDLC, human-in-the-loop gateways, and agent orchestration. |
+| 💡 **IT Consultant** | [`it_consultant`](.agents/skills/it_consultant/SKILL.md) | Solution architect for Phase 1. Asks **one question** (*Mobile or Web?*) and scaffolds full tech stack & permission matrix. |
+| 📋 **Product Owner** | [`product_owner`](.agents/skills/product_owner/SKILL.md) | Phase 2 spec writer. Translates scope into `PRD.md` and full-stack INVEST user stories in `USER_STORIES.md`. |
+| ⚖️ **Architecture Reviewer** | [`architecture_reviewer`](.agents/skills/architecture_reviewer/SKILL.md) | Zero-trust auditor across all phases. Evaluates security vectors, IDOR leaks, Apple design rules, and coverage. |
+| 📐 **Content Parser** | [`content_parser`](.agents/skills/content_parser/SKILL.md) | Generates deterministic JSON Schemas, Zod contracts, and mock fixtures saved to `src/assets/schemas/`. |
+| 🎨 **Frontend Developer** | [`frontend_developer`](.agents/skills/frontend_developer/SKILL.md) | Builds Apple-native UI component trees. Enforces visual mockup sign-offs (`docs/DESIGN_REGISTER.md`) before writing code. |
+| ⚙️ **Service Engineer** | [`service_engineer`](.agents/skills/service_engineer/SKILL.md) | Engineers offline-first database adapters, sync engines, role/ownership guards, and JWT auth managers. |
+| 🧪 **QA Agent** | [`qa_agent`](.agents/skills/qa_agent/SKILL.md) | Enforces ≥80% service coverage, passes automated P1 tests, and performs visual UI comparison against approved mockups. |
+| 🔄 **Orchestrator** | [`orchestrator`](.agents/skills/orchestrator/SKILL.md) | State machine engine. Overwrites `docs/PROJECT_STATUS.md` every turn to enable cold-start session resumption. |
+| 🚀 **Deployment Lead** | [`deployment`](.agents/skills/deployment/SKILL.md) | Release playbook for Expo EAS (OTA & native builds) and Vercel web deployments. |
+
+---
+
+## ⚡ Token & Context Efficiency System
+
+To prevent LLM context window bloat and keep execution crisp after 30+ turns, the swarm enforces three core rules:
+
+1. **Write-to-Disk, Link-in-Chat:** Agents write code, schemas, and specifications directly to workspace files and return a concise bullet summary with a clickable Markdown file link (`[PRD.md](file:///path/to/docs/PRD.md)`). Large text blocks are never dumped into the chat stream.
+2. **Lazy-Load Artifacts:** Each agent reads *only* the specific file required for its step (e.g., `service_engineer` reads only `TECHNICAL_SPEC.md` and `schemas/`, ignoring discovery history).
+3. **Bounded State Window:** `docs/PROJECT_STATUS.md` maintains a rolling **3-session log cap**, guaranteeing the status file stays under 50 lines regardless of project age.
+
+---
+
+## 📂 Standard Directory Layout
+
+All project documentation is stored in a clean, visible `docs/` folder:
+
+```
+docs/
+├── PROJECT_STATUS.md       # Living state machine & NEXT_STEP_POINTER
+├── ARCH_BRIEF.md           # Phase 1: Architecture Brief & Permission Matrix
+├── PRD.md                  # Phase 2: Product Requirements & "The Bet"
+├── USER_STORIES.md         # Phase 2: Full-stack feature stories
+├── TECHNICAL_SPEC.md       # Phase 3: Technical Spec & Data reconciliation
+├── TASK_MANIFEST.md        # Phase 3: Infrastructure tasks & execution plan
+├── DESIGN_REGISTER.md      # Phase 5: UI mockup versioning & feedback log
+├── design/mockups/         # Phase 5: Generated screen mockup images
+└── reviews/                # Architecture Reviewer audit reports
+```
+
+---
+
+## 🏁 Quick Start & Resumption
+
+### 1. Starting a New Project
+Provide your raw project pitch to the swarm:
+> *"Scaffold a mobile app for local food trucks to update their daily menu and location in real-time."*
+
+The **IT Consultant** will process the pitch and ask the single scoping question: *"Mobile App or Website?"*
+
+### 2. Resuming an Ongoing Session
+If you pause or resume work after hours or days, simply tell the AI:
+> *"Read `docs/PROJECT_STATUS.md` and continue."*
+
+The **Orchestrator** will parse `NEXT_STEP_POINTER`, announce the active agent and step, and resume execution instantly with zero context re-negotiation.
