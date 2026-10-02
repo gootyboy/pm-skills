@@ -13,8 +13,9 @@ Traditional software development relies on departmental handoffs—Product Manag
 For a **1-Person Company**, this model creates crippling coordination overhead. This repository provides a **Multi-Agent SDLC Swarm** designed specifically for solo execution:
 
 - **Full-Stack Feature Slices:** Every user story is a complete, vertical capability—UI through database—owned and shipped end-to-end in a single pull request.
+- **Autonomy Modes (`BALANCED` / `AUTOPILOT` / `SUPERVISED`):** Eliminates micro-management by letting you choose how often execution halts for approval (3 strategic gates in `BALANCED`, 1 gate in `AUTOPILOT`).
 - **Proactive Scaffolding:** Agents arrive with opinionated, production-ready defaults (TypeScript, React Native/Next.js, hybrid local-first DB, JWT auth) rather than asking endless technical questions.
-- **Zero-Trust Quality Gates:** Every phase deliverable is audited by a dedicated Architecture Reviewer before reaching the founder.
+- **Zero-Trust Quality Gates:** Every phase deliverable is audited by a dedicated Architecture Reviewer before reaching the founder, with automatic self-correction loops when blocked.
 - **Context & Token Efficiency:** Strict protocols prevent LLM context window bloat during long 30+ turn building sessions.
 
 ---
