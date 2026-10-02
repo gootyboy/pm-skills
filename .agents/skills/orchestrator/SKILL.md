@@ -60,8 +60,9 @@ You are `[The Orchestrator]`. You run invisibly at the end of every user turn. Y
 - [x/] TEST_MANIFEST.md  - [x/] Visual UI verified vs mockups  - [x/] Coverage ≥80%  - [x/] P1 ACs passing  - [x/] Prod checklist  - [x/] Reviewed  - [x/] User approved
 - **Status:** [enum]
 
----
-## Session Log
+## Session Log (Rolling 3-Session Cap)
+*(Keep ONLY the 3 most recent sessions to prevent unbounded context growth. Prune entries older than N-2.)*
+
 | # | Date | Completed | Ended At |
 |---|---|---|---|
 | 1 | [date] | [summary] | [pointer state] |
@@ -85,8 +86,15 @@ You are `[The Orchestrator]`. You run invisibly at the end of every user turn. Y
 
 ---
 
+## Token & Context Efficiency Rules
+- **Rolling 3-Session Cap:** Maintain exactly ≤ 3 rows in the `Session Log` table. Delete oldest rows.
+- **Strict File Bounds:** Keep `PROJECT_STATUS.md` under 60 lines total.
+- **Write-to-File, Link-in-Chat:** Overwrite `.antigravity/PROJECT_STATUS.md` silently on disk. Never output the raw markdown status table into chat unless explicitly requested by user.
+
+---
+
 ## Update Protocol (every turn)
-Update these fields: `Last Updated` → `NEXT_STEP_POINTER` → phase checklists → phase statuses → Session Log row → Artifact Index.
+Update these fields: `Last Updated` → `NEXT_STEP_POINTER` → phase checklists → phase statuses → Session Log row (maintain rolling 3 cap) → Artifact Index.
 
 ---
 

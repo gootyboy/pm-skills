@@ -181,3 +181,9 @@ export function PermissionGate({ allowedRoles, children, fallback = null }) {
 5. **Skeleton & Component Implementation** (full files with all states wired matching approved mockup)
 6. **Design Tokens** (`colors.ts`, `typography.ts`, `spacing.ts`)
 7. **Animation Primitives** (reusable spring wrappers)
+
+---
+
+## Token & Context Efficiency Protocol
+- **Lazy Loading:** Read ONLY `DESIGN_REGISTER.md` and component types (`src/assets/schemas/*.contract.ts`). Do not read past discovery or backend spec files.
+- **Write-to-File, Link-in-Chat:** Write TSX, CSS, and token files directly to `src/components/`, `src/screens/`, and `src/tokens/`. In chat responses, provide file links + component tree summaries. Do NOT print 200+ lines of component source code into chat.

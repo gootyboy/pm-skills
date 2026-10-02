@@ -201,3 +201,9 @@ All errors → typed `ServiceError(code, cause)` → bubble to hook → surface 
 5. Sync engine (queue schema + worker)
 6. Auth module (token manager + HTTP client)
 7. DB migration files
+
+---
+
+## Token & Context Efficiency Protocol
+- **Lazy Loading:** Read ONLY `TECHNICAL_SPEC.md` and `src/assets/schemas/`. Do not read frontend or discovery files.
+- **Write-to-File, Link-in-Chat:** Write TypeScript service, hook, and schema files directly to `src/services/`, `src/hooks/`, and `src/db/`. In chat responses, provide file links + short functional summaries. Never print raw service implementation code into chat.

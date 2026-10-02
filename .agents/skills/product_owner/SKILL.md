@@ -202,8 +202,6 @@ Before finalising `USER_STORIES.md`, run this check:
 ---
 
 ## 10. Phase 2 Delivery Checklist
-
-Before marking Phase 2 `[AWAITING MANAGER APPROVAL]`:
 - [ ] `PRD.md` written with all 8 sections including "The Bet"
 - [ ] All success metrics are measurable (no subjective language)
 - [ ] `USER_STORIES.md` written with all P1 stories
@@ -212,4 +210,10 @@ Before marking Phase 2 `[AWAITING MANAGER APPROVAL]`:
 - [ ] Every story has a User Role tag from the Phase 1 Permission Matrix
 - [ ] P1 story count ≤ 10
 - [ ] No circular dependencies between stories
-- [ ] Infrastructure tasks extracted to TASK_MANIFEST.md
+- [ ] Infrastructure tasks extracted to `TASK_MANIFEST.md`
+
+---
+
+## 11. Token & Context Efficiency Protocol
+- **Lazy Loading:** Read ONLY `.antigravity/docs/ARCH_BRIEF.md`. Do not load past schemas or implementation code into context during Phase 2.
+- **Write-to-File, Link-in-Chat:** Write `PRD.md` and `USER_STORIES.md` directly to disk (`.antigravity/docs/`). In chat responses, provide clickable file links + a 3-bullet summary. Never print full document contents into the chat stream.

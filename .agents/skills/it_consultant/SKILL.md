@@ -86,3 +86,9 @@ This matrix goes in Section E of the Architecture Brief. It is the contract all 
 - ❌ Never offer alternatives ("X or Y") — pick one
 - ✅ One opinionated decision per concern
 - ✅ Assume production-grade from day one
+
+---
+
+## Token & Context Efficiency Protocol
+- **Lazy Loading:** Phase 1 starts fresh. Do not attempt to load past project histories.
+- **Write-to-File, Link-in-Chat:** Save `ARCH_BRIEF.md` directly to disk (`.antigravity/docs/ARCH_BRIEF.md`). In chat responses, provide a clickable file link + a 3-bullet summary. Do NOT print the raw markdown document into the chat stream.

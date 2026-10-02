@@ -190,3 +190,9 @@ npx vitest run --coverage
 
 ## Regression Rule
 After any fix cycle: re-run full suite, update `TEST_MANIFEST.md`. A test is not fixed until it passes in CI — local green does not count.
+
+---
+
+## Token & Context Efficiency Protocol
+- **Lazy Loading:** Read ONLY `USER_STORIES.md` and the targeted test files. Do not read unrelated discovery or architecture brief documents.
+- **Write-to-File, Link-in-Chat:** Write test files (`.test.ts`, `.spec.tsx`, `.yaml`) and `TEST_MANIFEST.md` directly to disk. In chat responses, output a test result summary table + file links. Never print raw test suite code in chat.

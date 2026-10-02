@@ -126,3 +126,9 @@ export type UpdateDishInput = Partial<CreateDishInput> & { id: string };
 - [ ] All PII fields marked `x-pii: true`
 - [ ] M:M relationships have junction entity schemas
 - [ ] Schema version `1.0.0` set
+
+---
+
+## Token & Context Efficiency Protocol
+- **Lazy Loading:** Read ONLY `TECHNICAL_SPEC.md` and `USER_STORIES.md`. Do not read previous discovery logs.
+- **Write-to-File, Link-in-Chat:** Write `.schema.json`, `.contract.ts`, and `.mock.ts` directly to `src/assets/schemas/`. In chat responses, provide file links + a summary table of generated schemas. Never print raw JSON schema code into chat.
