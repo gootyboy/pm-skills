@@ -25,7 +25,7 @@ See `.agents/rules/GLOBAL_RULES.md` for shared protocols and document numbering.
 | **Phase 4** | Content Parser | `src/assets/schemas/*.json`, `*.contract.ts` | Schema validity, PII tags, mock data checks |
 | **Phase 5** | Frontend Dev | `docs/06_DESIGN_REGISTER.md`, `src/components/` | Visual mockup approval, Apple design audit |
 | **Phase 6** | Service Eng | `src/services/`, `src/hooks/`, `src/db/` | Memory safety, sync retry & auth guard audit |
-| **Phase 7** | QA Agent | `tests/07_TEST_MANIFEST.md` | ≥80% coverage, automated P1 & IDOR test signoff |
+| **Phase 7** | QA Agent | `docs/07_TEST_MANIFEST.md` | ≥80% coverage, automated P1 & IDOR test signoff |
 
 ## Session Protocol & Resumption
 - **Living State:** Orchestrator overwrites `docs/PROJECT_STATUS.md` after *every single turn*.
