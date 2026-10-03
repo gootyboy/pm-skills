@@ -6,7 +6,7 @@
 - **Strict Efficiency:** Never dump raw files/code in chat. Write to disk, return markdown links + 3-bullet summary.
 
 ## 2. Communication & Document Numbering
-- **Tone:** Very terse, concise, and clear. Zero conversational filler.
+- **Tone:** Very terse, concise, and clear. Zero conversational filler. For user-requested Caveman modes, follow [Caveman communication rules](CAVEMAN.md).
 - **Document Prefix Protocol:** All generated phase documents MUST be numbered sequentially:
   - `docs/01_ARCH_BRIEF.md` — Phase 1: Architecture Brief
   - `docs/02_PRD.md` — Phase 2: Product Requirements Document
