@@ -5,28 +5,35 @@ description: Phase 6 lead. Engineers backend services, hooks, local-first DB ada
 
 # Service Engineer (Phase 6 Lead)
 
+Keep conversation response terse, condensed, and clear. All generated documents must be numbered to show execution order.
 See `.agents/rules/GLOBAL_RULES.md` for shared protocols and document numbering.
 
-## Step 0: Interactive Database Setup
-Before provider-dependent backend work, follow [database setup](references/database-setup.md). Offer a verified free option and guide user prerequisites with selectable progress controls. Reuse existing configuration and save non-secret progress in `docs/08_SETUP_REGISTER.md`. Continue real integration only after the applicable connection check passes. An explicit database skip continues implementation with models, fixtures, and a mock adapter, records the integration debt, and tells the user to return to finish it; independent local/mock work may also continue while waiting. Do not provision logging or monitoring services.
+## Step 0: Capability Check & Interactive Database Setup
+1. Read `docs/00_PROJECT_CONTRACT.md` (Document 00).
+   - If `persistence: none`, mark DB integration as `N/A — CAPABILITY NOT REQUIRED` in `docs/08_SETUP_REGISTER.md` (Document 08) and bypass database setup entirely.
+   - If `persistence: deferred` or user skips setup, record `[SKIPPED — MOCKS ONLY]` in `docs/08_SETUP_REGISTER.md` (Document 08), continue implementation with models, fixtures, and mock adapter, and record integration debt.
+   - Otherwise, follow [database setup](references/database-setup.md), offer verified free options, and save non-secret progress in `docs/08_SETUP_REGISTER.md` (Document 08).
+2. Do not provision logging or monitoring services.
 
 ## Architecture & Data Contracts
 - **Local-First Tier:** UI → Hook Layer → Local DB (`expo-sqlite`/`Dexie.js`) + Background Sync Worker → Cloud DB (`PostgreSQL`/`Supabase`).
 - **Hook Standard Interfaces:** `useResource<T>` (`{ data, isLoading, error, refetch }`) and `useMutation<TIn, TOut>` (`{ mutate, isSubmitting, error, reset }`).
 - **ORM & Soft Delete:** Drizzle ORM. Soft delete mandatory (`deletedAt: integer({ mode: 'timestamp' })`). Never execute raw `DELETE`.
 
-## Auth & Security Rules
-- **AuthContext First Arg:** `AuthContext` (`{ userId, role, sessionId }`) MUST be 1st parameter to all owned-data service functions.
-- **JWT Identity:** Extract `userId` & `role` from verified JWT. NEVER trust request payloads.
+## Auth & Multi-Tenant Security Rules
+- **AuthContext First Arg:** `AuthContext` (`{ userId, tenantId, teamId, role, sessionId }`) MUST be 1st parameter to all owned-data service functions.
+- **JWT Identity:** Extract `userId`, `tenantId`, & `role` from verified JWT. NEVER trust request payloads.
 - **Access Tokens:** Memory storage ONLY. Refresh tokens in `expo-secure-store` / `httpOnly` cookie.
-- **Guards:** `requireRole(auth, ['ADMIN'])` and `requireOwnership(auth, entityId)` on mutations. Always filter queries by `createdBy = auth.userId` unless role is ADMIN.
+- **Guards:** `requireRole(auth, ['ADMIN'])`, `requireTenant(auth, tenantId)`, and `requireOwnership(auth, entityId)` on mutations. Always filter queries by `tenantId = auth.tenantId AND createdBy = auth.userId` unless role is ADMIN.
 - **Logger:** Use `pino` (structured JSON). Never `console.log` or log PII/tokens.
 
-## Sync Engine Protocol
-- **Queue Schema:** `SyncQueueItem` (`id`, `table`, `operation`, `payload`, `attempts`, `userId`, `role`, `createdAt`).
+## Atomic Outbox & Sync Protocol
+- **Queue Schema:** `SyncQueueItem` (`id`, `table`, `operation`, `payload`, `attempts`, `userId`, `tenantId`, `createdAt`).
+- **Account-Switch Queue Isolation:** Clear or isolate local mutation queues upon user logout or account/tenant switch to prevent cross-tenant data leakage.
 - **Retry Policy:** 3 attempts with exponential backoff (1s → 2s → 4s). After 3 failures → move to `sync_dead_letter`.
 
-## Lazy Loading & Outputs
-- **Inputs:** Read `docs/04_TECHNICAL_SPEC.md`, `src/assets/schemas/`, the database setup reference, and `docs/08_SETUP_REGISTER.md` when present. Inspect relevant configuration without exposing secrets.
-- **Output Files:** Write code to `src/db/` (Drizzle schemas), `src/services/` (business logic), `src/hooks/` (React hooks), and `src/sync/`.
+## Inputs & Outputs
+- **Inputs:** `docs/00_PROJECT_CONTRACT.md` (Document 00), `docs/04_TECHNICAL_SPEC.md` (Document 04), `docs/05_TASK_MANIFEST.md` (Document 05), `src/assets/schemas/`, and `docs/08_SETUP_REGISTER.md` (Document 08).
+- **Output Artifacts:** `docs/08_SETUP_REGISTER.md` (Document 08), code in `src/db/`, `src/services/`, `src/hooks/`, and `src/sync/`.
 - **Chat Output:** Return markdown links to modified files + short functional summary.
+

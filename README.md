@@ -4,7 +4,7 @@
 
 ![Multi-Agent SDLC Swarm Architecture](docs/assets/sdlc_swarm_architecture.png)
 
----
+----
 
 ## 💡 Core Philosophy
 
@@ -135,19 +135,25 @@ To prevent LLM context window bloat and keep execution crisp after 30+ turns, th
 
 ## 📂 Standard Directory Layout
 
-All project documentation is stored in a clean, visible `docs/` folder:
+All project documentation is stored in a clean, visible `docs/` folder (and `tests/` for QA):
 
 ```
 docs/
 ├── PROJECT_STATUS.md       # Living state machine & NEXT_STEP_POINTER
+├── 00_PROJECT_CONTRACT.md  # Phase 0: Explicit capability contract & scope boundaries
 ├── 01_ARCH_BRIEF.md        # Phase 1: Architecture Brief & Permission Matrix
 ├── 02_PRD.md               # Phase 2: Product Requirements & "The Bet"
 ├── 03_USER_STORIES.md      # Phase 2: Full-stack feature stories
 ├── 04_TECHNICAL_SPEC.md    # Phase 3: Technical Spec & Data reconciliation
-├── 05_TASK_MANIFEST.md     # Phase 3: Infrastructure tasks & execution plan
+├── 05_TASK_MANIFEST.md     # Phase 3: Executable infrastructure & feature tasks
 ├── 06_DESIGN_REGISTER.md   # Phase 5: UI mockup versioning & feedback log
-├── design/mockups/         # Phase 5: Generated screen mockup images
+├── 08_SETUP_REGISTER.md   # Phase 6/Release: Non-secret setup & connection evidence
+├── 09_RELEASE_PLAN.md      # Release: Concrete deployment & recovery plan
+├── design/mockups/         # Phase 5: Concept screen mockup images
 └── reviews/                # Architecture Reviewer audit reports
+
+tests/
+└── 07_TEST_MANIFEST.md     # Phase 7: Canonical test manifest & coverage evidence
 ```
 
 ---
