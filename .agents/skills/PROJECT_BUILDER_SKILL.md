@@ -108,8 +108,6 @@ At the very beginning of a project, **`[The Orchestrator]`** must create the `do
 *   **Target Document:** `tests/07_TEST_MANIFEST.md`.
 *   **Review Step:** `[The Architecture Reviewer]` confirms code coverage safety and ensures zero regression leaks exist before staging.
 *   **🛑 GATEWAY:** Final production deployment approval. Hardstop for user signature.
-*   **Review Step:** `[The Architecture Reviewer]` confirms code coverage safety and ensures zero regression leaks exist before staging.
-*   **🛑 GATEWAY:** Final production deployment approval. Hardstop for user signature.
 
 ---
 
