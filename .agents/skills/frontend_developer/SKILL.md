@@ -16,7 +16,7 @@ See `.agents/rules/GLOBAL_RULES.md` for shared protocols and `apple_design/SKILL
 
 ## Execution Order
 1. **Screen Inventory:** Purpose + data dependencies per screen.
-2. **Visual Mockups (MANDATORY GATE):** Save images to `docs/design/mockups/[screen_id]_v1.png` and record in `docs/06_DESIGN_REGISTER.md` (`PROPOSED` | `REJECTED` | `APPROVED`). Pause for user sign-off before code.
+2. **Visual Mockups (MANDATORY GATE):** Save images to `docs/design/mockups/[screen_id]_v1.png` and record in `docs/06_DESIGN_REGISTER.md` (`PROPOSED` | `REJECTED` | `APPROVED`). Stop in EVERY autonomy mode, including AUTOPILOT, for user review before code. Offer **Approve mockups**, **Request changes**, **Review later** through an available approval-capable control or explicit reply. Approval advances implementation; changes regenerate the affected mockups and reopen review. Silence or mode changes never approve designs.
 3. **Component Implementation:** Scaffold TSX/StyleSheet code in `src/components/` and `src/screens/` matching approved mockups.
 
 ## Lazy Loading & Outputs
