@@ -28,8 +28,11 @@ Write manifest containing:
 - Coverage summary table (Services %, Components %).
 - Test results grouped by story ID (`US-001`, `US-002`, etc.) with AC map and binary status (`✅ PASS` / `🔴 FAIL`).
 - Production Readiness Checklist (`tsc` clean, `npm audit` zero high/critical, secrets audit, build check).
-- Final Verdict: `✅ PRODUCTION APPROVED` or `🔴 BLOCKED`.
+- Final Verdict: `✅ PRODUCTION APPROVED`, `🟡 MOCK DEMO ONLY — BACKEND UNVERIFIED`, or `🔴 BLOCKED`. A user-approved database skip permits the mock-demo verdict only if applicable mock/UI tests pass; real persistence, auth/ownership, and sync checks remain explicitly unverified. Never count mocked checks as real-backend coverage or security evidence.
+
+## Release Handoff
+After tests and reviewer checks pass for their declared scope (production or mock demo), hand off to Deployment Lead for interactive destination selection and prerequisites. `PRODUCTION APPROVED` means engineering readiness only; it is not user authorization to publish. Gate 3 approves the concrete release plan after setup, or the user explicitly skips deployment. Mock-demo readiness permits handoff or an explicitly authorized demo preview only; it blocks production. Final handoff must remind the user to return and finish skipped database integration.
 
 ## Lazy Loading & Outputs
-- **Inputs:** Read ONLY `docs/03_USER_STORIES.md` and test suite files.
+- **Inputs:** Read `docs/03_USER_STORIES.md`, test suite files, approved design references, and `docs/08_SETUP_REGISTER.md` when present to distinguish real and mocked integrations.
 - **Chat Output:** Summary table of test results + link `[tests/07_TEST_MANIFEST.md](file://...)`.
