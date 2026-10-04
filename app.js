@@ -1,170 +1,126 @@
-// Complete Network Graph Data: All 14 Skills (Zero Rules, Clean Light Theme)
-const GRAPH_NODES = [
-  // --- CORE CONTROLLERS ---
-  { id: 'skill_builder', label: 'PROJECT_BUILDER_SKILL.md', type: 'controller', category: 'Controllers', icon: '👑', x: 120, y: 140, desc: 'Multi-Agent SDLC Swarm Lead System Architect & Engineering Director Controller.' },
-  { id: 'skill_orchestrator', label: 'orchestrator', type: 'controller', category: 'Controllers', icon: '🎼', x: 380, y: 140, desc: 'State machine engine routing handoffs and managing PROJECT_STATUS.md & progress.html.' },
+// SDLC Swarm Wheel Diagram: 14 Skills Arranged in a Symmetrical Radial Wheel
+const CENTER_HUB = {
+  cx: 380,
+  cy: 250,
+  radius: 170
+};
 
-  // --- PHASE SKILLS (SDLC Pipeline) ---
-  { id: 'skill_pm', label: 'pm', type: 'phase', phaseNum: 1, category: 'SDLC Pipeline', icon: '📋', x: 80, y: 290, desc: 'Project Manager: Scope discovery, feature trade-offs, and project contract creation.' },
-  { id: 'skill_po', label: 'product_owner', type: 'phase', phaseNum: 2, category: 'SDLC Pipeline', icon: '🎯', x: 240, y: 290, desc: 'Product Owner: Generates PRD.md, full-stack user stories, and acceptance criteria.' },
-  { id: 'skill_architect', label: 'techincal_architect', type: 'phase', phaseNum: 3, category: 'SDLC Pipeline', icon: '📐', x: 400, y: 290, desc: 'Technical Architect: Selects tech stack, data schemas, and API contracts.' },
-  { id: 'skill_design', label: 'apple_design', type: 'phase', phaseNum: 3, category: 'SDLC Pipeline', icon: '🎨', x: 560, y: 290, desc: 'Apple Design: Crafts Apple HIG-compliant UI design specs, typography, and glassmorphism.' },
-  { id: 'skill_frontend', label: 'frontend_developer', type: 'phase', phaseNum: 4, category: 'SDLC Pipeline', icon: '💻', x: 720, y: 290, desc: 'Frontend Developer: Builds modular UI components, interactions, and client logic.' },
-  { id: 'skill_service', label: 'service_engineer', type: 'phase', phaseNum: 4, category: 'SDLC Pipeline', icon: '⚙️', x: 880, y: 290, desc: 'Service Engineer: Implements backend services, database connections, and REST/GraphQL APIs.' },
-  { id: 'skill_qa', label: 'qa_agent', type: 'phase', phaseNum: 5, category: 'SDLC Pipeline', icon: '🧪', x: 720, y: 460, desc: 'QA Agent: Generates automated test suites, executes boundary checks, and produces QA_REPORT.md.' },
-  { id: 'skill_uat', label: 'uat', type: 'phase', phaseNum: 6, category: 'SDLC Pipeline', icon: '⚡', x: 520, y: 460, desc: 'UAT Coordinator: Deploys temporary StackBlitz cloud sandbox for stakeholder evaluation.' },
-  { id: 'skill_deploy', label: 'deployment', type: 'phase', phaseNum: 7, category: 'SDLC Pipeline', icon: '🚀', x: 320, y: 460, desc: 'Deployment Agent: Configures production cloud hosting (Vercel, Netlify, Cloudflare).' },
+// 12 Outer Spokes around the Wheel + 2 Center Hub Skills = 14 Skills Total
+const RAW_SKILLS = [
+  // --- Center Hub (2 Skills) ---
+  { id: 'skill_builder', label: 'PROJECT_BUILDER_SKILL.md', isCenter: true, category: 'Swarm Controller', icon: '👑', desc: 'Lead System Architect & Engineering Director Controller.' },
+  { id: 'skill_orchestrator', label: 'orchestrator', isCenter: true, category: 'State Engine', icon: '🎼', desc: 'State machine engine routing handoffs and managing project state.' },
 
-  // --- SUPPORTING SKILLS ---
-  { id: 'skill_arch_review', label: 'architecture_reviewer', type: 'support', category: 'Specialized Support', icon: '🔍', x: 620, y: 140, desc: 'Architecture Reviewer: Audits deliverables against contract, checking scalability and zero-trust security.' },
-  { id: 'skill_it', label: 'it_consultant', type: 'support', category: 'Specialized Support', icon: '💼', x: 800, y: 140, desc: 'IT Consultant: Evaluates third-party vendor APIs, database setups, and infrastructure requirements.' },
-  { id: 'skill_parser', label: 'content_parser', type: 'support', category: 'Specialized Support', icon: '📄', x: 120, y: 460, desc: 'Content Parser: Extracts structured technical schemas from raw briefs and PDFs.' }
+  // --- 12 Outer Wheel Spokes (Clockwise Order) ---
+  { id: 'skill_pm', label: 'pm', category: 'Phase 1: Discovery', icon: '📋', desc: 'Project Manager: Scope discovery & project contract creation.' },
+  { id: 'skill_po', label: 'product_owner', category: 'Phase 2: Product', icon: '🎯', desc: 'Product Owner: Generates PRD.md & user stories.' },
+  { id: 'skill_architect', label: 'techincal_architect', category: 'Phase 3: Architecture', icon: '📐', desc: 'Technical Architect: Tech stack & database schemas.' },
+  { id: 'skill_design', label: 'apple_design', category: 'Phase 3: UI/UX Design', icon: '🎨', desc: 'Apple Design: HIG UI specs & typography.' },
+  { id: 'skill_frontend', label: 'frontend_developer', category: 'Phase 4: Frontend', icon: '💻', desc: 'Frontend Dev: UI components & client logic.' },
+  { id: 'skill_service', label: 'service_engineer', category: 'Phase 4: Backend', icon: '⚙️', desc: 'Service Engineer: APIs & database connections.' },
+  { id: 'skill_qa', label: 'qa_agent', category: 'Phase 5: Quality', icon: '🧪', desc: 'QA Agent: Automated test suites & verification.' },
+  { id: 'skill_uat', label: 'uat', category: 'Phase 6: Sandbox UAT', icon: '⚡', desc: 'UAT Coordinator: Temporary StackBlitz cloud sandbox.' },
+  { id: 'skill_deploy', label: 'deployment', category: 'Phase 7: Release', icon: '🚀', desc: 'Deployment Agent: Production cloud deployment.' },
+  { id: 'skill_arch_review', label: 'architecture_reviewer', category: 'Support: Audit', icon: '🔍', desc: 'Architecture Reviewer: Audits scalability & security.' },
+  { id: 'skill_it', label: 'it_consultant', category: 'Support: Ops', icon: '💼', desc: 'IT Consultant: Vendor APIs & DB architecture.' },
+  { id: 'skill_parser', label: 'content_parser', category: 'Support: Parsing', icon: '📄', desc: 'Content Parser: Extracts specs from briefs & PDFs.' }
 ];
 
-// Network Edges / Connections
-const GRAPH_EDGES = [
-  // Pipeline Handoff Edges
-  { from: 'skill_builder', to: 'skill_pm', label: '1. Init Scope' },
-  { from: 'skill_pm', to: 'skill_po', label: '2. Contract Handoff' },
-  { from: 'skill_po', to: 'skill_architect', label: '3a. Specs' },
-  { from: 'skill_po', to: 'skill_design', label: '3b. UI Tokens' },
-  { from: 'skill_architect', to: 'skill_frontend', label: '4a. Tech Spec' },
-  { from: 'skill_architect', to: 'skill_service', label: '4b. DB Schema' },
-  { from: 'skill_design', to: 'skill_frontend', label: '4c. HIG Mockups' },
-  { from: 'skill_frontend', to: 'skill_qa', label: '5a. Code Base' },
-  { from: 'skill_service', to: 'skill_qa', label: '5b. API Endpoints' },
-  { from: 'skill_qa', to: 'skill_uat', label: '6. QA Verified' },
-  { from: 'skill_uat', to: 'skill_deploy', label: '7. UAT Approved' },
+// Calculate Wheel Coordinates
+const outerSkills = RAW_SKILLS.filter(s => !s.isCenter);
+const totalOuter = outerSkills.length;
 
-  // Orchestration & Support Links
-  { from: 'skill_orchestrator', to: 'skill_pm', label: 'Sync State' },
-  { from: 'skill_orchestrator', to: 'skill_uat', label: 'Sync UAT Link' },
-  { from: 'skill_arch_review', to: 'skill_architect', label: 'Audit Arch' },
-  { from: 'skill_it', to: 'skill_service', label: 'Vendor Consult' },
-  { from: 'skill_parser', to: 'skill_po', label: 'Parse Specs' }
-];
-
-// Guided Story Steps
-const STORY_STEPS = [
-  {
-    step: 1,
-    title: "1. Swarm Controller & Orchestrator Kickoff",
-    focusNodes: ['skill_builder', 'skill_orchestrator'],
-    desc: "The SDLC Swarm Controller (PROJECT_BUILDER_SKILL) initializes the workspace, sets autonomy mode, and engages Orchestrator to track project state."
-  },
-  {
-    step: 2,
-    title: "2. Scope Discovery & Project Contract",
-    focusNodes: ['skill_pm'],
-    desc: "The Project Manager (pm) conducts requirement discovery, establishes feature trade-offs, and locks PROJECT_CONTRACT.md."
-  },
-  {
-    step: 3,
-    title: "3. PRD & User Stories Definition",
-    focusNodes: ['skill_po', 'skill_parser'],
-    desc: "The Product Owner (product_owner) expands scope into PRD.md and granular USER_STORIES.md with acceptance criteria."
-  },
-  {
-    step: 4,
-    title: "4. Technical Architecture & Apple Design",
-    focusNodes: ['skill_architect', 'skill_design', 'skill_arch_review'],
-    desc: "Technical Architect specifies tech stack and schemas while Apple Design crafts HIG typography, glassmorphism tokens, and layout specs."
-  },
-  {
-    step: 5,
-    title: "5. Parallel Engineering (Frontend & Service)",
-    focusNodes: ['skill_frontend', 'skill_service', 'skill_it'],
-    desc: "Frontend Developer builds modular UI components while Service Engineer implements backend APIs and database connections."
-  },
-  {
-    step: 6,
-    title: "6. Automated QA Verification",
-    focusNodes: ['skill_qa'],
-    desc: "QA Agent executes automated test suites, validates boundary conditions, and produces QA_REPORT.md."
-  },
-  {
-    step: 7,
-    title: "7. StackBlitz Temporary Cloud Sandbox UAT",
-    focusNodes: ['skill_uat'],
-    desc: "UAT Coordinator packages the build into a zero-config StackBlitz WebContainer cloud sandbox for stakeholder evaluation."
-  },
-  {
-    step: 8,
-    title: "8. Production Release Automation",
-    focusNodes: ['skill_deploy'],
-    desc: "Upon UAT sign-off, Deployment Agent publishes the final build to production cloud hosting (Vercel/Netlify)."
+const GRAPH_NODES = RAW_SKILLS.map((skill, index) => {
+  if (skill.isCenter) {
+    const isFirst = skill.id === 'skill_builder';
+    return {
+      ...skill,
+      x: CENTER_HUB.cx + (isFirst ? -55 : 55),
+      y: CENTER_HUB.cy
+    };
+  } else {
+    const outerIndex = outerSkills.findIndex(s => s.id === skill.id);
+    // Angle starting from top (-PI/2) moving clockwise
+    const angle = (outerIndex / totalOuter) * 2 * Math.PI - Math.PI / 2;
+    return {
+      ...skill,
+      x: Math.round(CENTER_HUB.cx + CENTER_HUB.radius * Math.cos(angle)),
+      y: Math.round(CENTER_HUB.cy + CENTER_HUB.radius * Math.sin(angle)),
+      angle
+    };
   }
+});
+
+// Guided Wheel Story Steps (1 to 8)
+const STORY_STEPS = [
+  { step: 1, title: '1. Central Swarm Controller Kickoff', focus: ['skill_builder', 'skill_orchestrator'], desc: 'The Swarm Controller (PROJECT_BUILDER_SKILL) activates the wheel, engaging Orchestrator.' },
+  { step: 2, title: '2. Scope Discovery (PM)', focus: ['skill_pm'], desc: 'Project Manager (pm) conducts requirement discovery and locks PROJECT_CONTRACT.md.' },
+  { step: 3, title: '3. Product Requirements (PO)', focus: ['skill_po', 'skill_parser'], desc: 'Product Owner (product_owner) creates PRD.md and full-stack USER_STORIES.md.' },
+  { step: 4, title: '4. Architecture & Design System', focus: ['skill_architect', 'skill_design', 'skill_arch_review'], desc: 'Technical Architect defines tech stack while Apple Design defines UI HIG tokens.' },
+  { step: 5, title: '5. Parallel Full-Stack Build', focus: ['skill_frontend', 'skill_service', 'skill_it'], desc: 'Frontend Dev and Service Engineer build modular components, APIs, and DB schemas.' },
+  { step: 6, title: '6. Quality Assurance Testing', focus: ['skill_qa'], desc: 'QA Agent runs automated test suites and validates boundary conditions.' },
+  { step: 7, title: '7. Temporary StackBlitz Cloud UAT', focus: ['skill_uat'], desc: 'UAT Coordinator deploys build to a temporary StackBlitz sandbox and updates progress.html.' },
+  { step: 8, title: '8. Production Release', focus: ['skill_deploy'], desc: 'Deployment Agent publishes final release to production cloud hosting.' }
 ];
 
-// App State
 let currentStoryStep = 0;
 let selectedNodeId = 'skill_pm';
 
 function initApp() {
-  renderNetworkGraph();
+  renderWheel();
   renderNodeDetails(selectedNodeId);
   renderSkillsList();
 }
 
-function renderNetworkGraph() {
-  const svg = document.getElementById('networkSvg');
-  const nodesContainer = document.getElementById('networkNodes');
+function renderWheel() {
+  const svg = document.getElementById('wheelSvg');
+  const nodesContainer = document.getElementById('wheelNodes');
   
   if (!svg || !nodesContainer) return;
-
-  svg.innerHTML = `
-    <defs>
-      <marker id="arrow" viewBox="0 0 10 10" refX="18" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-        <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
-      </marker>
-      <marker id="arrow-active" viewBox="0 0 10 10" refX="18" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-        <path d="M 0 0 L 10 5 L 0 10 z" fill="#007aff"/>
-      </marker>
-    </defs>
-  `;
-  nodesContainer.innerHTML = '';
 
   const isStoryActive = currentStoryStep > 0;
   const storyStepObj = isStoryActive ? STORY_STEPS[currentStoryStep - 1] : null;
 
-  // Render Edges (Light Theme Slate / Blue Line)
-  GRAPH_EDGES.forEach(edge => {
-    const fromNode = GRAPH_NODES.find(n => n.id === edge.from);
-    const toNode = GRAPH_NODES.find(n => n.id === edge.to);
+  // Render Wheel SVG Ring & Spoke Lines
+  let svgContent = `
+    <!-- Outer Wheel Ring Circle -->
+    <circle cx="${CENTER_HUB.cx}" cy="${CENTER_HUB.cy}" r="${CENTER_HUB.radius}" stroke="#e2e8f0" stroke-width="2.5" fill="none" stroke-dasharray="4 4"/>
+    <!-- Center Hub Box -->
+    <circle cx="${CENTER_HUB.cx}" cy="${CENTER_HUB.cy}" r="65" stroke="#cbd5e1" stroke-width="1.5" fill="#f8fafc"/>
+  `;
 
-    if (!fromNode || !toNode) return;
+  // Draw Radial Spokes from Center to Outer Nodes
+  GRAPH_NODES.filter(n => !n.isCenter).forEach(node => {
+    const isSelected = selectedNodeId === node.id;
+    const isStoryFocused = storyStepObj && storyStepObj.focusNodes.includes(node.id);
+    const isHighlighted = isSelected || isStoryFocused;
 
-    const isConnectedToSelected = (edge.from === selectedNodeId || edge.to === selectedNodeId);
-    const isStoryFocused = storyStepObj && (storyStepObj.focusNodes.includes(edge.from) || storyStepObj.focusNodes.includes(edge.to));
-    const isHighlighted = isConnectedToSelected || isStoryFocused;
-
-    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    line.setAttribute('x1', fromNode.x);
-    line.setAttribute('y1', fromNode.y);
-    line.setAttribute('x2', toNode.x);
-    line.setAttribute('y2', toNode.y);
-    line.setAttribute('stroke', isHighlighted ? '#007aff' : '#cbd5e1');
-    line.setAttribute('stroke-width', isHighlighted ? '2.5' : '1.5');
-    line.setAttribute('marker-end', isHighlighted ? 'url(#arrow-active)' : 'url(#arrow)');
-    if (isHighlighted) line.setAttribute('stroke-dasharray', '4 4');
-
-    svg.appendChild(line);
+    svgContent += `
+      <line 
+        x1="${CENTER_HUB.cx}" y1="${CENTER_HUB.cy}" 
+        x2="${node.x}" y2="${node.y}" 
+        stroke="${isHighlighted ? '#007aff' : '#e2e8f0'}" 
+        stroke-width="${isHighlighted ? '2.5' : '1.5'}"
+        ${isHighlighted ? 'stroke-dasharray="4 4"' : ''}
+      />
+    `;
   });
 
-  // Render Nodes (Light Theme Cards)
+  svg.innerHTML = svgContent;
+  nodesContainer.innerHTML = '';
+
+  // Render Nodes
   GRAPH_NODES.forEach(node => {
     const isSelected = selectedNodeId === node.id;
     const isStoryFocused = storyStepObj && storyStepObj.focusNodes.includes(node.id);
     const isActive = isSelected || isStoryFocused;
 
     const el = document.createElement('div');
-    el.className = `absolute transform -translate-x-1/2 -translate-y-1/2 p-2.5 rounded-2xl cursor-pointer transition-all border select-none flex items-center gap-2 ${
+    el.className = `absolute transform -translate-x-1/2 -translate-y-1/2 p-2 rounded-2xl cursor-pointer transition-all border select-none flex items-center gap-1.5 ${
       isActive 
-        ? 'bg-blue-50/90 border-blue-500 text-blue-950 shadow-xl scale-105 ring-4 ring-blue-500/20 z-20 font-semibold' 
-        : node.type === 'controller'
-        ? 'bg-purple-50/90 border-purple-300 text-purple-950 hover:border-purple-400 shadow-sm z-10'
-        : node.type === 'support'
-        ? 'bg-amber-50/90 border-amber-300 text-amber-950 hover:border-amber-400 shadow-sm z-10'
+        ? 'bg-blue-50 border-blue-500 text-blue-950 shadow-xl scale-110 ring-4 ring-blue-500/20 z-20 font-semibold' 
+        : node.isCenter
+        ? 'bg-purple-50 border-purple-300 text-purple-950 hover:border-purple-400 shadow-sm z-10'
         : 'bg-white border-slate-200 text-slate-900 hover:border-slate-300 hover:shadow shadow-sm z-10'
     }`;
 
@@ -173,10 +129,10 @@ function renderNetworkGraph() {
     el.onclick = () => selectNode(node.id);
 
     el.innerHTML = `
-      <span class="text-lg">${node.icon}</span>
+      <span class="text-base">${node.icon}</span>
       <div>
-        <div class="font-bold text-xs leading-none whitespace-nowrap">${node.label}</div>
-        <div class="text-[9.5px] text-slate-500 font-mono mt-0.5 whitespace-nowrap">${node.type === 'phase' ? `PHASE ${node.phaseNum}` : node.category.toUpperCase()}</div>
+        <div class="font-bold text-[11px] leading-none whitespace-nowrap">${node.label}</div>
+        <div class="text-[9px] text-slate-500 font-mono mt-0.5 whitespace-nowrap">${node.category}</div>
       </div>
     `;
 
@@ -186,7 +142,7 @@ function renderNetworkGraph() {
 
 function selectNode(nodeId) {
   selectedNodeId = nodeId;
-  renderNetworkGraph();
+  renderWheel();
   renderNodeDetails(nodeId);
 }
 
@@ -195,19 +151,6 @@ function renderNodeDetails(nodeId) {
   const detailEl = document.getElementById('nodeDetailContainer');
 
   if (!node || !detailEl) return;
-
-  const connectedEdges = GRAPH_EDGES.filter(e => e.from === nodeId || e.to === nodeId);
-  
-  let handoffsHtml = connectedEdges.map(e => {
-    const isOut = e.from === nodeId;
-    const target = GRAPH_NODES.find(n => n.id === (isOut ? e.to : e.from));
-    return `
-      <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs">
-        <span class="text-slate-500 font-medium">${isOut ? 'Outputs To →' : '← Inputs From'}</span>
-        <span class="font-bold text-blue-600 font-mono">${target ? target.label : e.to}</span>
-      </div>
-    `;
-  }).join('');
 
   detailEl.innerHTML = `
     <div class="flex items-center justify-between pb-3 border-b border-slate-200">
@@ -219,21 +162,19 @@ function renderNodeDetails(nodeId) {
         </div>
       </div>
       <span class="px-2.5 py-1 rounded-full text-xs font-mono font-semibold bg-blue-50 text-blue-700 border border-blue-200">
-        ${node.type.toUpperCase()}
+        ${node.isCenter ? 'HUB' : 'SPOKE'}
       </span>
     </div>
 
     <div class="mt-3 space-y-3 text-xs">
       <div>
-        <label class="text-[10.5px] uppercase font-semibold text-slate-400 tracking-wider">Directive & Responsibility</label>
+        <label class="text-[10.5px] uppercase font-semibold text-slate-400 tracking-wider">Swarm Wheel Role</label>
         <p class="text-slate-700 mt-1 leading-relaxed font-normal">${node.desc}</p>
       </div>
 
-      <div>
-        <label class="text-[10.5px] uppercase font-semibold text-slate-400 tracking-wider mb-1.5 block">Graph Connections</label>
-        <div class="space-y-1.5">
-          ${handoffsHtml}
-        </div>
+      <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+        <span class="text-[10.5px] uppercase font-semibold text-slate-500 block mb-1">Wheel Position</span>
+        <span class="text-xs text-slate-700 font-medium">${node.isCenter ? 'Central Control Hub' : 'Outer Wheel Spokes (Clockwise SDLC Flow)'}</span>
       </div>
     </div>
   `;
@@ -268,7 +209,7 @@ function setStoryStep(stepNum) {
     }
   }
 
-  renderNetworkGraph();
+  renderWheel();
 }
 
 function nextStoryStep() {

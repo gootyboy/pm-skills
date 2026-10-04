@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Multi-Agent SDLC Swarm — Skills Network Graph</title>
+  <title>Multi-Agent SDLC Swarm — Skills Wheel Diagram</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap');
@@ -16,15 +16,15 @@
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col antialiased">
 
-  <!-- Header (Light Theme) -->
+  <!-- Header -->
   <header class="h-16 border-b border-slate-200/80 px-4 md:px-8 flex items-center justify-between shrink-0 bg-white/90 backdrop-blur-xl z-20 shadow-sm">
     <div class="flex items-center gap-3">
       <div class="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-600 font-bold text-lg">
-        🕸️
+        🎡
       </div>
       <div>
         <h1 class="text-sm font-bold tracking-tight text-slate-900 flex items-center gap-2">
-          <span>SDLC Swarm Skills Network Graph</span>
+          <span>SDLC Swarm Skills Wheel Diagram</span>
           <span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 font-mono font-semibold">14 Skills</span>
         </h1>
         <p class="text-[11px] text-slate-500 font-mono">/Volumes/Samsung 990 1TB/hp/projects/pm-skills</p>
@@ -33,16 +33,16 @@
 
     <!-- View Tabs -->
     <nav class="flex items-center bg-slate-100 border border-slate-200 rounded-2xl p-1">
-      <button onclick="document.getElementById('viewNetwork').classList.remove('hidden'); document.getElementById('viewAllDocs').classList.add('hidden');" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-white text-slate-900 shadow-sm border border-slate-200">
-        Network Graph & Story
+      <button onclick="document.getElementById('viewWheel').classList.remove('hidden'); document.getElementById('viewAllSkills').classList.add('hidden');" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-white text-slate-900 shadow-sm border border-slate-200">
+        Skills Wheel & Story
       </button>
-      <button onclick="document.getElementById('viewNetwork').classList.add('hidden'); document.getElementById('viewAllDocs').classList.remove('hidden');" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors">
+      <button onclick="document.getElementById('viewWheel').classList.add('hidden'); document.getElementById('viewAllSkills').classList.remove('hidden');" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors">
         All 14 Skills List
       </button>
     </nav>
   </header>
 
-  <!-- Story Controls Toolbar (Light Theme) -->
+  <!-- Story Controls Toolbar -->
   <div class="bg-white border-b border-slate-200 px-4 py-2 flex flex-wrap items-center justify-between gap-3 text-xs shrink-0 z-20 shadow-sm">
     <div class="flex items-center gap-2">
       <span class="font-bold text-slate-800 uppercase tracking-wider text-[11px]">📖 Story Mode:</span>
@@ -70,14 +70,14 @@
   <!-- Main Viewport -->
   <main class="flex-1 flex overflow-hidden relative">
 
-    <!-- VIEW 1: Light Theme Network Graph -->
-    <div id="viewNetwork" class="flex-1 flex overflow-hidden w-full relative">
+    <!-- VIEW 1: Wheel Diagram -->
+    <div id="viewWheel" class="flex-1 flex overflow-hidden w-full relative">
       
-      <!-- Graph Canvas Container -->
+      <!-- Canvas Container -->
       <div class="flex-1 relative bg-slate-50 overflow-auto" id="canvasViewport">
         
-        <!-- Story Banner (Light Theme) -->
-        <div id="storyBanner" class="hidden absolute top-4 left-4 right-4 md:right-[420px] bg-white/95 backdrop-blur-xl border border-blue-200 rounded-2xl p-4 shadow-xl z-30">
+        <!-- Story Banner -->
+        <div id="storyBanner" class="hidden absolute top-4 left-4 right-4 md:right-[400px] bg-white/95 backdrop-blur-xl border border-blue-200 rounded-2xl p-4 shadow-xl z-30">
           <div class="flex items-center gap-2 text-blue-600 font-bold text-xs uppercase tracking-wider">
             <span>📖 Active Story Walkthrough</span>
           </div>
@@ -85,16 +85,16 @@
           <p id="storyDesc" class="text-xs text-slate-600 mt-0.5 leading-relaxed font-normal"></p>
         </div>
 
-        <!-- SVG Edges Layer -->
-        <svg id="networkSvg" class="absolute inset-0 w-[1000px] h-[580px] pointer-events-none z-0"></svg>
+        <!-- SVG Ring Layer -->
+        <svg id="wheelSvg" class="absolute inset-0 w-[760px] h-[500px] pointer-events-none z-0"></svg>
         
         <!-- Interactive Nodes Layer -->
-        <div id="networkNodes" class="absolute inset-0 w-[1000px] h-[580px]"></div>
+        <div id="wheelNodes" class="absolute inset-0 w-[760px] h-[500px]"></div>
 
       </div>
 
-      <!-- Right Inspector Drawer (Light Theme) -->
-      <aside class="w-full md:w-[380px] bg-white border-l border-slate-200 p-5 flex flex-col shrink-0 overflow-y-auto z-20 shadow-lg">
+      <!-- Right Inspector Drawer -->
+      <aside class="w-full md:w-[360px] bg-white border-l border-slate-200 p-5 flex flex-col shrink-0 overflow-y-auto z-20 shadow-lg">
         <div id="nodeDetailContainer">
           <!-- Populated by app.js -->
         </div>
@@ -102,8 +102,8 @@
 
     </div>
 
-    <!-- VIEW 2: Complete List of All 14 Skills -->
-    <div id="viewAllDocs" class="hidden flex-1 flex flex-col p-6 overflow-y-auto bg-slate-50">
+    <!-- VIEW 2: All 14 Skills Grid -->
+    <div id="viewAllSkills" class="hidden flex-1 flex flex-col p-6 overflow-y-auto bg-slate-50">
       <div class="pb-4">
         <h2 class="text-base font-bold text-slate-900">All 14 Skills Reference</h2>
         <p class="text-xs text-slate-500">Complete listing of every skill in the pm-skills repository</p>
