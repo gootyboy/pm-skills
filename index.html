@@ -62,6 +62,23 @@
     .gate-badge-pill.gate-active { background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; }
     .gate-badge-pill.gate-passive { background: #fafafa; border: 1px solid #e5e5e5; color: #737373; }
 
+    /* Active Project Stage (where project execution currently resides) */
+    .role-card.active-project-stage { background: #f0fdf4; border-color: #22c55e; }
+    .role-card.active-project-stage .card-role { color: #15803d; }
+    .role-card.active-project-stage .badge { background: #16a34a; color: #ffffff; }
+    .active-stage-pill { font-size: 8px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; background: #dcfce7; color: #15803d; padding: 1px 5px; border-radius: 3px; margin-left: 4px; border: 1px solid #86efac; display: inline-block; }
+
+    /* Completed Stage Checkmark (Positioned Centered On Top of Connector Line) */
+    .completed-checkmark { position: absolute; bottom: 8px; right: 14px; width: 16px; height: 16px; border-radius: 50%; background: #dcfce7; color: #15803d; border: 2px solid #ffffff; font-size: 10px; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; line-height: 1; z-index: 12; box-shadow: 0 0 0 1px #86efac, 0 1px 3px rgba(0,0,0,0.08); }
+
+    /* Inspected Stage (currently selected by user for viewing details) */
+    .role-card.inspected { outline: 2px solid #2563eb; outline-offset: -1px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15); }
+
+    /* Connector Lines Joining Stage Badges (1.5px Dotted rgba(0,0,0,0.08)) */
+    .phase-cards { position: relative; }
+    .phase-cards::before { content: ''; position: absolute; top: 20px; bottom: 20px; right: 21px; width: 0; border-right: 1.5px dotted rgba(0, 0, 0, 0.08); z-index: 10; pointer-events: none; }
+    .badge { position: relative; z-index: 11; border: 2px solid #ffffff; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06); }
+
     /* Fluid Spring Physics Detail Panel Transition */
     .detail-panel { margin-top: 20px; padding: 20px; border: 1px solid #e5e5e5; border-radius: 12px; background: #ffffff; min-height: 200px; display: flex; flex-direction: column; justify-content: flex-start; transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1); animation: appleSpringSlide 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards; }
     
@@ -109,17 +126,64 @@
     .story-ac-title { font-size: 9px; font-weight: 700; color: #737373; text-transform: uppercase; margin-bottom: 3px; }
     .story-ac-list { margin: 0; padding-left: 14px; font-size: 10px; color: #525252; line-height: 14px; }
 
+    /* Project Header Bar & Completion Progress */
+    .project-header-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 16px; padding: 14px 18px; background: #ffffff; border: 1px solid #e5e5e5; border-radius: 12px; }
+    .project-title-group { display: flex; align-items: center; gap: 12px; }
+    .project-icon { font-size: 22px; line-height: 1; }
+    .project-name { margin: 0; font-size: 15px; font-weight: 700; color: #171717; }
+    .project-mode-badge { font-size: 11px; font-weight: 600; color: #737373; display: block; margin-top: 2px; }
+    .progress-section { width: 200px; flex-shrink: 0; }
+    .progress-label-row { display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: 600; color: #737373; margin-bottom: 6px; }
+    .progress-percent { font-family: monospace; font-weight: 700; color: #2563eb; }
+    .progress-track { width: 100%; height: 7px; background: #f5f5f5; border: 1px solid #e5e5e5; border-radius: 999px; overflow: hidden; }
+    .progress-fill { height: 100%; background: #2563eb; border-radius: 999px; transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15); }
+
+    /* QA Test Results Summary Box */
+    .qa-summary-box { padding: 14px; border: 1px solid #bbf7d0; border-radius: 10px; background: #f0fdf4; margin-bottom: 14px; }
+    .qa-summary-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #dcfce7; padding-bottom: 8px; }
+    .qa-verdict-title { font-size: 12px; font-weight: 700; color: #166534; display: flex; align-items: center; gap: 6px; }
+    .qa-coverage-tag { font-family: monospace; font-size: 10px; font-weight: 700; background: #166534; color: #ffffff; padding: 2px 7px; border-radius: 4px; }
+    .qa-metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; text-align: center; }
+    .qa-metric-card { background: #ffffff; border: 1px solid #dcfce7; padding: 8px; border-radius: 6px; }
+    .qa-metric-value { font-size: 14px; font-weight: 700; color: #166534; }
+    .qa-metric-label { font-size: 9px; color: #737373; text-transform: uppercase; margin-top: 2px; }
+    .qa-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; font-size: 11px; color: #166534; }
+    .qa-list li { display: flex; justify-content: space-between; background: #ffffff; padding: 5px 10px; border-radius: 6px; border: 1px solid #dcfce7; }
+
     @media (max-width: 768px) {
       body { padding: 16px 8px; display: block; overflow-x: auto; }
       .visualizer-wrapper { min-width: 680px; }
       main { padding: 16px; }
       .v-grid { gap: 10px; padding: 10px; }
       .stories-grid { grid-template-columns: 1fr; }
+      .project-header-bar { flex-direction: column; align-items: flex-start; }
+      .progress-section { width: 100%; }
     }
   </style>
 </head>
 <body>
   <div class="visualizer-wrapper">
+    <!-- Top Project Header & Progress % -->
+    <header class="project-header-bar">
+      <div class="project-title-group">
+        <span class="project-icon">🚀</span>
+        <div>
+          <h1 class="project-name" id="projectName">PM Skills SDLC</h1>
+          <span class="project-mode-badge" id="projectModeBadge">Autonomy Mode: 🟢 Autopilot</span>
+        </div>
+      </div>
+
+      <div class="progress-section">
+        <div class="progress-label-row">
+          <span>Project Completion</span>
+          <span class="progress-percent" id="progressPercent">62%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progressFill" style="width: 62%;"></div>
+        </div>
+      </div>
+    </header>
+
     <!-- Minimalist Folder-Style Top Mode Tabs -->
     <div class="folder-tabs-bar">
       <button type="button" class="folder-tab active" data-mode="autopilot" onclick="switchAutonomyMode('autopilot')">🟢 Autopilot</button>

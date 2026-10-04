@@ -12,10 +12,10 @@ See `.agents/rules/GLOBAL_RULES.md` for shared protocols and document numbering.
 - **Invisible Execution:** Overwrite `docs/PROJECT_STATUS.md` silently on disk at the end of *every user turn*. Never dump raw table in chat unless requested.
 - **Line Limit & Session Cap:** Keep `PROJECT_STATUS.md` under 65 lines. Maintain rolling **3-session log cap** (delete oldest rows).
 - **Status Enums:** Use the authoritative vocabulary in Global Rules, including `[AWAITING USER SETUP]`, `[AWAITING UAT SIGN-OFF]`, and `[STALE — REVISION REQUIRED]`.
-- **Visual Progress Synchronization:** Copy and update `progress.html` (or `index.html` + `app.js`) in `docs/` and project root at every turn with current phase, deliverables index, interactive User Stories viewer, and selected UAT environment link.
-- **Document Links Alignment:** Ensure `progress.html` links directly to all project deliverables (`docs/00_PROJECT_CONTRACT.md`, `docs/01_ARCH_BRIEF.md`, `docs/02_PRD.md`, `docs/03_USER_STORIES.md`, `docs/04_TECHNICAL_SPEC.md`, `docs/05_TASK_MANIFEST.md`, `src/assets/schemas/`, `docs/06_DESIGN_REGISTER.md`, `tests/07_TEST_MANIFEST.md`, `docs/08_SETUP_REGISTER.md`, `docs/09_RELEASE_PLAN.md`, `docs/10_UAT_CHECKLIST.md`).
+- **Visual Progress Synchronization:** Copy and update `index.html` + `app.js` in the project root at every turn with current phase, deliverables index, interactive User Stories viewer, automated QA test summary, and selected UAT environment link.
+- **Document Links Alignment:** Ensure `index.html` + `app.js` link directly to all project deliverables (`docs/00_PROJECT_CONTRACT.md`, `docs/01_ARCH_BRIEF.md`, `docs/02_PRD.md`, `docs/03_USER_STORIES.md`, `docs/04_TECHNICAL_SPEC.md`, `docs/05_TASK_MANIFEST.md`, `src/assets/schemas/`, `docs/06_DESIGN_REGISTER.md`, `tests/07_TEST_MANIFEST.md`, `docs/08_SETUP_REGISTER.md`, `docs/09_RELEASE_PLAN.md`, `docs/10_UAT_CHECKLIST.md`).
 - **Gate 2 UI Mockup Stop Point:** Clearly flag Phase 5 (UI/UX) as a mandatory autonomy stop point. When UI mockups are created, pause execution for manager approval before frontend code implementation.
-- **Dashboard Template:** Use `references/progress-template.html` or embedded `index.html`/`app.js`; populate active story and UAT environment summary/access from recorded evidence. Before access exists, render a disabled pending-access label instead of an empty or placeholder link.
+- **Dashboard Template:** Use `index.html` + `app.js` in project root as the master visualizer template; populate active story, stage status, checkmarks, and UAT environment summary/access from recorded evidence. Before access exists, render a disabled pending-access label instead of an empty or placeholder link.
 
 ## Template: `docs/PROJECT_STATUS.md`
 ```markdown
