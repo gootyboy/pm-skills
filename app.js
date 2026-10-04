@@ -1,4 +1,5 @@
 // SDLC Swarm Skills Visualizer — NYC Subway Style Variants Engine
+// Includes LED Station Strip with Angled 45° Titles + MTA System Trunk, Winding Route, Vertical Strip, and Junction Grid
 
 const SDLC_SWARM_NODES = [
   { id: 'skill_builder', stop: 1, label: 'PROJECT_BUILDER_SKILL.md', mta: 'S', color: 'bg-[#808183] text-white', border: 'border-[#808183]', line: 'S Shuttle', category: 'Swarm Hub Controller', icon: '👑', desc: 'Master Swarm Controller: Sets autonomy modes (BALANCED / AUTOPILOT / SUPERVISED) and manages system lifecycle.' },
@@ -34,17 +35,17 @@ const SUBWAY_STATIONS = [
 
 let currentStoryStep = 2; // Default Stop 2: it_consultant
 let selectedNodeId = 'skill_it';
-let currentActiveView = 'mta_system'; // Default: MTA System Map
+let currentActiveView = 'led_strip'; // Default: LED Station Strip with Angled Titles
 
 function initApp() {
-  switchView('mta_system');
+  switchView('led_strip');
   renderNodeDetails(selectedNodeId);
 }
 
 function switchView(viewName) {
   currentActiveView = viewName;
 
-  const views = ['mta_system', 'winding', 'vertical', 'junction'];
+  const views = ['led_strip', 'mta_system', 'winding', 'vertical', 'junction'];
   views.forEach(v => {
     const el = document.getElementById(`view_${v}`);
     const tabBtn = document.getElementById(`tab_${v}`);
@@ -66,6 +67,7 @@ function switchView(viewName) {
     }
   });
 
+  if (viewName === 'led_strip') renderLedStripAngledView();
   if (viewName === 'mta_system') renderMtaSystemView();
   if (viewName === 'winding') renderWindingRouteView();
   if (viewName === 'vertical') renderVerticalPillarView();
@@ -73,7 +75,75 @@ function switchView(viewName) {
 }
 
 // -------------------------------------------------------------
-// VARIANT 1: 🗺️ MTA System Trunk Line Map
+// MAIN VARIANT: 🚇 LED Station Indicator Strip with Angled 45° Titles
+// -------------------------------------------------------------
+function renderLedStripAngledView() {
+  const container = document.getElementById('ledStripAngledContainer');
+  if (!container) return;
+
+  const activeStation = SUBWAY_STATIONS[currentStoryStep - 1] || SUBWAY_STATIONS[1];
+
+  container.innerHTML = `
+    <div class="w-full max-w-6xl mx-auto bg-white border border-slate-200 rounded-3xl p-8 shadow-xl space-y-12 select-none font-sans">
+      
+      <!-- Pure Light Theme NYC Subway LED Strip with Angled 45° Titles -->
+      <div class="bg-slate-50 p-8 pt-10 pb-28 rounded-3xl border border-slate-200/80 shadow-inner relative">
+        <div class="relative flex items-center justify-between px-6">
+          
+          <!-- Track Line -->
+          <div class="absolute left-8 right-8 top-1/2 -translate-y-1/2 h-3 bg-slate-200 rounded-full z-0"></div>
+          
+          <!-- Active Progress Line -->
+          <div class="absolute left-8 top-1/2 -translate-y-1/2 h-3 bg-blue-600 rounded-full z-0 transition-all duration-300" style="width: ${((currentStoryStep - 1) / 11) * 100}%"></div>
+
+          <!-- 12 Stations with Numbers INSIDE and Angled 45° Text Below -->
+          ${SUBWAY_STATIONS.map((st) => {
+            const isPassed = st.stop < currentStoryStep;
+            const isCurrent = st.stop === currentStoryStep;
+
+            return `
+              <div onclick="setStoryStep(${st.stop})" class="relative z-10 flex flex-col items-center cursor-pointer group">
+                
+                <!-- Circle with Number INSIDE -->
+                <div class="w-11 h-11 rounded-full flex items-center justify-center font-bold text-xs transition-all ${
+                  isCurrent
+                    ? 'bg-blue-600 text-white ring-4 ring-blue-500/30 scale-125 font-black shadow-lg z-20'
+                    : isPassed
+                    ? 'bg-blue-500 text-white font-bold shadow-sm'
+                    : 'bg-white text-slate-700 border-2 border-slate-300 hover:border-blue-400'
+                }">
+                  ${st.stop}
+                </div>
+
+                <!-- Angled 45° Text Label Below Circle (Zero Overlap!) -->
+                <div class="absolute top-14 left-1/2 transform -rotate-45 origin-top-left text-left w-36">
+                  <span class="text-[11px] font-bold ${isCurrent ? 'text-blue-600 font-extrabold scale-105' : 'text-slate-700'} whitespace-nowrap block">
+                    ${st.icon} ${st.name}
+                  </span>
+                </div>
+
+              </div>
+            `;
+          }).join('')}
+
+        </div>
+      </div>
+
+      <!-- Active Station Directive Card -->
+      <div class="p-5 rounded-2xl bg-blue-50/80 border border-blue-200/80 flex items-center gap-4 text-xs">
+        <span class="text-3xl">${activeStation.icon}</span>
+        <div>
+          <h4 class="font-bold text-sm text-slate-900">Station ${activeStation.stop}: ${activeStation.name}</h4>
+          <p class="text-slate-600 mt-1 leading-relaxed text-xs">${activeStation.desc}</p>
+        </div>
+      </div>
+
+    </div>
+  `;
+}
+
+// -------------------------------------------------------------
+// VARIANT 2: 🗺️ MTA System Trunk Line Map
 // -------------------------------------------------------------
 function renderMtaSystemView() {
   const container = document.getElementById('mtaSystemContainer');
@@ -151,7 +221,7 @@ function renderMtaSystemView() {
 }
 
 // -------------------------------------------------------------
-// VARIANT 2: 🚇 Winding S-Curve Route Map (3 Rows of 4 Stations)
+// VARIANT 3: 🚇 Winding S-Curve Route Map (3 Rows of 4 Stations)
 // -------------------------------------------------------------
 function renderWindingRouteView() {
   const container = document.getElementById('windingRouteContainer');
@@ -224,7 +294,7 @@ function renderWindingRouteView() {
 }
 
 // -------------------------------------------------------------
-// VARIANT 3: 📊 Vertical Station Strip & Platform Pillars
+// VARIANT 4: 📊 Vertical Station Strip & Platform Pillars
 // -------------------------------------------------------------
 function renderVerticalPillarView() {
   const container = document.getElementById('verticalPillarContainer');
@@ -296,7 +366,7 @@ function renderVerticalPillarView() {
 }
 
 // -------------------------------------------------------------
-// VARIANT 4: 🔀 Metro Transfer Terminal Grid
+// VARIANT 5: 🔀 Metro Transfer Terminal Grid
 // -------------------------------------------------------------
 function renderJunctionTerminalView() {
   const container = document.getElementById('junctionTerminalContainer');
