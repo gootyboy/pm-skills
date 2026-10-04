@@ -1,8 +1,8 @@
-// SDLC Swarm Wheel Diagram: 14 Skills Arranged in a Symmetrical Radial Wheel
+// SDLC Swarm Wheel Diagram (Light Theme, Expanded Radius, Zero Overlap, Zoom/Pan & Non-Overlapping Banner)
 const CENTER_HUB = {
-  cx: 380,
-  cy: 250,
-  radius: 170
+  cx: 420,
+  cy: 290,
+  radius: 220 // Expanded radius to prevent any label overlap
 };
 
 // 12 Outer Spokes around the Wheel + 2 Center Hub Skills = 14 Skills Total
@@ -11,7 +11,7 @@ const RAW_SKILLS = [
   { id: 'skill_builder', label: 'PROJECT_BUILDER_SKILL.md', isCenter: true, category: 'Swarm Controller', icon: '👑', desc: 'Lead System Architect & Engineering Director Controller.' },
   { id: 'skill_orchestrator', label: 'orchestrator', isCenter: true, category: 'State Engine', icon: '🎼', desc: 'State machine engine routing handoffs and managing project state.' },
 
-  // --- 12 Outer Wheel Spokes (Clockwise Order) ---
+  // --- 12 Outer Wheel Spokes (Spaced Clockwise Order) ---
   { id: 'skill_pm', label: 'pm', category: 'Phase 1: Discovery', icon: '📋', desc: 'Project Manager: Scope discovery & project contract creation.' },
   { id: 'skill_po', label: 'product_owner', category: 'Phase 2: Product', icon: '🎯', desc: 'Product Owner: Generates PRD.md & user stories.' },
   { id: 'skill_architect', label: 'techincal_architect', category: 'Phase 3: Architecture', icon: '📐', desc: 'Technical Architect: Tech stack & database schemas.' },
@@ -30,17 +30,16 @@ const RAW_SKILLS = [
 const outerSkills = RAW_SKILLS.filter(s => !s.isCenter);
 const totalOuter = outerSkills.length;
 
-const GRAPH_NODES = RAW_SKILLS.map((skill, index) => {
+const GRAPH_NODES = RAW_SKILLS.map((skill) => {
   if (skill.isCenter) {
     const isFirst = skill.id === 'skill_builder';
     return {
       ...skill,
-      x: CENTER_HUB.cx + (isFirst ? -55 : 55),
+      x: CENTER_HUB.cx + (isFirst ? -50 : 50),
       y: CENTER_HUB.cy
     };
   } else {
     const outerIndex = outerSkills.findIndex(s => s.id === skill.id);
-    // Angle starting from top (-PI/2) moving clockwise
     const angle = (outerIndex / totalOuter) * 2 * Math.PI - Math.PI / 2;
     return {
       ...skill,
@@ -51,25 +50,55 @@ const GRAPH_NODES = RAW_SKILLS.map((skill, index) => {
   }
 });
 
-// Guided Wheel Story Steps (1 to 8)
+// Story Steps (1 to 8)
 const STORY_STEPS = [
-  { step: 1, title: '1. Central Swarm Controller Kickoff', focus: ['skill_builder', 'skill_orchestrator'], desc: 'The Swarm Controller (PROJECT_BUILDER_SKILL) activates the wheel, engaging Orchestrator.' },
-  { step: 2, title: '2. Scope Discovery (PM)', focus: ['skill_pm'], desc: 'Project Manager (pm) conducts requirement discovery and locks PROJECT_CONTRACT.md.' },
-  { step: 3, title: '3. Product Requirements (PO)', focus: ['skill_po', 'skill_parser'], desc: 'Product Owner (product_owner) creates PRD.md and full-stack USER_STORIES.md.' },
-  { step: 4, title: '4. Architecture & Design System', focus: ['skill_architect', 'skill_design', 'skill_arch_review'], desc: 'Technical Architect defines tech stack while Apple Design defines UI HIG tokens.' },
-  { step: 5, title: '5. Parallel Full-Stack Build', focus: ['skill_frontend', 'skill_service', 'skill_it'], desc: 'Frontend Dev and Service Engineer build modular components, APIs, and DB schemas.' },
-  { step: 6, title: '6. Quality Assurance Testing', focus: ['skill_qa'], desc: 'QA Agent runs automated test suites and validates boundary conditions.' },
+  { step: 1, title: '1. Central Swarm Controller Kickoff', focusNodes: ['skill_builder', 'skill_orchestrator'], desc: 'The Swarm Controller (PROJECT_BUILDER_SKILL) activates the wheel, engaging Orchestrator.' },
+  { step: 2, title: '2. Scope Discovery (PM)', focusNodes: ['skill_pm'], desc: 'Project Manager (pm) conducts requirement discovery and locks PROJECT_CONTRACT.md.' },
+  { step: 3, title: '3. Product Requirements (PO)', focusNodes: ['skill_po', 'skill_parser'], desc: 'Product Owner (product_owner) creates PRD.md and full-stack USER_STORIES.md.' },
+  { step: 4, title: '4. Architecture & Design System', focusNodes: ['skill_architect', 'skill_design', 'skill_arch_review'], desc: 'Technical Architect defines tech stack while Apple Design defines UI HIG tokens.' },
+  { step: 5, title: '5. Parallel Full-Stack Build', focusNodes: ['skill_frontend', 'skill_service', 'skill_it'], desc: 'Frontend Dev and Service Engineer build modular components, APIs, and DB schemas.' },
+  { step: 6, title: '6. Quality Assurance Testing', focusNodes: ['skill_qa'], desc: 'QA Agent runs automated test suites and validates boundary conditions.' },
   { step: 7, title: '7. Temporary StackBlitz Cloud UAT', focus: ['skill_uat'], desc: 'UAT Coordinator deploys build to a temporary StackBlitz sandbox and updates progress.html.' },
-  { step: 8, title: '8. Production Release', focus: ['skill_deploy'], desc: 'Deployment Agent publishes final release to production cloud hosting.' }
+  { step: 8, title: '8. Production Release', focusNodes: ['skill_deploy'], desc: 'Deployment Agent publishes final release to production cloud hosting.' }
 ];
 
+// App State
 let currentStoryStep = 0;
 let selectedNodeId = 'skill_pm';
+let currentZoom = 1.0;
 
 function initApp() {
   renderWheel();
   renderNodeDetails(selectedNodeId);
   renderSkillsList();
+}
+
+// Zoom Controls
+function zoomIn() {
+  currentZoom = Math.min(2.0, currentZoom + 0.15);
+  applyZoom();
+}
+
+function zoomOut() {
+  currentZoom = Math.max(0.6, currentZoom - 0.15);
+  applyZoom();
+}
+
+function resetZoom() {
+  currentZoom = 1.0;
+  applyZoom();
+}
+
+function applyZoom() {
+  const container = document.getElementById('zoomWrapper');
+  const label = document.getElementById('zoomLabel');
+  if (container) {
+    container.style.transform = `scale(${currentZoom})`;
+    container.style.transformOrigin = 'center center';
+  }
+  if (label) {
+    label.innerText = `${Math.round(currentZoom * 100)}%`;
+  }
 }
 
 function renderWheel() {
@@ -83,13 +112,10 @@ function renderWheel() {
 
   // Render Wheel SVG Ring & Spoke Lines
   let svgContent = `
-    <!-- Outer Wheel Ring Circle -->
-    <circle cx="${CENTER_HUB.cx}" cy="${CENTER_HUB.cy}" r="${CENTER_HUB.radius}" stroke="#e2e8f0" stroke-width="2.5" fill="none" stroke-dasharray="4 4"/>
-    <!-- Center Hub Box -->
-    <circle cx="${CENTER_HUB.cx}" cy="${CENTER_HUB.cy}" r="65" stroke="#cbd5e1" stroke-width="1.5" fill="#f8fafc"/>
+    <circle cx="${CENTER_HUB.cx}" cy="${CENTER_HUB.cy}" r="${CENTER_HUB.radius}" stroke="#cbd5e1" stroke-width="2" fill="none" stroke-dasharray="5 5"/>
+    <circle cx="${CENTER_HUB.cx}" cy="${CENTER_HUB.cy}" r="75" stroke="#e2e8f0" stroke-width="2" fill="#faf5ff"/>
   `;
 
-  // Draw Radial Spokes from Center to Outer Nodes
   GRAPH_NODES.filter(n => !n.isCenter).forEach(node => {
     const isSelected = selectedNodeId === node.id;
     const isStoryFocused = storyStepObj && storyStepObj.focusNodes.includes(node.id);
@@ -116,12 +142,12 @@ function renderWheel() {
     const isActive = isSelected || isStoryFocused;
 
     const el = document.createElement('div');
-    el.className = `absolute transform -translate-x-1/2 -translate-y-1/2 p-2 rounded-2xl cursor-pointer transition-all border select-none flex items-center gap-1.5 ${
+    el.className = `absolute transform -translate-x-1/2 -translate-y-1/2 px-2.5 py-1 rounded-2xl cursor-pointer transition-all border select-none flex items-center gap-1.5 whitespace-nowrap ${
       isActive 
-        ? 'bg-blue-50 border-blue-500 text-blue-950 shadow-xl scale-110 ring-4 ring-blue-500/20 z-20 font-semibold' 
+        ? 'bg-blue-600 text-white border-blue-600 shadow-xl scale-110 ring-4 ring-blue-500/25 z-20 font-bold' 
         : node.isCenter
-        ? 'bg-purple-50 border-purple-300 text-purple-950 hover:border-purple-400 shadow-sm z-10'
-        : 'bg-white border-slate-200 text-slate-900 hover:border-slate-300 hover:shadow shadow-sm z-10'
+        ? 'bg-purple-50/95 border-purple-200 text-purple-950 hover:border-purple-300 shadow-sm z-10'
+        : 'bg-white border-slate-200 text-slate-800 hover:border-slate-300 hover:shadow-md shadow-sm z-10'
     }`;
 
     el.style.left = `${node.x}px`;
@@ -129,15 +155,14 @@ function renderWheel() {
     el.onclick = () => selectNode(node.id);
 
     el.innerHTML = `
-      <span class="text-base">${node.icon}</span>
-      <div>
-        <div class="font-bold text-[11px] leading-none whitespace-nowrap">${node.label}</div>
-        <div class="text-[9px] text-slate-500 font-mono mt-0.5 whitespace-nowrap">${node.category}</div>
-      </div>
+      <span class="text-sm">${node.icon}</span>
+      <span class="text-xs font-bold">${node.label}</span>
     `;
 
     nodesContainer.appendChild(el);
   });
+
+  applyZoom();
 }
 
 function selectNode(nodeId) {
@@ -168,19 +193,19 @@ function renderNodeDetails(nodeId) {
 
     <div class="mt-3 space-y-3 text-xs">
       <div>
-        <label class="text-[10.5px] uppercase font-semibold text-slate-400 tracking-wider">Swarm Wheel Role</label>
+        <label class="text-[10.5px] uppercase font-semibold text-slate-400 tracking-wider">Skill Directive</label>
         <p class="text-slate-700 mt-1 leading-relaxed font-normal">${node.desc}</p>
       </div>
 
       <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
         <span class="text-[10.5px] uppercase font-semibold text-slate-500 block mb-1">Wheel Position</span>
-        <span class="text-xs text-slate-700 font-medium">${node.isCenter ? 'Central Control Hub' : 'Outer Wheel Spokes (Clockwise SDLC Flow)'}</span>
+        <span class="text-xs text-slate-700 font-medium">${node.isCenter ? 'Central Control Hub' : 'Outer Radial Wheel Spoke'}</span>
       </div>
     </div>
   `;
 }
 
-// Story Playback Controls
+// Story Controls
 function setStoryStep(stepNum) {
   currentStoryStep = stepNum;
   const banner = document.getElementById('storyBanner');
@@ -204,7 +229,7 @@ function setStoryStep(stepNum) {
       if (i === stepNum) {
         btn.className = "px-2.5 py-1 rounded-lg bg-blue-600 text-white font-bold text-xs shadow";
       } else {
-        btn.className = "px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 text-xs border border-slate-200";
+        btn.className = "px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 text-xs border border-slate-200";
       }
     }
   }

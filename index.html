@@ -42,7 +42,7 @@
     </nav>
   </header>
 
-  <!-- Story Controls Toolbar -->
+  <!-- Toolbar: Story Mode Controls & Zoom Controls -->
   <div class="bg-white border-b border-slate-200 px-4 py-2 flex flex-wrap items-center justify-between gap-3 text-xs shrink-0 z-20 shadow-sm">
     <div class="flex items-center gap-2">
       <span class="font-bold text-slate-800 uppercase tracking-wider text-[11px]">📖 Story Mode:</span>
@@ -51,45 +51,59 @@
         <button onclick="nextStoryStep()" class="px-3 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-sm">Next Step ⏭</button>
         <button onclick="setStoryStep(0)" class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200 text-slate-600 hover:bg-slate-200 font-medium">Reset Free View</button>
       </div>
+
+      <!-- Step Buttons (1-8) -->
+      <div class="hidden sm:flex items-center gap-1 ml-2">
+        <span class="text-slate-400 text-[11px] mr-1">Step:</span>
+        <button id="storyBtn1" onclick="setStoryStep(1)" class="px-2 py-1 rounded-lg bg-slate-100 text-slate-600 text-xs border border-slate-200 font-medium">1</button>
+        <button id="storyBtn2" onclick="setStoryStep(2)" class="px-2 py-1 rounded-lg bg-slate-100 text-slate-600 text-xs border border-slate-200 font-medium">2</button>
+        <button id="storyBtn3" onclick="setStoryStep(3)" class="px-2 py-1 rounded-lg bg-slate-100 text-slate-600 text-xs border border-slate-200 font-medium">3</button>
+        <button id="storyBtn4" onclick="setStoryStep(4)" class="px-2 py-1 rounded-lg bg-slate-100 text-slate-600 text-xs border border-slate-200 font-medium">4</button>
+        <button id="storyBtn5" onclick="setStoryStep(5)" class="px-2 py-1 rounded-lg bg-slate-100 text-slate-600 text-xs border border-slate-200 font-medium">5</button>
+        <button id="storyBtn6" onclick="setStoryStep(6)" class="px-2 py-1 rounded-lg bg-slate-100 text-slate-600 text-xs border border-slate-200 font-medium">6</button>
+        <button id="storyBtn7" onclick="setStoryStep(7)" class="px-2 py-1 rounded-lg bg-slate-100 text-slate-600 text-xs border border-slate-200 font-medium">7</button>
+        <button id="storyBtn8" onclick="setStoryStep(8)" class="px-2 py-1 rounded-lg bg-slate-100 text-slate-600 text-xs border border-slate-200 font-medium">8</button>
+      </div>
     </div>
 
-    <!-- Step Buttons (1-8) -->
-    <div class="flex items-center gap-1">
-      <span class="text-slate-400 text-[11px] mr-1">Step:</span>
-      <button id="storyBtn1" onclick="setStoryStep(1)" class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 text-xs border border-slate-200 font-medium">1</button>
-      <button id="storyBtn2" onclick="setStoryStep(2)" class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 text-xs border border-slate-200 font-medium">2</button>
-      <button id="storyBtn3" onclick="setStoryStep(3)" class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 text-xs border border-slate-200 font-medium">3</button>
-      <button id="storyBtn4" onclick="setStoryStep(4)" class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 text-xs border border-slate-200 font-medium">4</button>
-      <button id="storyBtn5" onclick="setStoryStep(5)" class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 text-xs border border-slate-200 font-medium">5</button>
-      <button id="storyBtn6" onclick="setStoryStep(6)" class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 text-xs border border-slate-200 font-medium">6</button>
-      <button id="storyBtn7" onclick="setStoryStep(7)" class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 text-xs border border-slate-200 font-medium">7</button>
-      <button id="storyBtn8" onclick="setStoryStep(8)" class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 text-xs border border-slate-200 font-medium">8</button>
+    <!-- Zoom In / Out / Reset Controls -->
+    <div class="flex items-center gap-1 bg-slate-100 border border-slate-200 rounded-xl p-0.5">
+      <button onclick="zoomOut()" title="Zoom Out" class="px-2 py-0.5 rounded-lg text-slate-700 hover:bg-white font-bold text-xs">🔍 -</button>
+      <span class="text-[11px] font-mono px-2 font-semibold text-slate-700" id="zoomLabel">100%</span>
+      <button onclick="zoomIn()" title="Zoom In" class="px-2 py-0.5 rounded-lg text-slate-700 hover:bg-white font-bold text-xs">🔍 +</button>
+      <button onclick="resetZoom()" title="Reset Zoom" class="px-2 py-0.5 rounded-lg text-slate-600 hover:bg-white text-[11px] font-medium border-l border-slate-200 ml-1">Reset</button>
+    </div>
+  </div>
+
+  <!-- Story Banner (Clean Header Block ABOVE the Canvas - NO Overlapping!) -->
+  <div id="storyBanner" class="hidden bg-blue-50/90 border-b border-blue-200 px-6 py-3 text-xs shrink-0 transition-all">
+    <div class="max-w-6xl mx-auto flex items-center justify-between gap-4">
+      <div>
+        <span class="text-blue-700 font-bold uppercase tracking-wider text-[10.5px]">📖 Active Story Step</span>
+        <h3 id="storyTitle" class="text-sm font-bold text-slate-900 mt-0.5">1. Swarm Controller Kickoff</h3>
+        <p id="storyDesc" class="text-xs text-slate-600 mt-0.5 leading-relaxed font-normal"></p>
+      </div>
+      <button onclick="setStoryStep(0)" class="text-slate-400 hover:text-slate-700 font-bold px-2 py-1">✕</button>
     </div>
   </div>
 
   <!-- Main Viewport -->
   <main class="flex-1 flex overflow-hidden relative">
 
-    <!-- VIEW 1: Wheel Diagram -->
+    <!-- VIEW 1: Wheel Diagram Viewport -->
     <div id="viewWheel" class="flex-1 flex overflow-hidden w-full relative">
       
       <!-- Canvas Container -->
-      <div class="flex-1 relative bg-slate-50 overflow-auto" id="canvasViewport">
+      <div class="flex-1 relative bg-slate-50 overflow-auto flex items-center justify-center p-4" id="canvasViewport">
         
-        <!-- Story Banner -->
-        <div id="storyBanner" class="hidden absolute top-4 left-4 right-4 md:right-[400px] bg-white/95 backdrop-blur-xl border border-blue-200 rounded-2xl p-4 shadow-xl z-30">
-          <div class="flex items-center gap-2 text-blue-600 font-bold text-xs uppercase tracking-wider">
-            <span>📖 Active Story Walkthrough</span>
-          </div>
-          <h3 id="storyTitle" class="text-sm font-bold text-slate-900 mt-1">1. Swarm Controller Kickoff</h3>
-          <p id="storyDesc" class="text-xs text-slate-600 mt-0.5 leading-relaxed font-normal"></p>
+        <!-- Scalable Wheel Wrapper -->
+        <div id="zoomWrapper" class="relative w-[840px] h-[580px] shrink-0 transition-transform duration-150">
+          <!-- SVG Ring Layer -->
+          <svg id="wheelSvg" class="absolute inset-0 w-[840px] h-[580px] pointer-events-none z-0"></svg>
+          
+          <!-- Interactive Nodes Layer -->
+          <div id="wheelNodes" class="absolute inset-0 w-[840px] h-[580px]"></div>
         </div>
-
-        <!-- SVG Ring Layer -->
-        <svg id="wheelSvg" class="absolute inset-0 w-[760px] h-[500px] pointer-events-none z-0"></svg>
-        
-        <!-- Interactive Nodes Layer -->
-        <div id="wheelNodes" class="absolute inset-0 w-[760px] h-[500px]"></div>
 
       </div>
 
