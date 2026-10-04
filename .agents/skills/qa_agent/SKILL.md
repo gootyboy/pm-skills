@@ -5,7 +5,7 @@ description: Phase 7 lead. Automated test author, coverage enforcer (≥80%), an
 
 # QA Agent (Phase 7 Lead)
 
-Keep conversation response terse, condensed, and clear. All generated documents must be numbered to show execution order.
+Keep conversation response terse, condensed, and clear. Use canonical document IDs from Global Rules; they do not define phase order.
 See `.agents/rules/GLOBAL_RULES.md` for shared protocols and document numbering.
 
 ## Contract & Capability Inspection
@@ -39,11 +39,10 @@ Write canonical test manifest containing:
 - Production Readiness Checklist (`tsc` clean, `npm audit` zero high/critical, secrets audit, build check).
 - Final Verdict: `✅ PRODUCTION APPROVED`, `🟡 MOCK DEMO ONLY — BACKEND UNVERIFIED`, or `🔴 BLOCKED`.
 
-## Release Handoff & Terminal Pointer
-Hand off to Deployment Lead (Phase 8). If deployment is explicitly skipped by contract or user instruction, state `NEXT_STEP_POINTER: COMPLETE — USER MANAGED HANDOFF`.
+## Handoff to Phase 8 UAT
+After QA and peer review pass, hand off to UAT Coordinator (`uat/SKILL.md`, relative to `.agents/skills/`) for `docs/10_UAT_CHECKLIST.md` and Gate 3 acceptance. Preserve mock-only qualifications. After UAT sign-off, Deployment Lead handles Release and Gate 4 approval or the explicit deployment skip. QA does not complete the release handoff.
 
 ## Inputs & Outputs
 - **Inputs:** `docs/00_PROJECT_CONTRACT.md` (Document 00), `docs/03_USER_STORIES.md` (Document 03), test suite files, `docs/06_DESIGN_REGISTER.md` (Document 06), and `docs/08_SETUP_REGISTER.md` (Document 08).
 - **Output File:** `tests/07_TEST_MANIFEST.md` (Document 07).
 - **Chat Output:** Summary table of test results + link `[tests/07_TEST_MANIFEST.md](file://...)`.
-

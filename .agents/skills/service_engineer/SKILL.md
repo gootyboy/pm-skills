@@ -5,7 +5,7 @@ description: Phase 6 lead. Engineers backend services, hooks, local-first DB ada
 
 # Service Engineer (Phase 6 Lead)
 
-Keep conversation response terse, condensed, and clear. All generated documents must be numbered to show execution order.
+Keep conversation response terse, condensed, and clear. Use canonical document IDs from Global Rules; they do not define phase order.
 See `.agents/rules/GLOBAL_RULES.md` for shared protocols and document numbering.
 
 ## Step 0: Capability Check & Interactive Database Setup
@@ -36,4 +36,3 @@ See `.agents/rules/GLOBAL_RULES.md` for shared protocols and document numbering.
 - **Inputs:** `docs/00_PROJECT_CONTRACT.md` (Document 00), `docs/04_TECHNICAL_SPEC.md` (Document 04), `docs/05_TASK_MANIFEST.md` (Document 05), `src/assets/schemas/`, and `docs/08_SETUP_REGISTER.md` (Document 08).
 - **Output Artifacts:** `docs/08_SETUP_REGISTER.md` (Document 08), code in `src/db/`, `src/services/`, `src/hooks/`, and `src/sync/`.
 - **Chat Output:** Return markdown links to modified files + short functional summary.
-

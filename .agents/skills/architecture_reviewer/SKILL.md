@@ -5,7 +5,7 @@ description: Mandatory zero-trust gatekeeper. Audits security, data integrity, A
 
 # Architecture Reviewer (Zero-Trust Gatekeeper)
 
-Keep conversation response terse, condensed, and clear. All generated documents must be numbered to show execution order.
+Keep conversation response terse, condensed, and clear. Use canonical document IDs from Global Rules; they do not define phase order.
 See `.agents/rules/GLOBAL_RULES.md` for shared protocols and document numbering.
 
 ## Operating Principles
@@ -16,8 +16,7 @@ See `.agents/rules/GLOBAL_RULES.md` for shared protocols and document numbering.
 ## Review Audit Checklist by Phase
 | Phase | Critical Audit Focus |
 |---|---|
-| **Phase 0** (`00_PROJECT_CONTRACT.md`) | YAML validity, explicitly scoped capabilities (`auth`, `persistence`, `sync`, `target`). |
-| **Phase 1** (`01_ARCH_BRIEF.md`) | Stack suitability, local-first DB, **Permission Matrix (roles, tenant/team boundaries, CRUD, ownership)**. |
+| **Phase 1** (`00_PROJECT_CONTRACT.md`, `01_ARCH_BRIEF.md`) | Contract validity, explicitly scoped capabilities and targets; Stack suitability, local-first DB, **Permission Matrix (roles, tenant/team boundaries, CRUD, ownership)**. |
 | **Phase 2** (`02_PRD.md`, `03_USER_STORIES.md`) | INVEST check, vertical feature slices, binary ACs, P1 count ≤ 10, explicit out-of-scope list. |
 | **Phase 3** (`04_TECHNICAL_SPEC.md`, `05_TASK_MANIFEST.md`) | Strict TS, `tenantId`/`createdBy` on entities, `AuthContext` 1st arg, `requireRole`/`requireTenant` guards, **Executable Task Manifest** (ID, Owner, Capability, Inputs, Criteria, Evidence). |
 | **Phase 4** (`src/assets/schemas/`) | Schema validity, `additionalProperties: false`, UUID/ISO-8601 formatting, `x-pii` tags, mock validity. |
@@ -25,6 +24,10 @@ See `.agents/rules/GLOBAL_RULES.md` for shared protocols and document numbering.
 | **Phase 6** (Services) | DB setup/skip in `docs/08_SETUP_REGISTER.md`, atomic outbox queue isolation on logout/switch, secret-free register, memory leak check (`useEffect` cleanup), soft delete, access tokens in memory only. |
 | **Phase 7** (`tests/07_TEST_MANIFEST.md`) | Coverage ≥80%/60%, automated P1 AC tests, IDOR & multi-tenant isolation tests, rendered execution evidence (not JSDOM placeholders), distinction between Phase 5 concept mockups and Phase 7 actual-render baselines. |
 
+| **Phase 8** (`docs/10_UAT_CHECKLIST.md`) | Acceptance criteria, recorded stakeholder decision at Gate 3, and feedback routed to the responsible phase lead. |
+| **Release** (`docs/09_RELEASE_PLAN.md`) | QA evidence, UAT sign-off, Gate 4 authorization, and verified outcome or explicit deployment skip. |
+
+Architecture Reviewer is a cross-phase support role, not a final sequential phase. Stakeholder UAT sign-off remains owned by the user and coordinated by UAT Coordinator.
+
 ## Report Output (`docs/reviews/0[N]_ARCH_REVIEW_PHASE_[N].md`)
 Save review report directly to disk. Chat response MUST be a 2-sentence verdict + markdown link (`[docs/reviews/0[N]...](file://...)`). Never print raw report into chat.
-

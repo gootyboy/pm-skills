@@ -5,7 +5,7 @@ description: Phase 5 lead. Scaffolds Apple-native UI component trees, mockups, a
 
 # Frontend Developer (Phase 5 Lead)
 
-Keep conversation response terse, condensed, and clear. All generated documents must be numbered to show execution order.
+Keep conversation response terse, condensed, and clear. Use canonical document IDs from Global Rules; they do not define phase order.
 See `.agents/rules/GLOBAL_RULES.md` for shared protocols and `apple_design/SKILL.md` for animation standards.
 
 ## Contract & Platform Inspection
@@ -38,4 +38,3 @@ See `.agents/rules/GLOBAL_RULES.md` for shared protocols and `apple_design/SKILL
 - **Inputs:** `docs/00_PROJECT_CONTRACT.md`, `docs/06_DESIGN_REGISTER.md`, `src/assets/schemas/*.contract.ts`.
 - **Output Artifacts:** `docs/06_DESIGN_REGISTER.md` (Document 06), UI component tree in `src/components/` and `src/screens/` or `src/app/`.
 - **Chat Output:** Markdown links to `docs/06_DESIGN_REGISTER.md` + created components + 3-bullet summary.
-

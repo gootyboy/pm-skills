@@ -1,150 +1,94 @@
-// SDLC Swarm Skills Visualizer — V-Model Engine
-
-const SDLC_SWARM_NODES = [
-  { id: 'skill_builder', stop: 1, label: 'PROJECT_BUILDER_SKILL.md', category: 'Swarm Hub Controller', icon: '👑', desc: 'Master Swarm Controller: Sets autonomy modes (BALANCED / AUTOPILOT / SUPERVISED) and manages system lifecycle.' },
-  { id: 'skill_orchestrator', stop: 1, label: 'orchestrator', category: 'State Engine', icon: '🎼', desc: 'State Engine: Overwrites docs/PROJECT_STATUS.md every turn to maintain rolling 3-session state and routing.' },
-  { id: 'skill_it', stop: 2, label: 'it_consultant', phase: 'Phase 1', category: 'Phase 1: IT Consultant', icon: '💼', desc: 'Phase 1 — IT Consultant (Solutions Architect): Scope discovery, trade-off negotiation, & 01_ARCH_BRIEF.md.' },
-  { id: 'skill_po', stop: 3, label: 'product_owner', phase: 'Phase 2', category: 'Phase 2: Product Owner', icon: '🎯', desc: 'Phase 2 — Product Owner: 02_PRD.md & full-stack vertical 03_USER_STORIES.md.' },
-  { id: 'skill_architect', stop: 4, label: 'techincal_architect', phase: 'Phase 3', category: 'Phase 3: Technical Architect', icon: '📐', desc: 'Phase 3 — Technical Architect: Defines system architecture, 04_TECHNICAL_SPEC.md, and 05_TASK_MANIFEST.md.' },
-  { id: 'skill_design', stop: 5, label: 'apple_design', phase: 'Phase 3 UX', category: 'Phase 3: UI/UX System', icon: '🎨', desc: 'Apple Design Rules: HIG design specs, SF typography, & glassmorphism tokens.' },
-  { id: 'skill_parser', stop: 6, label: 'content_parser', phase: 'Phase 4', category: 'Phase 4: Content Parser', icon: '📄', desc: 'Phase 4 — Content Parser: JSON Schemas & Zod Contracts in src/assets/schemas/.' },
-  { id: 'skill_frontend', stop: 7, label: 'frontend_developer', phase: 'Phase 5', category: 'Phase 5: Frontend Developer', icon: '💻', desc: 'Phase 5 — Frontend Developer: UI Slices & Step 0 Visual Gate mockups.' },
-  { id: 'skill_service', stop: 8, label: 'service_engineer', phase: 'Phase 6', category: 'Phase 6: Service Engineer', icon: '⚙️', desc: 'Phase 6 — Service Engineer: Database setup first, followed by backend services & APIs.' },
-  { id: 'skill_qa', stop: 9, label: 'qa_agent', phase: 'Phase 7', category: 'Phase 7: QA Agent', icon: '🧪', desc: 'Phase 7 — QA Agent: Automated test suites, visual diff checks, & 07_TEST_MANIFEST.md.' },
-  { id: 'skill_uat', stop: 10, label: 'uat', phase: 'Phase 6 UAT', category: 'Cloud UAT Coordinator', icon: '⚡', desc: 'Cloud UAT Coordinator: Deploys temporary zero-config StackBlitz cloud sandbox.' },
-  { id: 'skill_deploy', stop: 11, label: 'deployment', phase: 'Release', category: 'Release: Deployment Lead', icon: '🚀', desc: 'Release — Deployment Lead: Provider setup, approval gates, EAS OTA, & Vercel release.' },
-  { id: 'skill_arch_review', stop: 12, label: 'architecture_reviewer', phase: 'Audit', category: 'Audit: Architecture Reviewer', icon: '🔍', desc: 'Audit — Architecture Reviewer: Zero-Trust Security Gatekeeper & audit log report.' }
+// Workflow visualizer. Mirrors the canonical registry in GLOBAL_RULES.md.
+// Only phases have numbers; release and supporting roles are not extra phases.
+const WORKFLOW_STAGES = [
+  { id: 'discovery', phase: 1, role: 'IT Consultant', skill: 'it_consultant', path: 'it_consultant/SKILL.md', group: 'specification', icon: '💼', title: 'Discovery & Contract', description: 'Define capabilities and create the architecture brief. Document 00 is part of Phase 1.', artifacts: ['docs/00_PROJECT_CONTRACT.md', 'docs/01_ARCH_BRIEF.md'], checkpoint: 'Review capabilities and architecture.' },
+  { id: 'scope', phase: 2, role: 'Product Owner', skill: 'product_owner', path: 'product_owner/SKILL.md', group: 'specification', icon: '🎯', title: 'Scope', description: 'Define the PRD and complete user stories within the agreed capabilities.', artifacts: ['docs/02_PRD.md', 'docs/03_USER_STORIES.md'], checkpoint: 'Gate 1 — Scope approval in BALANCED and SUPERVISED.' },
+  { id: 'architecture', phase: 3, role: 'Technical Architect', skill: 'technical_architect', path: 'techincal_architect/SKILL.md', group: 'specification', icon: '📐', title: 'Technical Specification', description: 'Define architecture, contracts, and the executable task manifest.', artifacts: ['docs/04_TECHNICAL_SPEC.md', 'docs/05_TASK_MANIFEST.md'], checkpoint: 'Architecture Reviewer checks technical deliverables.' },
+  { id: 'schemas', phase: 4, role: 'Content Parser', skill: 'content_parser', path: 'content_parser/SKILL.md', group: 'specification', icon: '📄', title: 'Schemas', description: 'Generate applicable JSON schemas, Zod contracts, and mock fixtures.', artifacts: ['src/assets/schemas/'], checkpoint: 'Mark schema work N/A when persistence is not required.' },
+  { id: 'frontend', phase: 5, role: 'Frontend Developer', skill: 'frontend_developer', path: 'frontend_developer/SKILL.md', group: 'implementation', icon: '💻', title: 'UI/UX', description: 'Create screen inventory, generate mockups, then implement approved UI. Apple Design supports this phase.', artifacts: ['docs/06_DESIGN_REGISTER.md', 'docs/design/mockups/', 'src/components/'], checkpoint: 'Gate 2 — Mockup approval before UI code, in every mode.' },
+  { id: 'services', phase: 6, role: 'Service Engineer', skill: 'service_engineer', path: 'service_engineer/SKILL.md', group: 'implementation', icon: '⚙️', title: 'Database Setup & Services', description: 'Complete database setup or record the explicit mock-only skip, then implement applicable backend services.', artifacts: ['docs/08_SETUP_REGISTER.md', 'src/services/', 'src/hooks/', 'src/db/', 'src/sync/'], checkpoint: 'Database setup/skip at phase entry, in every mode.' },
+  { id: 'qa', phase: 7, role: 'QA Agent', skill: 'qa_agent', path: 'qa_agent/SKILL.md', group: 'validation', icon: '🧪', title: 'QA', description: 'Verify applicable tests and evidence. Passing QA hands off to Phase 8 UAT.', artifacts: ['tests/07_TEST_MANIFEST.md'], checkpoint: 'Preserve any mock-only qualification; QA is not release authorization.' },
+  { id: 'uat', phase: 8, role: 'UAT Coordinator', skill: 'uat', path: 'uat/SKILL.md', group: 'validation', icon: '⚡', title: 'UAT', description: 'Coordinate stakeholder acceptance through the existing StackBlitz review. Revisions return through PM to the responsible phase lead, then QA and UAT are rechecked.', artifacts: ['docs/10_UAT_CHECKLIST.md', 'open_stackblitz.html', 'redirect_stackblitz.html', 'UAT_FEEDBACK.md'], checkpoint: 'Gate 3 — UAT sign-off in every mode. Feedback file is created only when revisions are requested.' },
+  { id: 'release', phase: null, role: 'Deployment Lead', skill: 'deployment', path: 'deployment/SKILL.md', group: 'validation', icon: '🚀', title: 'Release', description: 'After UAT sign-off, choose a provider or skip deployment. Prepare and verify the selected release, or record the user-managed handoff.', artifacts: ['docs/08_SETUP_REGISTER.md', 'docs/09_RELEASE_PLAN.md'], checkpoint: 'Deployment selection/skip, then Gate 4 — Release approval if deploying, in every mode.' }
 ];
 
-const SUBWAY_STATIONS = [
-  { stop: 1, name: 'orchestrator', icon: '🎼', focusNodes: ['skill_builder', 'skill_orchestrator'], desc: 'State Engine initializes state in docs/PROJECT_STATUS.md.' },
-  { stop: 2, name: 'it_consultant', icon: '💼', focusNodes: ['skill_it'], desc: 'it_consultant conducts scope discovery and locks 01_ARCH_BRIEF.md.' },
-  { stop: 3, name: 'product_owner', icon: '🎯', focusNodes: ['skill_po'], desc: 'product_owner creates 02_PRD.md and 03_USER_STORIES.md.' },
-  { stop: 4, name: 'techincal_architect', icon: '📐', focusNodes: ['skill_architect'], desc: 'techincal_architect defines 04_TECHNICAL_SPEC.md and 05_TASK_MANIFEST.md.' },
-  { stop: 5, name: 'apple_design', icon: '🎨', focusNodes: ['skill_design'], desc: 'apple_design specifies HIG UI design rules and SF typography.' },
-  { stop: 6, name: 'content_parser', icon: '📄', focusNodes: ['skill_parser'], desc: 'content_parser extracts JSON Schemas & Zod Contracts.' },
-  { stop: 7, name: 'frontend_developer', icon: '💻', focusNodes: ['skill_frontend'], desc: 'frontend_developer creates Visual Gate mockups & UI code.' },
-  { stop: 8, name: 'service_engineer', icon: '⚙️', focusNodes: ['skill_service'], desc: 'service_engineer performs DB setup first, then backend APIs.' },
-  { stop: 9, name: 'qa_agent', icon: '🧪', focusNodes: ['skill_qa'], desc: 'qa_agent executes automated test suites & visual diff checks.' },
-  { stop: 10, name: 'uat', icon: '⚡', focusNodes: ['skill_uat'], desc: 'uat deploys temporary StackBlitz cloud sandbox for evaluation.' },
-  { stop: 11, name: 'deployment', icon: '🚀', focusNodes: ['skill_deploy'], desc: 'deployment manages provider setup and publishes release.' },
-  { stop: 12, name: 'architecture_reviewer', icon: '🔍', focusNodes: ['skill_arch_review'], desc: 'architecture_reviewer enforces zero-trust audit gate.' }
+const SUPPORT_ROLES = [
+  { id: 'pm', role: 'PM', skill: 'pm', path: 'pm/SKILL.md', icon: '🧭', title: 'Entry & routing', description: 'Routes /pm commands to the phase lead. Uses the controller document and canonical global rules.' },
+  { id: 'orchestrator', role: 'Orchestrator', skill: 'orchestrator', path: 'orchestrator/SKILL.md', icon: '🎼', title: 'State & dashboard', description: 'Maintains project state, revision invalidation, pending approvals, and the live progress dashboard.', artifacts: ['docs/PROJECT_STATUS.md', 'progress.html'] },
+  { id: 'reviewer', role: 'Architecture Reviewer', skill: 'architecture_reviewer', path: 'architecture_reviewer/SKILL.md', icon: '🔍', title: 'Cross-phase audit', description: 'Reviews deliverables throughout the workflow. It is not a final numbered step.', artifacts: ['docs/reviews/'] },
+  { id: 'design', role: 'Apple Design', skill: 'apple-design', path: 'apple_design/SKILL.md', icon: '🎨', title: 'Phase 5 design support', description: 'Provides design and motion standards to Frontend Developer during Phase 5.' },
+  { id: 'controller', role: 'Workflow Controller', path: 'PROJECT_BUILDER_SKILL.md', icon: '👑', title: 'Controller document', description: 'Documents the existing workflow. It is not a separate skill or phase.' }
 ];
 
-let currentStoryStep = 2; // Default Stop 2: it_consultant
+const ALL_ROLES = [...WORKFLOW_STAGES, ...SUPPORT_ROLES];
+let selectedRoleId = 'discovery';
 
-function initApp() {
-  renderVModelView();
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 }
 
-function setStoryStep(stepNumber) {
-  currentStoryStep = stepNumber;
+function selectRole(id) {
+  if (!ALL_ROLES.some(role => role.id === id)) return;
+  selectedRoleId = id;
   renderVModelView();
+  // Preserve keyboard focus when the selected card is rerendered.
+  document.querySelector('[data-role-id="' + id + '"]')?.focus({ preventScroll: true });
 }
 
-// -------------------------------------------------------------
-// TEXTBOOK MODEL: ✌️ The V-Model Engine
-// -------------------------------------------------------------
+// Match the reference's three-column arrangement. The reviewer sits outside the
+// sequence because it audits every phase rather than running as a final step.
+const CARD_LABELS = {
+  discovery: 'Scope & Architecture Brief',
+  scope: 'PRD & Full-Stack User Stories',
+  architecture: 'Technical Spec & Task Manifest',
+  schemas: 'Data Contracts & Schemas',
+  frontend: 'Frontend UI Slices',
+  services: 'Service & Database Setup',
+  qa: 'Automated Test Suites',
+  uat: 'Cloud UAT Sandbox',
+  reviewer: 'Zero-Trust Audit Gate',
+  release: 'Production Cloud Release'
+};
+
+function renderCard(role) {
+  const active = role.id === selectedRoleId;
+  const badge = role.phase || 'R';
+  const badgeLabel = role.phase ? 'Phase ' + role.phase : 'Release';
+  return `<button type="button" class="role-card ${active ? 'selected' : ''}" data-role-id="${role.id}" aria-pressed="${active}" aria-controls="roleDetail" onclick="selectRole('${role.id}')">
+    <span class="card-heading"><span class="card-role"><span aria-hidden="true">${role.icon}</span> ${escapeHtml(role.skill)}</span><span class="badge" aria-label="${badgeLabel}" title="${badgeLabel}">${badge}</span></span>
+    <span class="card-label">${CARD_LABELS[role.id]}</span>
+  </button>`;
+}
+
 function renderVModelView() {
   const container = document.getElementById('vModelContainer');
   if (!container) return;
-
-  const activeStation = SUBWAY_STATIONS[currentStoryStep - 1] || SUBWAY_STATIONS[1];
-
-  const leftLeg = [
-    { stop: 2, name: 'it_consultant', role: 'Scope & Architecture Brief', icon: '💼', level: 'User Needs Discovery' },
-    { stop: 3, name: 'product_owner', role: 'PRD & Full-Stack User Stories', icon: '🎯', level: 'System PRD Specs' },
-    { stop: 4, name: 'techincal_architect', role: 'Technical Spec & Task Manifest', icon: '📐', level: 'System Architecture' },
-    { stop: 6, name: 'content_parser', role: 'Data Contracts & Schemas', icon: '📄', level: 'Component Contracts' }
+  const selected = ALL_ROLES.find(role => role.id === selectedRoleId);
+  const groups = [
+    ['specification', 'Specification (Verification)', ['discovery', 'scope', 'architecture', 'schemas']],
+    ['implementation', 'Implementation Apex', ['frontend', 'services']],
+    ['validation', 'Validation (Testing)', ['qa', 'uat', 'release']]
   ];
-
-  const centerApex = [
-    { stop: 7, name: 'frontend_developer', role: 'Frontend UI Slices', icon: '💻' },
-    { stop: 8, name: 'service_engineer', role: 'Service & Database Setup', icon: '⚙️' }
-  ];
-
-  const rightLeg = [
-    { stop: 9, name: 'qa_agent', role: 'Automated Test Suites', icon: '🧪', level: 'Unit/Integration Test' },
-    { stop: 10, name: 'uat', role: 'Cloud UAT Sandbox', icon: '⚡', level: 'System Acceptance' },
-    { stop: 12, name: 'architecture_reviewer', role: 'Zero-Trust Audit Gate', icon: '🔍', level: 'Security Audit' },
-    { stop: 11, name: 'deployment', role: 'Production Cloud Release', icon: '🚀', level: 'Production Release' }
-  ];
-
+  const description = selected.id === 'discovery'
+    ? 'it_consultant conducts scope discovery and locks 00_PROJECT_CONTRACT.md and 01_ARCH_BRIEF.md.'
+    : selected.description;
+  const reviewer = ALL_ROLES.find(role => role.id === 'reviewer');
   container.innerHTML = `
-    <div class="w-full max-w-5xl mx-auto bg-white border border-slate-200 rounded-3xl p-8 shadow-xl space-y-6">
-
-      <!-- V-Shape Grid Layout -->
-      <div class="grid grid-cols-3 gap-6 relative p-4 bg-slate-50 rounded-2xl border border-slate-200">
-        
-        <!-- Left Leg: Verification (Specification) -->
-        <div class="space-y-4">
-          <div class="font-bold text-xs text-blue-600 uppercase tracking-wider text-center pb-2 border-b border-blue-200">Specification (Verification)</div>
-          ${leftLeg.map(s => {
-            const isCur = currentStoryStep === s.stop;
-            return `
-              <div onclick="setStoryStep(${s.stop})" class="p-3.5 rounded-2xl border cursor-pointer transition-all ${
-                isCur ? 'bg-blue-600 text-white font-bold border-blue-600 shadow-md ring-2 ring-blue-300' : 'bg-white border-slate-200 text-slate-800 hover:border-blue-400'
-              }">
-                <div class="flex items-center justify-between">
-                  <span class="text-xs font-bold">${s.icon} ${s.name}</span>
-                  <span class="w-6 h-6 rounded-full ${isCur ? 'bg-white text-blue-600' : 'bg-blue-100 text-blue-700'} font-black text-xs flex items-center justify-center">${s.stop}</span>
-                </div>
-                <div class="text-[10.5px] opacity-80 mt-1">${s.role}</div>
-              </div>
-            `;
-          }).join('')}
-        </div>
-
-        <!-- Apex Bottom: Coding Implementation -->
-        <div class="flex flex-col justify-end space-y-4">
-          <div class="font-bold text-xs text-purple-600 uppercase tracking-wider text-center pb-2 border-b border-purple-200">Implementation Apex</div>
-          ${centerApex.map(s => {
-            const isCur = currentStoryStep === s.stop;
-            return `
-              <div onclick="setStoryStep(${s.stop})" class="p-3.5 rounded-2xl border cursor-pointer transition-all ${
-                isCur ? 'bg-purple-600 text-white font-bold border-purple-600 shadow-md ring-2 ring-purple-300' : 'bg-white border-purple-200 text-slate-800 hover:border-purple-400'
-              }">
-                <div class="flex items-center justify-between">
-                  <span class="text-xs font-bold">${s.icon} ${s.name}</span>
-                  <span class="w-6 h-6 rounded-full ${isCur ? 'bg-white text-purple-600' : 'bg-purple-100 text-purple-700'} font-black text-xs flex items-center justify-center">${s.stop}</span>
-                </div>
-                <div class="text-[10.5px] opacity-80 mt-1">${s.role}</div>
-              </div>
-            `;
-          }).join('')}
-        </div>
-
-        <!-- Right Leg: Validation (Testing) -->
-        <div class="space-y-4">
-          <div class="font-bold text-xs text-emerald-600 uppercase tracking-wider text-center pb-2 border-b border-emerald-200">Validation (Testing)</div>
-          ${rightLeg.map(s => {
-            const isCur = currentStoryStep === s.stop;
-            return `
-              <div onclick="setStoryStep(${s.stop})" class="p-3.5 rounded-2xl border cursor-pointer transition-all ${
-                isCur ? 'bg-emerald-600 text-white font-bold border-emerald-600 shadow-md ring-2 ring-emerald-300' : 'bg-white border-slate-200 text-slate-800 hover:border-emerald-400'
-              }">
-                <div class="flex items-center justify-between">
-                  <span class="text-xs font-bold">${s.icon} ${s.name}</span>
-                  <span class="w-6 h-6 rounded-full ${isCur ? 'bg-white text-emerald-600' : 'bg-emerald-100 text-emerald-700'} font-black text-xs flex items-center justify-center">${s.stop}</span>
-                </div>
-                <div class="text-[10.5px] opacity-80 mt-1">${s.role}</div>
-              </div>
-            `;
-          }).join('')}
-        </div>
-
-      </div>
-
-      <!-- Directive Box -->
-      <div class="p-4 rounded-2xl bg-blue-50 border border-blue-200 flex items-center gap-3 text-xs">
-        <span class="text-2xl">${activeStation.icon}</span>
-        <div>
-          <h4 class="font-bold text-slate-900">Step ${activeStation.stop}: ${activeStation.name}</h4>
-          <p class="text-slate-600 mt-0.5">${activeStation.desc}</p>
-        </div>
-      </div>
+    <button type="button" class="audit-strip ${selectedRoleId === 'reviewer' ? 'selected' : ''}" data-role-id="reviewer" aria-pressed="${selectedRoleId === 'reviewer'}" aria-controls="roleDetail" onclick="selectRole('reviewer')">
+      <span><span aria-hidden="true">${reviewer.icon}</span> architecture_reviewer</span>
+      <span>Cross-phase audit · reviews every phase and release</span>
+    </button>
+    <div class="v-grid">${groups.map(([group, title, ids]) => `
+      <section class="phase-column ${group}" aria-label="${title}">
+        <h2>${title}</h2>
+        <div class="phase-cards">${ids.map(id => renderCard(ALL_ROLES.find(role => role.id === id))).join('')}</div>
+      </section>`).join('')}
     </div>
-  `;
+    <section id="roleDetail" class="detail" aria-live="polite" aria-atomic="true">
+      <span class="detail-icon" aria-hidden="true">${selected.icon}</span>
+      <div><h2>${selected.phase ? 'Phase ' + selected.phase : selected.id === 'release' ? 'Release' : 'Cross-phase support'}: ${escapeHtml(selected.skill || selected.role)}</h2>
+      <p>${escapeHtml(description)}</p></div>
+    </section>`;
 }
 
-document.addEventListener('DOMContentLoaded', initApp);
+document.addEventListener('DOMContentLoaded', renderVModelView);
