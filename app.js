@@ -1,105 +1,378 @@
-// Workflow visualizer. Mirrors the canonical registry in GLOBAL_RULES.md.
-// Only phases have numbers; release and supporting roles are not extra phases.
+// Workflow visualizer. Mirrors canonical rules in GLOBAL_RULES.md and PROJECT_BUILDER_SKILL.md.
+
 const WORKFLOW_STAGES = [
-  { id: 'discovery', phase: 1, role: 'IT Consultant', skill: 'it_consultant', path: 'it_consultant/SKILL.md', group: 'specification', icon: '💼', title: 'Discovery & Contract', description: 'Record confirmed capabilities, assumptions, and open questions before architecture decisions. Document 00 belongs to Phase 1.', artifacts: ['docs/00_PROJECT_CONTRACT.md', 'docs/01_ARCH_BRIEF.md'], checkpoint: 'Review capabilities and architecture.' },
-  { id: 'scope', phase: 2, role: 'Product Owner', skill: 'product_owner', path: 'product_owner/SKILL.md', group: 'specification', icon: '🎯', title: 'Scope', description: 'Confirm users, workflows, constraints, and uncertain capabilities. Map each AC to acceptance scenarios and define measurable NFR targets.', artifacts: ['docs/02_PRD.md', 'docs/03_USER_STORIES.md'], checkpoint: 'Gate 1 — Scope approval in BALANCED and SUPERVISED.' },
-  { id: 'architecture', phase: 3, role: 'Technical Architect', skill: 'technical_architect', path: 'techincal_architect/SKILL.md', group: 'specification', icon: '📐', title: 'Technical Specification', description: 'Map architecture and API boundaries to integration checks and NFR evidence. Schedule Phase 5 → 6 → 7 tasks per feature.', artifacts: ['docs/04_TECHNICAL_SPEC.md', 'docs/05_TASK_MANIFEST.md'], checkpoint: 'Architecture Reviewer checks technical deliverables.' },
-  { id: 'schemas', phase: 4, role: 'Content Parser', skill: 'content_parser', path: 'content_parser/SKILL.md', group: 'specification', icon: '📄', title: 'Schemas', description: 'Generate applicable schemas and contracts; map boundaries and rejected inputs to unit/contract checks.', artifacts: ['src/assets/schemas/'], checkpoint: 'Mark schema work N/A when persistence is not required.' },
-  { id: 'frontend', phase: 5, role: 'Frontend Developer', skill: 'frontend_developer', path: 'frontend_developer/SKILL.md', group: 'implementation', icon: '💻', title: 'UI/UX', description: 'For the active feature, implement approved UI and run component checks. Continue to services and QA; repeat for the next feature. Apple Design supports this phase.', artifacts: ['docs/06_DESIGN_REGISTER.md', 'docs/design/mockups/', 'src/components/'], checkpoint: 'Gate 2 — Mockup approval before UI code, in every mode.' },
-  { id: 'services', phase: 6, role: 'Service Engineer', skill: 'service_engineer', path: 'service_engineer/SKILL.md', group: 'implementation', icon: '⚙️', title: 'Database Setup & Services', description: 'Integrate the active feature and run unit/integration checks. Reuse verified database setup; preserve any mock-only qualification.', artifacts: ['docs/08_SETUP_REGISTER.md', 'src/services/', 'src/hooks/', 'src/db/', 'src/sync/'], checkpoint: 'Database setup/skip at phase entry, in every mode.' },
-  { id: 'qa', phase: 7, role: 'QA Agent', skill: 'qa_agent', path: 'qa_agent/SKILL.md', group: 'validation', icon: '🧪', title: 'QA', description: 'Verify AC/NFR results and developer evidence. Slice QA returns to the next feature; aggregate regression QA across all slices hands off to UAT. Coverage alone is insufficient.', artifacts: ['tests/07_TEST_MANIFEST.md'], checkpoint: 'Preserve any mock-only qualification; QA is not release authorization.' },
-  { id: 'uat', phase: 8, role: 'UAT Coordinator', skill: 'uat', path: 'uat/SKILL.md', group: 'validation', icon: '⚡', title: 'UAT', description: 'Validate acceptance scenarios on the target platform: compatible web preview or native build/device. Record revision, environment, results, and limitations; preserve mock-only scope.', artifacts: ['docs/10_UAT_CHECKLIST.md', 'open_stackblitz.html', 'redirect_stackblitz.html', 'UAT_FEEDBACK.md'], checkpoint: 'Gate 3 — UAT sign-off in every mode. Feedback file is created only when revisions are requested.' },
-  { id: 'release', phase: null, role: 'Deployment Lead', skill: 'deployment', path: 'deployment/SKILL.md', group: 'validation', icon: '🚀', title: 'Release', description: 'After UAT sign-off, choose a provider or skip deployment. Prepare and verify the selected release, or record the user-managed handoff.', artifacts: ['docs/08_SETUP_REGISTER.md', 'docs/09_RELEASE_PLAN.md'], checkpoint: 'Deployment selection/skip, then Gate 4 — Release approval if deploying, in every mode.' }
+  {
+    id: 'discovery',
+    phase: 1,
+    role: 'IT Consultant',
+    skill: 'it_consultant',
+    path: 'it_consultant/SKILL.md',
+    group: 'specification',
+    icon: '💼',
+    title: 'Discovery & Contract',
+    description: 'Record confirmed capabilities, assumptions, and open questions before architecture decisions. Document 00 belongs to Phase 1.',
+    artifacts: [
+      { name: '00_PROJECT_CONTRACT.md', path: 'docs/00_PROJECT_CONTRACT.md', desc: 'Capability & platform boundary agreement' },
+      { name: '01_ARCH_BRIEF.md', path: 'docs/01_ARCH_BRIEF.md', desc: 'High-level system architecture brief' }
+    ]
+  },
+  {
+    id: 'scope',
+    phase: 2,
+    role: 'Product Owner',
+    skill: 'product_owner',
+    path: 'product_owner/SKILL.md',
+    group: 'specification',
+    icon: '🎯',
+    title: 'Scope & User Stories',
+    description: 'Confirm users, workflows, constraints, and uncertain capabilities. Map each AC to acceptance scenarios and define measurable NFR targets.',
+    artifacts: [
+      { name: '02_PRD.md', path: 'docs/02_PRD.md', desc: 'Product Requirements Document & NFR targets' },
+      { name: '03_USER_STORIES.md', path: 'docs/03_USER_STORIES.md', desc: 'Full-stack user story inventory & acceptance criteria' }
+    ],
+    userStories: [
+      {
+        id: 'US-001',
+        title: 'Project Intake & Capability Contract',
+        persona: 'As a Product Manager',
+        goal: 'I want to define project type and explicit capabilities in 00_PROJECT_CONTRACT.md',
+        benefit: 'so that agents do not generate unneeded backend or database code.',
+        status: 'VERIFIED',
+        ac: [
+          'AC-1: Validates project_type (web | mobile)',
+          'AC-2: Explicitly flags auth, persistence, and sync requirements',
+          'AC-3: Records capability contract in docs/00_PROJECT_CONTRACT.md'
+        ]
+      },
+      {
+        id: 'US-002',
+        title: 'UI/UX Mockup Approval Gate',
+        persona: 'As a UX Lead / Manager',
+        goal: 'I want the system to halt at Phase 5 after generating screen mockups',
+        benefit: 'so that I can review and approve visual designs before code is written.',
+        status: 'CHECKPOINT',
+        ac: [
+          'AC-1: Generates docs/06_DESIGN_REGISTER.md and PNG/WebP or HTML/SVG mockups',
+          'AC-2: Sets status to [AWAITING MANAGER APPROVAL]',
+          'AC-3: Autonomy pauses at Gate across ALL modes (Balanced, Autopilot, Supervised)'
+        ]
+      },
+      {
+        id: 'US-003',
+        title: 'Target-Platform UAT Acceptance',
+        persona: 'As a Quality Auditor',
+        goal: 'I want interactive UAT verification in web preview or native build',
+        benefit: 'so that all features are accepted on real hardware before release.',
+        status: 'PLANNED',
+        ac: [
+          'AC-1: Provides live UAT checklist in docs/10_UAT_CHECKLIST.md',
+          'AC-2: Verifies non-functional targets and device accessibility',
+          'AC-3: Mandates explicit Gate sign-off prior to Release'
+        ]
+      }
+    ]
+  },
+  {
+    id: 'architecture',
+    phase: 3,
+    role: 'Technical Architect',
+    skill: 'technical_architect',
+    path: 'techincal_architect/SKILL.md',
+    group: 'specification',
+    icon: '📐',
+    title: 'Technical Specification',
+    description: 'Map architecture and API boundaries to integration checks and NFR evidence. Schedule Phase 5 → 6 → 7 tasks per feature.',
+    artifacts: [
+      { name: '04_TECHNICAL_SPEC.md', path: 'docs/04_TECHNICAL_SPEC.md', desc: 'System architecture & API contracts' },
+      { name: '05_TASK_MANIFEST.md', path: 'docs/05_TASK_MANIFEST.md', desc: 'Executable task manifest per story slice' }
+    ]
+  },
+  {
+    id: 'schemas',
+    phase: 4,
+    role: 'Content Parser',
+    skill: 'content_parser',
+    path: 'content_parser/SKILL.md',
+    group: 'specification',
+    icon: '📄',
+    title: 'Schemas & Data Contracts',
+    description: 'Generate applicable schemas and Zod contracts; map boundaries and rejected inputs to unit/contract checks.',
+    artifacts: [
+      { name: 'src/assets/schemas/', path: 'src/assets/schemas/', desc: 'Zod schemas & JSON data contracts' }
+    ]
+  },
+  {
+    id: 'frontend',
+    phase: 5,
+    role: 'Frontend Developer',
+    skill: 'frontend_developer',
+    path: 'frontend_developer/SKILL.md',
+    group: 'implementation',
+    icon: '💻',
+    title: 'UI/UX & Screen Mockups',
+    description: 'Create visual screen mockups (PNG/WebP images if tools exist, or HTML/SVG mockups) and design register. HALT at Gate for approval before writing UI code.',
+    artifacts: [
+      { name: '06_DESIGN_REGISTER.md', path: 'docs/06_DESIGN_REGISTER.md', desc: 'Screen inventory & mockup approvals' },
+      { name: 'docs/design/mockups/', path: 'docs/design/mockups/', desc: 'Rendered visual UI mockups (PNG/WebP or HTML)' },
+      { name: 'src/components/', path: 'src/components/', desc: 'Verified Apple HIG frontend components' }
+    ]
+  },
+  {
+    id: 'services',
+    phase: 6,
+    role: 'Service Engineer',
+    skill: 'service_engineer',
+    path: 'service_engineer/SKILL.md',
+    group: 'implementation',
+    icon: '⚙️',
+    title: 'Database Setup & Services',
+    description: 'Integrate active feature and run unit/integration checks. Reuse verified database setup; preserve mock-only status if deferred.',
+    artifacts: [
+      { name: '08_SETUP_REGISTER.md', path: 'docs/08_SETUP_REGISTER.md', desc: 'Database & infrastructure config register' },
+      { name: 'src/services/', path: 'src/services/', desc: 'Backend services & local storage adapters' }
+    ]
+  },
+  {
+    id: 'qa',
+    phase: 7,
+    role: 'QA Agent',
+    skill: 'qa_agent',
+    path: 'qa_agent/SKILL.md',
+    group: 'validation',
+    icon: '🧪',
+    title: 'QA & Test Manifest',
+    description: 'Verify AC/NFR results and developer evidence. Slice QA returns to next feature; aggregate regression hands off to UAT.',
+    artifacts: [
+      { name: '07_TEST_MANIFEST.md', path: 'tests/07_TEST_MANIFEST.md', desc: 'Automated test suite & evidence log' }
+    ]
+  },
+  {
+    id: 'uat',
+    phase: 8,
+    role: 'UAT Coordinator',
+    skill: 'uat',
+    path: 'uat/SKILL.md',
+    group: 'validation',
+    icon: '⚡',
+    title: 'UAT Acceptance',
+    description: 'Validate acceptance scenarios on target platform (web preview or native device). Record environment results and sign off at Gate.',
+    artifacts: [
+      { name: '10_UAT_CHECKLIST.md', path: 'docs/10_UAT_CHECKLIST.md', desc: 'Target-platform UAT checklist & sign-off' },
+      { name: 'UAT_FEEDBACK.md', path: 'UAT_FEEDBACK.md', desc: 'User feedback & revision log (if requested)' }
+    ]
+  },
+  {
+    id: 'release',
+    phase: null,
+    role: 'Deployment Lead',
+    skill: 'deployment',
+    path: 'deployment/SKILL.md',
+    group: 'validation',
+    icon: '🚀',
+    title: 'Release & Deployment',
+    description: 'After UAT sign-off, choose cloud provider or skip deployment. Gate sign-off verifies production deployment or records user-managed handoff.',
+    artifacts: [
+      { name: '09_RELEASE_PLAN.md', path: 'docs/09_RELEASE_PLAN.md', desc: 'Production release plan & verification' }
+    ]
+  }
 ];
 
 const SUPPORT_ROLES = [
-  { id: 'pm', role: 'PM', skill: 'pm', path: 'pm/SKILL.md', icon: '🧭', title: 'Entry & routing', description: 'Routes /pm commands to the phase lead. Uses the controller document and canonical global rules.' },
-  { id: 'orchestrator', role: 'Orchestrator', skill: 'orchestrator', path: 'orchestrator/SKILL.md', icon: '🎼', title: 'State & dashboard', description: 'Maintains project state, revision invalidation, pending approvals, and the live progress dashboard.', artifacts: ['docs/PROJECT_STATUS.md', 'progress.html'] },
-  { id: 'reviewer', role: 'Architecture Reviewer', skill: 'architecture_reviewer', path: 'architecture_reviewer/SKILL.md', icon: '🔍', title: 'Cross-phase audit', description: 'Reviews deliverables throughout the workflow. It is not a final numbered step.', artifacts: ['docs/reviews/'] },
-  { id: 'design', role: 'Apple Design', skill: 'apple-design', path: 'apple_design/SKILL.md', icon: '🎨', title: 'Phase 5 design support', description: 'Provides design and motion standards to Frontend Developer during Phase 5.' },
-  { id: 'controller', role: 'Workflow Controller', path: 'PROJECT_BUILDER_SKILL.md', icon: '👑', title: 'Controller document', description: 'Documents the existing workflow. It is not a separate skill or phase.' }
+  { id: 'pm', role: 'PM', skill: 'pm', path: 'pm/SKILL.md', icon: '🧭', title: 'Entry & routing', description: 'Routes /pm commands to phase lead. Uses controller document and canonical global rules.' },
+  { id: 'orchestrator', role: 'Orchestrator', skill: 'orchestrator', path: 'orchestrator/SKILL.md', icon: '🎼', title: 'State & dashboard', description: 'Maintains project state, revision invalidation, pending approvals, and progress dashboard.', artifacts: [{ name: 'PROJECT_STATUS.md', path: 'docs/PROJECT_STATUS.md', desc: 'Live project state machine pointer' }] },
+  { id: 'reviewer', role: 'Architecture Reviewer', skill: 'architecture_reviewer', path: 'architecture_reviewer/SKILL.md', icon: '🔍', title: 'Cross-phase audit', description: 'Reviews deliverables throughout workflow.', artifacts: [{ name: 'docs/reviews/', path: 'docs/reviews/', desc: 'Zero-trust architecture audit logs' }] }
 ];
 
 const ALL_ROLES = [...WORKFLOW_STAGES, ...SUPPORT_ROLES];
-let selectedRoleId = 'discovery';
+let selectedRoleId = 'scope';
+let currentAutonomyMode = 'autopilot';
+
+// Simple boolean gate checker per stage & mode
+function isGateActive(stageId, mode) {
+  if (mode === 'supervised') return true;
+  if (mode === 'balanced') {
+    return ['scope', 'frontend', 'uat', 'release'].includes(stageId);
+  }
+  // autopilot mode
+  return ['frontend', 'services', 'uat', 'release'].includes(stageId);
+}
 
 function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+}
+
+function switchAutonomyMode(mode) {
+  currentAutonomyMode = mode;
+  document.querySelectorAll('.folder-tab').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-mode') === mode);
+  });
+  renderVModelView();
 }
 
 function selectRole(id) {
   if (!ALL_ROLES.some(role => role.id === id)) return;
   selectedRoleId = id;
   renderVModelView();
-  // Preserve keyboard focus when the selected card is rerendered.
   document.querySelector('[data-role-id="' + id + '"]')?.focus({ preventScroll: true });
 }
 
-// Match the reference's three-column arrangement. The reviewer sits outside the
-// sequence because it audits every phase rather than running as a final step.
 const CARD_LABELS = {
   discovery: 'Scope & Architecture Brief',
   scope: 'PRD & Full-Stack User Stories',
   architecture: 'Technical Spec & Task Manifest',
   schemas: 'Data Contracts & Schemas',
-  frontend: 'Feature UI & Component Tests',
+  frontend: 'UI Mockups (Gate Checkpoint)',
   services: 'Feature Integration & Tests',
-  qa: 'Slice QA & Integrated Regression',
+  qa: 'Slice QA & Regression Manifest',
   uat: 'Target-Platform Acceptance',
   reviewer: 'Zero-Trust Audit Gate',
   release: 'Production Cloud Release'
-};
-
-const TEST_RELATIONSHIPS = {
-  discovery: 'Confirm consequential assumptions during scope clarification.',
-  scope: 'Requirements / ACs ↔ acceptance tests (Phase 8)',
-  architecture: 'Architecture / APIs ↔ integration tests (Phases 6–7)',
-  schemas: 'Contracts ↔ unit / contract tests (Phases 5–7)',
-  frontend: 'Per feature: UI → Services → QA ↺ next feature',
-  services: 'Per feature: UI → Services → QA ↺ next feature',
-  qa: 'All slices + integrated regression + required NFR evidence → UAT',
-  uat: 'Accept the tested build and environment; web preview does not prove native behavior.'
 };
 
 function renderCard(role) {
   const active = role.id === selectedRoleId;
   const badge = role.phase || 'R';
   const badgeLabel = role.phase ? 'Phase ' + role.phase : 'Release';
+  
+  let gatePill = '';
+  if (role.phase || role.id === 'release') {
+    const hasGate = isGateActive(role.id, currentAutonomyMode);
+    const pillClass = hasGate ? 'gate-active' : 'gate-passive';
+    const pillText = hasGate ? '🚧 Gate' : '⚡ Auto';
+    gatePill = `<span class="gate-badge-pill ${pillClass}">${escapeHtml(pillText)}</span>`;
+  }
+  
   return `<button type="button" class="role-card ${active ? 'selected' : ''}" data-role-id="${role.id}" aria-pressed="${active}" aria-controls="roleDetail" onclick="selectRole('${role.id}')">
-    <span class="card-heading"><span class="card-role"><span aria-hidden="true">${role.icon}</span> ${escapeHtml(role.skill)}</span><span class="badge" aria-label="${badgeLabel}" title="${badgeLabel}">${badge}</span></span>
+    <span class="card-heading">
+      <span class="card-role"><span aria-hidden="true">${role.icon}</span> ${escapeHtml(role.skill)}</span>
+      <span class="badge" aria-label="${badgeLabel}" title="${badgeLabel}">${badge}</span>
+    </span>
     <span class="card-label">${CARD_LABELS[role.id]}</span>
+    ${gatePill}
   </button>`;
 }
 
 function renderVModelView() {
   const container = document.getElementById('vModelContainer');
   if (!container) return;
+
   const selected = ALL_ROLES.find(role => role.id === selectedRoleId);
   const groups = [
     ['specification', 'Specification (Verification)', ['discovery', 'scope', 'architecture', 'schemas']],
     ['implementation', 'Implementation Apex', ['frontend', 'services']],
     ['validation', 'Validation (Testing)', ['qa', 'uat', 'release']]
   ];
-  const description = selected.id === 'discovery'
-    ? 'it_consultant records confirmed decisions, assumptions, and open questions in the contract and architecture brief.'
-    : selected.description;
   const reviewer = ALL_ROLES.find(role => role.id === 'reviewer');
+
+  // Render Consistent Gate Callout Banner
+  let stopBannerHtml = '';
+  const hasGate = isGateActive(selected.id, currentAutonomyMode);
+  
+  if (selected.id === 'frontend') {
+    stopBannerHtml = `
+      <div class="stop-point-banner">
+        <span class="stop-point-banner-icon">🛑</span>
+        <div>
+          <div class="stop-point-banner-title">GATE CHECKPOINT — UI/UX Mockups</div>
+          <div class="stop-point-banner-desc">
+            Execution <strong>pauses after visual mockups are generated</strong> in <code>docs/design/mockups/</code> and recorded in <code>docs/06_DESIGN_REGISTER.md</code>.
+            User/Manager sign-off is required before UI code implementation.
+          </div>
+        </div>
+      </div>
+    `;
+  } else if (hasGate) {
+    stopBannerHtml = `
+      <div class="stop-point-banner">
+        <span class="stop-point-banner-icon">🚧</span>
+        <div>
+          <div class="stop-point-banner-title">GATE CHECKPOINT</div>
+          <div class="stop-point-banner-desc">
+            Execution pauses here for user sign-off on stage deliverables before proceeding.
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // Render Document Links Pills
+  let docPillsHtml = '';
+  if (selected.artifacts && selected.artifacts.length > 0) {
+    docPillsHtml = `
+      <div class="doc-links-section">
+        <div class="section-label">Generated Stage Documents & Artifacts</div>
+        <div class="doc-pills">
+          ${selected.artifacts.map(art => `
+            <a href="${art.path}" class="doc-pill" target="_blank" title="${escapeHtml(art.desc)}">
+              📄 ${escapeHtml(art.name)}
+            </a>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  // Render User Stories List if Phase 2 / Scope is selected
+  let storiesHtml = '';
+  if (selected.id === 'scope' && selected.userStories && selected.userStories.length > 0) {
+    storiesHtml = `
+      <div style="margin-top: 20px;">
+        <div class="section-label">Created User Stories & Acceptance Criteria</div>
+        <div class="stories-grid">
+          ${selected.userStories.map(story => `
+            <div class="story-card">
+              <div class="story-header">
+                <span class="story-id">${escapeHtml(story.id)}</span>
+                <span class="story-status">${escapeHtml(story.status)}</span>
+              </div>
+              <div class="story-title">${escapeHtml(story.title)}</div>
+              <div class="story-statement">${escapeHtml(story.persona)}, ${escapeHtml(story.goal)} ${escapeHtml(story.benefit)}</div>
+              <div class="story-ac-title">Acceptance Criteria</div>
+              <ul class="story-ac-list">
+                ${story.ac.map(criterion => `<li>${escapeHtml(criterion)}</li>`).join('')}
+              </ul>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
   container.innerHTML = `
     <button type="button" class="audit-strip ${selectedRoleId === 'reviewer' ? 'selected' : ''}" data-role-id="reviewer" aria-pressed="${selectedRoleId === 'reviewer'}" aria-controls="roleDetail" onclick="selectRole('reviewer')">
       <span><span aria-hidden="true">${reviewer.icon}</span> architecture_reviewer</span>
-      <span>Cross-phase audit · reviews every phase and release</span>
+      <span>Cross-phase zero-trust audit · validates contract compliance at every phase</span>
     </button>
-    <div class="v-grid">${groups.map(([group, title, ids]) => `
-      <section class="phase-column ${group}" aria-label="${title}">
-        <h2>${title}</h2>
-        <div class="phase-cards">${ids.map(id => renderCard(ALL_ROLES.find(role => role.id === id))).join('')}</div>
-      </section>`).join('')}
+    <div class="v-grid">
+      ${groups.map(([group, title, ids]) => `
+        <section class="phase-column ${group}" aria-label="${title}">
+          <h2>${title}</h2>
+          <div class="phase-cards">${ids.map(id => renderCard(ALL_ROLES.find(role => role.id === id))).join('')}</div>
+        </section>
+      `).join('')}
     </div>
-    <section id="roleDetail" class="detail" aria-live="polite" aria-atomic="true">
-      <span class="detail-icon" aria-hidden="true">${selected.icon}</span>
-      <div><h2>${selected.phase ? 'Phase ' + selected.phase : selected.id === 'release' ? 'Release' : 'Cross-phase support'}: ${escapeHtml(selected.skill || selected.role)}</h2>
-      <p>${escapeHtml(description)}</p><p class="test-mapping">${escapeHtml(TEST_RELATIONSHIPS[selected.id] || selected.checkpoint || 'Audits requirements, implementation evidence, and target-platform acceptance throughout.')}</p></div>
-    </section>`;
+    
+    <section id="roleDetail" class="detail-panel" aria-live="polite" aria-atomic="true">
+      <div class="detail-header">
+        <div class="detail-title-group">
+          <span class="detail-icon" aria-hidden="true">${selected.icon}</span>
+          <div>
+            <h3 class="detail-title">${selected.phase ? 'Phase ' + selected.phase + ' — ' : ''}${escapeHtml(selected.title || selected.role)}</h3>
+            <p class="detail-subtitle">Lead Skill: <code>${escapeHtml(selected.skill || selected.role)}</code></p>
+          </div>
+        </div>
+      </div>
+      
+      ${stopBannerHtml}
+      <p style="color: #475569; font-size: 12px; line-height: 18px; margin-bottom: 16px;">${escapeHtml(selected.description)}</p>
+      ${docPillsHtml}
+      ${storiesHtml}
+    </section>
+  `;
 }
 
-document.addEventListener('DOMContentLoaded', renderVModelView);
+document.addEventListener('DOMContentLoaded', () => {
+  switchAutonomyMode('autopilot');
+});
+
+

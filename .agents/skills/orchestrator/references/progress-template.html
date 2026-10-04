@@ -38,19 +38,33 @@
     <section class="bg-neutral-900/60 border border-neutral-800 rounded-3xl p-6">
       <h2 class="text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-4">Milestone Progress · {{ACTIVE_STORY}}</h2>
       <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-9 gap-2 text-center text-xs font-mono">
-        <div class="p-2.5 rounded-xl border {{STEP_1_STYLE}}">1. Discovery &amp; Contract</div>
+        <div class="p-2.5 rounded-xl border {{STEP_1_STYLE}}">1. Contract</div>
         <div class="p-2.5 rounded-xl border {{STEP_2_STYLE}}">2. Scope</div>
-        <div class="p-2.5 rounded-xl border {{STEP_3_STYLE}}">3. Technical Spec</div>
+        <div class="p-2.5 rounded-xl border {{STEP_3_STYLE}}">3. Spec</div>
         <div class="p-2.5 rounded-xl border {{STEP_4_STYLE}}">4. Schemas</div>
-        <div class="p-2.5 rounded-xl border {{STEP_5_STYLE}}">5. UI/UX</div>
-        <div class="p-2.5 rounded-xl border {{STEP_6_STYLE}}">6. DB &amp; Services</div>
+        <div class="p-2.5 rounded-xl border {{STEP_5_STYLE}} relative">
+          <span>5. UI/UX</span>
+          <span class="text-[9px] block text-red-400 font-bold">🛑 Gate 2</span>
+        </div>
+        <div class="p-2.5 rounded-xl border {{STEP_6_STYLE}}">6. Services</div>
         <div class="p-2.5 rounded-xl border {{STEP_7_STYLE}}">7. QA</div>
         <div class="p-2.5 rounded-xl border {{STEP_8_STYLE}}">8. UAT</div>
         <div class="p-2.5 rounded-xl border {{RELEASE_STYLE}}">Release</div>
       </div>
     </section>
 
-    <!-- Populate UAT access only when available; otherwise render a disabled pending-access label. -->
+    <!-- Gate 2 Checkpoint Callout Banner -->
+    <section class="bg-red-950/30 border border-red-500/40 rounded-3xl p-5 flex items-start gap-4">
+      <div class="text-2xl shrink-0">🛑</div>
+      <div>
+        <h3 class="text-sm font-bold text-red-300">Mandatory Autonomy Stop Point — Gate 2 (UI/UX Mockups)</h3>
+        <p class="text-xs text-neutral-300 mt-1">
+          When the workflow reaches Phase 5 (UI/UX), execution <strong>pauses automatically</strong> after generating screen mockups in <code>docs/design/mockups/</code> and recording <code>docs/06_DESIGN_REGISTER.md</code>. Manager sign-off is required before frontend implementation code is created.
+        </p>
+      </div>
+    </section>
+
+    <!-- Target-Platform UAT -->
     <section class="bg-gradient-to-r from-blue-950/40 via-cyan-950/30 to-purple-950/40 border border-cyan-500/30 rounded-3xl p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
         <div class="flex items-center gap-2">
@@ -67,24 +81,89 @@
 
     <!-- Deliverables Hub -->
     <section class="bg-neutral-900/60 border border-neutral-800 rounded-3xl p-6">
-      <h2 class="text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-4">Deliverables & Documents</h2>
+      <h2 class="text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-4">Generated Deliverables &amp; Documents</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="deliverablesContainer">
-        <!-- Document cards populated by project -->
+        
         <a href="docs/00_PROJECT_CONTRACT.md" class="p-3.5 rounded-2xl bg-neutral-950 border border-neutral-800 hover:border-neutral-700 transition-colors flex items-center justify-between">
           <div>
             <span class="font-mono text-xs font-semibold text-white">📄 00_PROJECT_CONTRACT.md</span>
-            <span class="text-[11px] text-neutral-400 block mt-0.5">Platform & capability agreements</span>
+            <span class="text-[11px] text-neutral-400 block mt-0.5">Phase 1 · Platform &amp; capability agreements</span>
           </div>
-          <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-mono">LOCKED</span>
+          <span class="text-[10px] px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 font-mono">PHASE 1</span>
+        </a>
+
+        <a href="docs/01_ARCH_BRIEF.md" class="p-3.5 rounded-2xl bg-neutral-950 border border-neutral-800 hover:border-neutral-700 transition-colors flex items-center justify-between">
+          <div>
+            <span class="font-mono text-xs font-semibold text-white">📄 01_ARCH_BRIEF.md</span>
+            <span class="text-[11px] text-neutral-400 block mt-0.5">Phase 1 · High-level architecture brief</span>
+          </div>
+          <span class="text-[10px] px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 font-mono">PHASE 1</span>
         </a>
 
         <a href="docs/02_PRD.md" class="p-3.5 rounded-2xl bg-neutral-950 border border-neutral-800 hover:border-neutral-700 transition-colors flex items-center justify-between">
           <div>
             <span class="font-mono text-xs font-semibold text-white">📄 02_PRD.md</span>
-            <span class="text-[11px] text-neutral-400 block mt-0.5">Functional requirements & user stories</span>
+            <span class="text-[11px] text-neutral-400 block mt-0.5">Phase 2 · Functional requirements &amp; NFRs</span>
           </div>
-          <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-mono">VERIFIED</span>
+          <span class="text-[10px] px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 font-mono">PHASE 2</span>
         </a>
+
+        <a href="docs/03_USER_STORIES.md" class="p-3.5 rounded-2xl bg-neutral-950 border border-neutral-800 hover:border-neutral-700 transition-colors flex items-center justify-between">
+          <div>
+            <span class="font-mono text-xs font-semibold text-white">📄 03_USER_STORIES.md</span>
+            <span class="text-[11px] text-neutral-400 block mt-0.5">Phase 2 · User stories &amp; acceptance criteria</span>
+          </div>
+          <span class="text-[10px] px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 font-mono">PHASE 2</span>
+        </a>
+
+        <a href="docs/04_TECHNICAL_SPEC.md" class="p-3.5 rounded-2xl bg-neutral-950 border border-neutral-800 hover:border-neutral-700 transition-colors flex items-center justify-between">
+          <div>
+            <span class="font-mono text-xs font-semibold text-white">📄 04_TECHNICAL_SPEC.md</span>
+            <span class="text-[11px] text-neutral-400 block mt-0.5">Phase 3 · Architecture &amp; API boundaries</span>
+          </div>
+          <span class="text-[10px] px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 font-mono">PHASE 3</span>
+        </a>
+
+        <a href="docs/05_TASK_MANIFEST.md" class="p-3.5 rounded-2xl bg-neutral-950 border border-neutral-800 hover:border-neutral-700 transition-colors flex items-center justify-between">
+          <div>
+            <span class="font-mono text-xs font-semibold text-white">📄 05_TASK_MANIFEST.md</span>
+            <span class="text-[11px] text-neutral-400 block mt-0.5">Phase 3 · Executable task manifest</span>
+          </div>
+          <span class="text-[10px] px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 font-mono">PHASE 3</span>
+        </a>
+
+        <a href="docs/06_DESIGN_REGISTER.md" class="p-3.5 rounded-2xl bg-neutral-950 border border-red-500/30 hover:border-red-500 transition-colors flex items-center justify-between">
+          <div>
+            <span class="font-mono text-xs font-semibold text-white">🎨 06_DESIGN_REGISTER.md</span>
+            <span class="text-[11px] text-neutral-400 block mt-0.5">Phase 5 · Screen inventory &amp; mockups</span>
+          </div>
+          <span class="text-[10px] px-2 py-0.5 rounded bg-red-500/20 text-red-300 font-mono">🛑 GATE 2</span>
+        </a>
+
+        <a href="tests/07_TEST_MANIFEST.md" class="p-3.5 rounded-2xl bg-neutral-950 border border-neutral-800 hover:border-neutral-700 transition-colors flex items-center justify-between">
+          <div>
+            <span class="font-mono text-xs font-semibold text-white">🧪 07_TEST_MANIFEST.md</span>
+            <span class="text-[11px] text-neutral-400 block mt-0.5">Phase 7 · QA automated test suite</span>
+          </div>
+          <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-mono">PHASE 7</span>
+        </a>
+
+        <a href="docs/10_UAT_CHECKLIST.md" class="p-3.5 rounded-2xl bg-neutral-950 border border-neutral-800 hover:border-neutral-700 transition-colors flex items-center justify-between">
+          <div>
+            <span class="font-mono text-xs font-semibold text-white">⚡ 10_UAT_CHECKLIST.md</span>
+            <span class="text-[11px] text-neutral-400 block mt-0.5">Phase 8 · Target-platform acceptance</span>
+          </div>
+          <span class="text-[10px] px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 font-mono">PHASE 8</span>
+        </a>
+
+        <a href="docs/09_RELEASE_PLAN.md" class="p-3.5 rounded-2xl bg-neutral-950 border border-neutral-800 hover:border-neutral-700 transition-colors flex items-center justify-between">
+          <div>
+            <span class="font-mono text-xs font-semibold text-white">🚀 09_RELEASE_PLAN.md</span>
+            <span class="text-[11px] text-neutral-400 block mt-0.5">Release · Production deployment plan</span>
+          </div>
+          <span class="text-[10px] px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 font-mono">RELEASE</span>
+        </a>
+
       </div>
     </section>
 
