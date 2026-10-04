@@ -213,6 +213,12 @@ function selectRole(id) {
   if (!ALL_ROLES.some(role => role.id === id)) return;
   selectedRoleId = id;
   renderVModelView();
+  const detailPanel = document.getElementById('roleDetail');
+  if (detailPanel) {
+    detailPanel.style.animation = 'none';
+    void detailPanel.offsetHeight;
+    detailPanel.style.animation = 'appleSpringSlide 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards';
+  }
   document.querySelector('[data-role-id="' + id + '"]')?.focus({ preventScroll: true });
 }
 
@@ -316,23 +322,25 @@ function renderVModelView() {
   let storiesHtml = '';
   if (selected.id === 'scope' && selected.userStories && selected.userStories.length > 0) {
     storiesHtml = `
-      <div style="margin-top: 20px;">
+      <div style="margin-top: 14px;">
         <div class="section-label">Created User Stories & Acceptance Criteria</div>
-        <div class="stories-grid">
-          ${selected.userStories.map(story => `
-            <div class="story-card">
-              <div class="story-header">
-                <span class="story-id">${escapeHtml(story.id)}</span>
-                <span class="story-status">${escapeHtml(story.status)}</span>
+        <div class="stories-scroll-box">
+          <div class="stories-grid">
+            ${selected.userStories.map(story => `
+              <div class="story-card">
+                <div class="story-header">
+                  <span class="story-id">${escapeHtml(story.id)}</span>
+                  <span class="story-status">${escapeHtml(story.status)}</span>
+                </div>
+                <div class="story-title">${escapeHtml(story.title)}</div>
+                <div class="story-statement">${escapeHtml(story.persona)}, ${escapeHtml(story.goal)} ${escapeHtml(story.benefit)}</div>
+                <div class="story-ac-title">Acceptance Criteria</div>
+                <ul class="story-ac-list">
+                  ${story.ac.map(criterion => `<li>${escapeHtml(criterion)}</li>`).join('')}
+                </ul>
               </div>
-              <div class="story-title">${escapeHtml(story.title)}</div>
-              <div class="story-statement">${escapeHtml(story.persona)}, ${escapeHtml(story.goal)} ${escapeHtml(story.benefit)}</div>
-              <div class="story-ac-title">Acceptance Criteria</div>
-              <ul class="story-ac-list">
-                ${story.ac.map(criterion => `<li>${escapeHtml(criterion)}</li>`).join('')}
-              </ul>
-            </div>
-          `).join('')}
+            `).join('')}
+          </div>
         </div>
       </div>
     `;
@@ -364,7 +372,7 @@ function renderVModelView() {
       </div>
       
       ${stopBannerHtml}
-      <p style="color: #475569; font-size: 12px; line-height: 18px; margin-bottom: 16px;">${escapeHtml(selected.description)}</p>
+      <p style="color: #404040; font-size: 12px; line-height: 18px; margin-bottom: 16px;">${escapeHtml(selected.description)}</p>
       ${docPillsHtml}
       ${storiesHtml}
     </section>
