@@ -1,5 +1,5 @@
 // SDLC Swarm Skills Visualizer — Engine & UI Controller
-// Supports SDLC Pipeline Board + Ultra-Clean NYC Subway In-Car LED Strip Map
+// Supports SDLC Pipeline Board + Authentic Winding S-Curve NYC Subway Track Map
 
 const SDLC_SWARM_NODES = [
   { id: 'skill_builder', stop: 1, label: 'PROJECT_BUILDER_SKILL.md', category: 'Swarm Hub Controller', icon: '👑', desc: 'Master Swarm Controller: Sets autonomy modes (BALANCED / AUTOPILOT / SUPERVISED) and manages system lifecycle.' },
@@ -136,8 +136,8 @@ function renderPipelineView() {
 }
 
 // -------------------------------------------------------------
-// VIEW 2: Ultra-Clean NYC Subway In-Car LED Station Strip
-// (NO Toolbar, NO Banner, NO Extra Buttons, NO Extra Headers)
+// VIEW 2: Spacious Winding S-Curve Subway Track Map (Zero Overlap!)
+// 3 Rows of 4 Stations with Curved Handoff Tracks
 // -------------------------------------------------------------
 function renderSubwayCarView() {
   const container = document.getElementById('nycSubwayContainer');
@@ -145,57 +145,88 @@ function renderSubwayCarView() {
 
   const activeStation = SUBWAY_STATIONS[currentStoryStep - 1] || SUBWAY_STATIONS[1];
 
+  // Divide 12 stations into 3 horizontal rows of 4 stations each
+  const row1 = SUBWAY_STATIONS.slice(0, 4);   // Stops 1, 2, 3, 4 (Left -> Right)
+  const row2 = SUBWAY_STATIONS.slice(4, 8);   // Stops 5, 6, 7, 8 (Left -> Right)
+  const row3 = SUBWAY_STATIONS.slice(8, 12);  // Stops 9, 10, 11, 12 (Left -> Right)
+
+  const renderRow = (stations) => {
+    return stations.map(st => {
+      const isPassed = st.stop < currentStoryStep;
+      const isCurrent = st.stop === currentStoryStep;
+
+      return `
+        <div onclick="setStoryStep(${st.stop})" class="flex-1 p-3.5 rounded-2xl border cursor-pointer transition-all flex items-center gap-3 ${
+          isCurrent
+            ? 'bg-blue-600 text-white border-blue-600 shadow-lg ring-4 ring-blue-500/20 scale-[1.03] z-10'
+            : isPassed
+            ? 'bg-white border-blue-400 text-slate-900 shadow-sm hover:border-blue-500'
+            : 'bg-white border-slate-200 text-slate-700 hover:border-slate-400 shadow-sm'
+        }">
+          <!-- Circle with Number INSIDE -->
+          <div class="w-10 h-10 rounded-full flex items-center justify-center font-black text-xs shrink-0 ${
+            isCurrent
+              ? 'bg-white text-blue-600 shadow-md'
+              : isPassed
+              ? 'bg-blue-500 text-white'
+              : 'bg-slate-100 text-slate-700 border border-slate-300'
+          }">
+            ${st.stop}
+          </div>
+
+          <!-- Station Info -->
+          <div class="min-w-0 pr-1">
+            <div class="flex items-center gap-1.5 font-bold text-xs truncate">
+              <span>${st.icon}</span>
+              <span class="truncate ${isCurrent ? 'text-white font-extrabold' : 'text-slate-900'}">${st.name}</span>
+            </div>
+            <div class="text-[10px] ${isCurrent ? 'text-blue-100' : 'text-slate-500'} mt-0.5 font-mono truncate">
+              Stop ${st.stop} / 12
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  };
+
   container.innerHTML = `
     <div class="w-full max-w-6xl mx-auto bg-white border border-slate-200 rounded-3xl p-8 shadow-xl space-y-8 select-none font-sans">
       
-      <!-- Ultra-Clean NYC Subway LED Station Strip -->
-      <div class="bg-slate-50 p-8 rounded-3xl border border-slate-200/80 shadow-inner relative">
-        <div class="relative py-12 flex items-center justify-between px-6">
-          
-          <!-- Background Neutral Track Line -->
-          <div class="absolute left-8 right-8 top-1/2 -translate-y-1/2 h-3 bg-slate-200 rounded-full z-0"></div>
-          
-          <!-- Active Blue Progress Track Bar -->
-          <div class="absolute left-8 top-1/2 -translate-y-1/2 h-3 bg-blue-600 rounded-full z-0 transition-all duration-300" style="width: ${((currentStoryStep - 1) / 11) * 100}%"></div>
-
-          <!-- 12 Station Circles with NUMBERS INSIDE -->
-          ${SUBWAY_STATIONS.map((st) => {
-            const isPassed = st.stop < currentStoryStep;
-            const isCurrent = st.stop === currentStoryStep;
-
-            return `
-              <div onclick="setStoryStep(${st.stop})" class="relative z-10 flex flex-col items-center cursor-pointer group">
-                
-                <!-- Station Circle with NUMBER INSIDE -->
-                <div class="w-11 h-11 rounded-full flex items-center justify-center font-bold text-xs transition-all ${
-                  isCurrent
-                    ? 'bg-blue-600 text-white ring-4 ring-blue-500/30 scale-125 font-black shadow-lg z-20'
-                    : isPassed
-                    ? 'bg-blue-500 text-white font-bold shadow-sm'
-                    : 'bg-white text-slate-700 border-2 border-slate-300 hover:border-blue-400'
-                }">
-                  ${st.stop}
-                </div>
-
-                <!-- Station Name Label Below Circle -->
-                <div class="absolute top-14 flex flex-col items-center w-24 text-center">
-                  <span class="text-[10.5px] font-bold mt-1 ${isCurrent ? 'text-blue-600 font-extrabold' : 'text-slate-700'} truncate w-full">
-                    ${st.icon} ${st.name}
-                  </span>
-                </div>
-
-              </div>
-            `;
-          }).join('')}
-
+      <!-- S-Curve Winding Subway Track Rows (3 Tiers of 4 Stations) -->
+      <div class="space-y-6">
+        
+        <!-- Tier 1: Stops 1 to 4 -->
+        <div class="flex items-center justify-between gap-4">
+          ${renderRow(row1)}
         </div>
+
+        <!-- Connecting Curved Track Connector 1 -> 2 -->
+        <div class="flex justify-end pr-12 -my-2">
+          <div class="w-8 h-8 border-r-4 border-b-4 border-blue-500 rounded-br-2xl"></div>
+        </div>
+
+        <!-- Tier 2: Stops 5 to 8 -->
+        <div class="flex items-center justify-between gap-4">
+          ${renderRow(row2)}
+        </div>
+
+        <!-- Connecting Curved Track Connector 2 -> 3 -->
+        <div class="flex justify-start pl-12 -my-2">
+          <div class="w-8 h-8 border-l-4 border-b-4 border-blue-500 rounded-bl-2xl"></div>
+        </div>
+
+        <!-- Tier 3: Stops 9 to 12 -->
+        <div class="flex items-center justify-between gap-4">
+          ${renderRow(row3)}
+        </div>
+
       </div>
 
-      <!-- Station Directive Card -->
-      <div class="p-5 rounded-2xl bg-blue-50/70 border border-blue-200/80 flex items-center gap-4 text-xs">
+      <!-- Active Station Directive Card -->
+      <div class="p-5 rounded-2xl bg-blue-50/80 border border-blue-200/80 flex items-center gap-4 text-xs">
         <span class="text-3xl">${activeStation.icon}</span>
         <div>
-          <h4 class="font-bold text-sm text-slate-900">${activeStation.stop}. ${activeStation.name}</h4>
+          <h4 class="font-bold text-sm text-slate-900">Station ${activeStation.stop}: ${activeStation.name}</h4>
           <p class="text-slate-600 mt-1 leading-relaxed text-xs">${activeStation.desc}</p>
         </div>
       </div>
