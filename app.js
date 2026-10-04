@@ -1,30 +1,29 @@
 // Multi-View SDLC Swarm Skills Visualizer — Engine & UI Controller
+// Aligned strictly with PROJECT_BUILDER_SKILL.md & README.md target agent phase mapping
 
-const APPLE_SWARM_NODES = [
-  // --- Central Hub (Controller & Orchestrator) ---
-  { id: 'skill_builder', label: 'PROJECT_BUILDER_SKILL.md', isCenter: true, category: 'Swarm Controller', icon: '👑', desc: 'Lead System Architect & Engineering Director. Sets autonomy modes and manages system lifecycle.' },
-  { id: 'skill_orchestrator', label: 'orchestrator', isCenter: true, category: 'State Engine', icon: '🎼', desc: 'State machine engine routing handoffs and keeping PROJECT_STATUS.md & progress.html synchronized.' },
+const SDLC_SWARM_NODES = [
+  // --- Swarm Hub & State Engine ---
+  { id: 'skill_builder', label: 'PROJECT_BUILDER_SKILL.md', isCenter: true, category: 'Swarm Hub Controller', icon: '👑', desc: 'Master Swarm Controller: Sets autonomy modes (BALANCED / AUTOPILOT / SUPERVISED) and manages system lifecycle.' },
+  { id: 'skill_orchestrator', label: 'orchestrator', isCenter: true, category: 'State Engine', icon: '🎼', desc: 'State Engine: Overwrites docs/PROJECT_STATUS.md every turn to maintain rolling 3-session state and routing.' },
 
-  // --- 12 SDLC Roles ---
-  { id: 'skill_pm', label: 'pm', category: 'Phase 1: Discovery', icon: '📋', desc: 'Project Manager: Conducts scope discovery, locks trade-offs, and creates PROJECT_CONTRACT.md.' },
-  { id: 'skill_po', label: 'product_owner', category: 'Phase 2: Requirements', icon: '🎯', desc: 'Product Owner: Transforms contract into PRD.md and full-stack USER_STORIES.md.' },
-  { id: 'skill_architect', label: 'techincal_architect', category: 'Phase 3: Architecture', icon: '📐', desc: 'Technical Architect: Defines component architecture, database schemas, and API contracts.' },
-  { id: 'skill_design', label: 'apple_design', category: 'Phase 3: UI/UX System', icon: '🎨', desc: 'Apple Design: Crafts Apple HIG-compliant UI design specs, SF typography, and glassmorphism.' },
-  { id: 'skill_frontend', label: 'frontend_developer', category: 'Phase 4: Frontend', icon: '💻', desc: 'Frontend Developer: Implements modular UI components, interactions, and client logic.' },
-  { id: 'skill_service', label: 'service_engineer', category: 'Phase 4: Backend', icon: '⚙️', desc: 'Service Engineer: Implements backend services, database connections, and REST/GraphQL APIs.' },
-  { id: 'skill_qa', label: 'qa_agent', category: 'Phase 5: Quality', icon: '🧪', desc: 'QA Agent: Generates automated test suites, boundary checks, and QA_REPORT.md.' },
-  { id: 'skill_uat', label: 'uat', category: 'Phase 6: Cloud UAT', icon: '⚡', desc: 'UAT Coordinator: Deploys temporary StackBlitz cloud sandbox for stakeholder evaluation.' },
-  { id: 'skill_deploy', label: 'deployment', category: 'Phase 7: Release', icon: '🚀', desc: 'Deployment Agent: Configures production cloud hosting (Vercel, Netlify, Cloudflare).' },
-  { id: 'skill_arch_review', label: 'architecture_reviewer', category: 'Support: Audit', icon: '🔍', desc: 'Architecture Reviewer: Audits deliverables against contract for zero-trust security and scalability.' },
-  { id: 'skill_it', label: 'it_consultant', category: 'Support: Ops', icon: '💼', desc: 'IT Consultant: Evaluates third-party vendor APIs, database setups, and infrastructure.' },
-  { id: 'skill_parser', label: 'content_parser', category: 'Support: Ingestion', icon: '📄', desc: 'Content Parser: Extracts structured technical schemas from raw briefs and PDFs.' }
+  // --- Sequential SDLC Target Agents (Phases 1 - 7 + Release & Audit) ---
+  { id: 'skill_it', label: 'it_consultant', phase: 'Phase 1', icon: '💼', category: 'Phase 1: IT Consultant', desc: 'Phase 1 — IT Consultant (Solutions Architect): Conducts scope discovery, technology evaluation, and outputs 01_ARCH_BRIEF.md.' },
+  { id: 'skill_po', label: 'product_owner', phase: 'Phase 2', icon: '🎯', category: 'Phase 2: Product Owner', desc: 'Phase 2 — Product Owner: Transforms architectural brief into 02_PRD.md and full-stack vertical 03_USER_STORIES.md.' },
+  { id: 'skill_architect', label: 'techincal_architect', phase: 'Phase 3', icon: '📐', category: 'Phase 3: Technical Architect', desc: 'Phase 3 — Technical Architect: Defines system architecture, 04_TECHNICAL_SPEC.md, and 05_TASK_MANIFEST.md.' },
+  { id: 'skill_parser', label: 'content_parser', phase: 'Phase 4', icon: '📄', category: 'Phase 4: Content Parser', desc: 'Phase 4 — Content Parser (Schema Engine): Generates strict JSON Schemas & Zod Contracts in src/assets/schemas/.' },
+  { id: 'skill_frontend', label: 'frontend_developer', phase: 'Phase 5', icon: '💻', category: 'Phase 5: Frontend Developer', desc: 'Phase 5 — Frontend Developer: Implements visual components (Step 0: Visual Gate mockups -> UI component code).' },
+  { id: 'skill_design', label: 'apple_design', phase: 'Phase 5 Guide', icon: '🎨', category: 'Phase 5: UI/UX Rules', desc: 'Apple Design System Rules: Provides Apple HIG tokens, SF typography, and glassmorphism specs for Frontend Dev.' },
+  { id: 'skill_service', label: 'service_engineer', phase: 'Phase 6', icon: '⚙️', desc: 'Phase 6 — Service Engineer: Database setup first, followed by backend services, data access layers, and API endpoints.' },
+  { id: 'skill_qa', label: 'qa_agent', phase: 'Phase 7', icon: '🧪', category: 'Phase 7: QA Agent', desc: 'Phase 7 — QA Agent: Automated test suites, visual diff checks against mockups, and 07_TEST_MANIFEST.md.' },
+  { id: 'skill_deploy', label: 'deployment', phase: 'Release', icon: '🚀', category: 'Release: Deployment Lead', desc: 'Release — Deployment Lead: Handles provider setup, approval checkpoints, EAS OTA / Native, and Vercel cloud deployment.' },
+  { id: 'skill_arch_review', label: 'architecture_reviewer', phase: 'Audit', icon: '🔍', category: 'Audit: Architecture Reviewer', desc: 'Audit — Architecture Reviewer: Zero-Trust Security & Quality Gatekeeper auditing all deliverables against contracts.' }
 ];
 
 const APPLE_CENTER = { cx: 450, cy: 300, radius: 210 };
-const outerSkills = APPLE_SWARM_NODES.filter(s => !s.isCenter);
+const outerSkills = SDLC_SWARM_NODES.filter(s => !s.isCenter);
 const totalOuter = outerSkills.length;
 
-const GRAPH_NODES = APPLE_SWARM_NODES.map((skill) => {
+const GRAPH_NODES = SDLC_SWARM_NODES.map((skill) => {
   if (skill.isCenter) {
     const isFirst = skill.id === 'skill_builder';
     return {
@@ -44,29 +43,30 @@ const GRAPH_NODES = APPLE_SWARM_NODES.map((skill) => {
   }
 });
 
-// Keynote-Style Guided Story Steps (1 to 8)
+// Exact PROJECT_BUILDER_SKILL.md 10-Step Sequential Handoff Story
 const STORY_STEPS = [
-  { step: 1, title: '1. Swarm Controller & State Engine Kickoff', focusNodes: ['skill_builder', 'skill_orchestrator'], desc: 'The Swarm Controller (PROJECT_BUILDER_SKILL) initializes workspace autonomy and engages Orchestrator.' },
-  { step: 2, title: '2. Scope Discovery & Capability Contract', focusNodes: ['skill_pm'], desc: 'Project Manager (pm) conducts discovery, negotiates trade-offs, and locks PROJECT_CONTRACT.md.' },
-  { step: 3, title: '3. PRD & Full-Stack User Stories', focusNodes: ['skill_po', 'skill_parser'], desc: 'Product Owner (product_owner) creates PRD.md and full-stack USER_STORIES.md with acceptance criteria.' },
-  { step: 4, title: '4. System Architecture & Apple HIG System', focusNodes: ['skill_architect', 'skill_design', 'skill_arch_review'], desc: 'Technical Architect defines tech stack while Apple Design specifies SF typography and glassmorphic UI.' },
-  { step: 5, title: '5. Full-Stack Parallel Engineering', focusNodes: ['skill_frontend', 'skill_service', 'skill_it'], desc: 'Frontend Developer and Service Engineer build modular components, APIs, and DB schemas in parallel.' },
-  { step: 6, title: '6. Automated QA & Boundary Assertions', focusNodes: ['skill_qa'], desc: 'QA Agent executes unit tests, checks boundary conditions, and generates QA_REPORT.md.' },
-  { step: 7, title: '7. StackBlitz Temporary Cloud Sandbox UAT', focusNodes: ['skill_uat'], desc: 'UAT Coordinator packages the build into a zero-config StackBlitz sandbox and updates progress.html.' },
-  { step: 8, title: '8. Production Cloud Release', focusNodes: ['skill_deploy'], desc: 'Deployment Agent publishes final release to production cloud hosting (Vercel/Netlify).' }
+  { step: 1, title: 'State: Orchestrator State Engine', target: 'Orchestrator', focusNodes: ['skill_builder', 'skill_orchestrator'], desc: 'Orchestrator initializes state engine, maintaining docs/PROJECT_STATUS.md across rolling 3 sessions.' },
+  { step: 2, title: 'Phase 1: IT Consultant Scope Discovery', target: 'IT Consultant', focusNodes: ['skill_it'], desc: 'it_consultant conducts scope discovery and generates 01_ARCH_BRIEF.md.' },
+  { step: 3, title: 'Phase 2: Product Owner Requirements', target: 'Product Owner', focusNodes: ['skill_po'], desc: 'product_owner converts architectural brief into 02_PRD.md and 03_USER_STORIES.md.' },
+  { step: 4, title: 'Phase 3: Technical Architect Specs', target: 'Technical Architect', focusNodes: ['skill_architect'], desc: 'techincal_architect defines 04_TECHNICAL_SPEC.md and 05_TASK_MANIFEST.md.' },
+  { step: 5, title: 'Phase 4: Content Parser Data Contracts', target: 'Content Parser', focusNodes: ['skill_parser'], desc: 'content_parser extracts JSON Schemas and Zod Data Contracts into src/assets/schemas/.' },
+  { step: 6, title: 'Phase 5: Frontend Developer UI Slices', target: 'Frontend Developer', focusNodes: ['skill_frontend', 'skill_design'], desc: 'frontend_developer creates Step 0: Visual Gate mockups guided by apple_design, then implements UI components.' },
+  { step: 7, title: 'Phase 6: Service Engineer DB & Backend', target: 'Service Engineer', focusNodes: ['skill_service'], desc: 'service_engineer performs database setup first, followed by backend services and API implementations.' },
+  { step: 8, title: 'Phase 7: QA Agent Verification', target: 'QA Agent', focusNodes: ['skill_qa'], desc: 'qa_agent executes automated test suites, visual diff checks, and generates 07_TEST_MANIFEST.md.' },
+  { step: 9, title: 'Release: Deployment Lead Shipping', target: 'Deployment Lead', focusNodes: ['skill_deploy'], desc: 'deployment manages provider setup, founder approval checkpoints, and releases to cloud hosting.' },
+  { step: 10, title: 'Audit: Architecture Reviewer Gate', target: 'Architecture Reviewer', focusNodes: ['skill_arch_review'], desc: 'architecture_reviewer enforces zero-trust quality gates and writes audit logs in docs/reviews/.' }
 ];
 
 let currentStoryStep = 0;
-let selectedNodeId = 'skill_pm';
+let selectedNodeId = 'skill_it';
 let currentZoom = 1.0;
-let currentActiveView = 'pipeline'; // Default: Pipeline Kanban
+let currentActiveView = 'pipeline';
 
 function initApp() {
   switchView('pipeline');
   renderNodeDetails(selectedNodeId);
 }
 
-// View Switcher
 function switchView(viewName) {
   currentActiveView = viewName;
 
@@ -92,7 +92,6 @@ function switchView(viewName) {
     }
   });
 
-  // Render content for active view
   if (viewName === 'pipeline') renderPipelineView();
   if (viewName === 'linear') renderLinearView();
   if (viewName === 'dashboard') renderDashboardView();
@@ -101,19 +100,23 @@ function switchView(viewName) {
 }
 
 // -------------------------------------------------------------
-// VIEW 1: SDLC Pipeline Board (Kanban Columns)
+// VIEW 1: SDLC Pipeline Board (Strict Phase Sequence 1 - 7 + Release/Audit)
 // -------------------------------------------------------------
 function renderPipelineView() {
   const container = document.getElementById('pipelineBoard');
   if (!container) return;
 
   const columns = [
-    { title: '👑 Swarm Hub', phase: 'Hub', ids: ['skill_builder', 'skill_orchestrator'], color: 'border-purple-300 bg-purple-50/40' },
-    { title: '📋 Discovery & PRD', phase: 'Specs', ids: ['skill_pm', 'skill_po', 'skill_parser'], color: 'border-blue-300 bg-blue-50/40' },
-    { title: '📐 Architecture & UX', phase: 'Design', ids: ['skill_architect', 'skill_design', 'skill_arch_review'], color: 'border-indigo-300 bg-indigo-50/40' },
-    { title: '💻 Core Engineering', phase: 'Build', ids: ['skill_frontend', 'skill_service', 'skill_it'], color: 'border-emerald-300 bg-emerald-50/40' },
-    { title: '🧪 QA & Cloud UAT', phase: 'Testing', ids: ['skill_qa', 'skill_uat'], color: 'border-amber-300 bg-amber-50/40' },
-    { title: '🚀 Release & Ops', phase: 'Deploy', ids: ['skill_deploy'], color: 'border-rose-300 bg-rose-50/40' }
+    { title: '🎮 Swarm Hub & State', phase: 'State', ids: ['skill_builder', 'skill_orchestrator'], color: 'border-purple-300 bg-purple-50/40' },
+    { title: '💡 Phase 1: Scope Discovery', phase: 'Phase 1', ids: ['skill_it'], color: 'border-blue-300 bg-blue-50/40' },
+    { title: '🎯 Phase 2: Requirements', phase: 'Phase 2', ids: ['skill_po'], color: 'border-cyan-300 bg-cyan-50/40' },
+    { title: '📐 Phase 3: Tech Architecture', phase: 'Phase 3', ids: ['skill_architect'], color: 'border-indigo-300 bg-indigo-50/40' },
+    { title: '📄 Phase 4: Data Contracts', phase: 'Phase 4', ids: ['skill_parser'], color: 'border-teal-300 bg-teal-50/40' },
+    { title: '💻 Phase 5: Frontend UI', phase: 'Phase 5', ids: ['skill_frontend', 'skill_design'], color: 'border-emerald-300 bg-emerald-50/40' },
+    { title: '⚙️ Phase 6: Service & DB', phase: 'Phase 6', ids: ['skill_service'], color: 'border-amber-300 bg-amber-50/40' },
+    { title: '🧪 Phase 7: QA Verification', phase: 'Phase 7', ids: ['skill_qa'], color: 'border-orange-300 bg-orange-50/40' },
+    { title: '🚀 Release: Deployment Lead', phase: 'Release', ids: ['skill_deploy'], color: 'border-rose-300 bg-rose-50/40' },
+    { title: '🛡️ Audit: Architecture Review', phase: 'Audit', ids: ['skill_arch_review'], color: 'border-slate-300 bg-slate-100/60' }
   ];
 
   const storyStepObj = currentStoryStep > 0 ? STORY_STEPS[currentStoryStep - 1] : null;
@@ -146,7 +149,7 @@ function renderPipelineView() {
     }).join('');
 
     return `
-      <div class="flex-1 min-w-[240px] rounded-3xl border ${col.color} p-3 flex flex-col gap-3">
+      <div class="flex-1 min-w-[230px] rounded-3xl border ${col.color} p-3 flex flex-col gap-3">
         <div class="flex items-center justify-between pb-2 border-b border-slate-200/60 px-1">
           <h3 class="font-bold text-xs text-slate-800 tracking-tight">${col.title}</h3>
           <span class="text-[10px] font-mono font-bold text-slate-500 bg-white px-2 py-0.5 rounded-full border border-slate-200">${colSkills.length}</span>
@@ -160,20 +163,18 @@ function renderPipelineView() {
 }
 
 // -------------------------------------------------------------
-// VIEW 2: Linear Flow Storyboard (Step-by-Step Sequence Map)
+// VIEW 2: Linear Flow Storyboard (Exact Steps 1 - 10)
 // -------------------------------------------------------------
 function renderLinearView() {
   const container = document.getElementById('linearFlowContainer');
   if (!container) return;
-
-  const storyStepObj = currentStoryStep > 0 ? STORY_STEPS[currentStoryStep - 1] : null;
 
   container.innerHTML = STORY_STEPS.map((stepObj) => {
     const isActiveStep = currentStoryStep === stepObj.step;
     const focusSkills = GRAPH_NODES.filter(n => stepObj.focusNodes.includes(n.id));
 
     return `
-      <div onclick="setStoryStep(${stepObj.step})" class="relative flex-1 min-w-[260px] max-w-[320px] rounded-3xl border p-4 cursor-pointer transition-all ${
+      <div onclick="setStoryStep(${stepObj.step})" class="relative flex-1 min-w-[260px] max-w-[300px] rounded-3xl border p-4 cursor-pointer transition-all ${
         isActiveStep
           ? 'bg-gradient-to-b from-blue-600 to-blue-700 text-white border-blue-700 shadow-xl ring-4 ring-blue-500/30 scale-[1.03]'
           : 'bg-white border-slate-200 hover:border-blue-400 hover:shadow-md'
@@ -182,13 +183,12 @@ function renderLinearView() {
           <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
             isActiveStep ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600 border border-slate-200'
           }">Step ${stepObj.step}</span>
-          <span class="text-xs font-mono font-semibold ${isActiveStep ? 'text-blue-100' : 'text-slate-400'}">${focusSkills.length} Agents</span>
+          <span class="text-xs font-mono font-semibold ${isActiveStep ? 'text-blue-100' : 'text-blue-600'}">${stepObj.target}</span>
         </div>
 
         <h3 class="font-bold text-xs ${isActiveStep ? 'text-white' : 'text-slate-900'} leading-snug">${stepObj.title}</h3>
         <p class="text-[11px] ${isActiveStep ? 'text-blue-100' : 'text-slate-500'} mt-1.5 leading-relaxed">${stepObj.desc}</p>
 
-        <!-- Focus Skill Badges -->
         <div class="mt-4 pt-3 border-t ${isActiveStep ? 'border-white/20' : 'border-slate-100'} flex flex-wrap gap-1.5">
           ${focusSkills.map(s => `
             <div onclick="event.stopPropagation(); selectNode('${s.id}')" class="px-2 py-1 rounded-xl text-[10.5px] font-semibold flex items-center gap-1 transition-transform hover:scale-105 ${
@@ -212,8 +212,6 @@ function renderDashboardView() {
   const mainCanvas = document.getElementById('dashboardMainCanvas');
   if (!sidebar || !mainCanvas) return;
 
-  const categories = ['Swarm Controller', 'State Engine', 'Phase 1: Discovery', 'Phase 2: Requirements', 'Phase 3: Architecture', 'Phase 3: UI/UX System', 'Phase 4: Frontend', 'Phase 4: Backend', 'Phase 5: Quality', 'Phase 6: Cloud UAT', 'Phase 7: Release', 'Support: Audit', 'Support: Ops', 'Support: Ingestion'];
-
   sidebar.innerHTML = GRAPH_NODES.map(s => {
     const isSel = selectedNodeId === s.id;
     return `
@@ -224,7 +222,7 @@ function renderDashboardView() {
           <span>${s.icon}</span>
           <span class="truncate">${s.label}</span>
         </div>
-        <span class="text-[9px] opacity-75 font-mono shrink-0">${s.category.split(':')[0]}</span>
+        <span class="text-[9px] opacity-75 font-mono shrink-0">${s.phase || 'Hub'}</span>
       </div>
     `;
   }).join('');
@@ -244,18 +242,18 @@ function renderDashboardView() {
             </div>
           </div>
           <span class="px-3 py-1 rounded-full text-xs font-mono font-bold ${node.isCenter ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-700'}">
-            ${node.isCenter ? 'HUB CONTROLLER' : 'SDLC AGENT'}
+            ${node.isCenter ? 'HUB CONTROLLER' : node.phase || 'SDLC AGENT'}
           </span>
         </div>
 
         <div class="mt-4">
-          <h3 class="text-xs uppercase font-bold text-slate-400 tracking-wider">Role & Capabilities Directive</h3>
+          <h3 class="text-xs uppercase font-bold text-slate-400 tracking-wider">PROJECT_BUILDER Directive & Role Spec</h3>
           <p class="text-slate-700 mt-1.5 leading-relaxed text-sm">${node.desc}</p>
         </div>
 
         ${storyStepObj ? `
           <div class="mt-5 p-4 rounded-2xl bg-blue-50 border border-blue-200">
-            <span class="text-xs font-bold text-blue-700 uppercase tracking-wider block mb-1">Active Story Focus (Step ${storyStepObj.step})</span>
+            <span class="text-xs font-bold text-blue-700 uppercase tracking-wider block mb-1">Active Step ${storyStepObj.step}: ${storyStepObj.target}</span>
             <p class="text-xs text-slate-800 leading-relaxed">${storyStepObj.desc}</p>
           </div>
         ` : ''}
@@ -263,14 +261,14 @@ function renderDashboardView() {
 
       <div class="grid grid-cols-2 gap-4">
         <div class="p-5 rounded-3xl bg-white border border-slate-200 shadow-sm">
-          <span class="text-xs uppercase font-bold text-slate-400 block mb-1">Execution Mode</span>
-          <span class="text-sm font-semibold text-slate-800">Autonomous Reactive Agent</span>
-          <p class="text-xs text-slate-500 mt-1">Operates within the Antigravity multi-agent workspace loop.</p>
+          <span class="text-xs uppercase font-bold text-slate-400 block mb-1">Skill Path Location</span>
+          <span class="text-sm font-semibold text-slate-800 font-mono">${node.label}/SKILL.md</span>
+          <p class="text-xs text-slate-500 mt-1">Autonomous skill definition file loaded by Antigravity.</p>
         </div>
         <div class="p-5 rounded-3xl bg-white border border-slate-200 shadow-sm">
-          <span class="text-xs uppercase font-bold text-slate-400 block mb-1">Artifact Deliverable</span>
-          <span class="text-sm font-semibold text-slate-800 font-mono">${node.label}.md</span>
-          <p class="text-xs text-slate-500 mt-1">Creates & maintains structured Markdown specs in workspace.</p>
+          <span class="text-xs uppercase font-bold text-slate-400 block mb-1">Target Handoff Artifact</span>
+          <span class="text-sm font-semibold text-slate-800 font-mono">docs/ & src/ Deliverables</span>
+          <p class="text-xs text-slate-500 mt-1">Passes structured markdown or code to next phase agent.</p>
         </div>
       </div>
     </div>
@@ -311,7 +309,7 @@ function renderGridMatrixView() {
         </div>
 
         <div class="mt-4 pt-3 border-t ${isStoryFocused ? 'border-white/20' : 'border-slate-100'} flex items-center justify-between text-[11px]">
-          <span class="font-mono ${isStoryFocused ? 'text-blue-100' : 'text-slate-400'}">${s.isCenter ? 'Hub Directive' : 'SDLC Skill'}</span>
+          <span class="font-mono ${isStoryFocused ? 'text-blue-100' : 'text-slate-400'}">${s.phase || 'Hub'}</span>
           <span class="font-bold ${isStoryFocused ? 'text-white' : 'text-blue-600'}">Inspect ↗</span>
         </div>
       </div>
@@ -444,18 +442,18 @@ function renderNodeDetails(nodeId) {
         </div>
       </div>
       <span class="px-3 py-1 rounded-full text-xs font-mono font-semibold ${node.isCenter ? 'bg-purple-50 text-purple-700 border border-purple-200' : 'bg-blue-50 text-blue-700 border border-blue-200'}">
-        ${node.isCenter ? 'CENTER HUB' : 'ORBITAL SPOKE'}
+        ${node.isCenter ? 'CENTER HUB' : node.phase || 'SDLC AGENT'}
       </span>
     </div>
 
     <div class="mt-3 space-y-3 text-xs">
       <div>
-        <label class="text-[10.5px] uppercase font-semibold text-slate-400 tracking-wider">Skill Directive</label>
+        <label class="text-[10.5px] uppercase font-semibold text-slate-400 tracking-wider">PROJECT_BUILDER Skill Directive</label>
         <p class="text-slate-700 mt-1 leading-relaxed font-normal">${node.desc}</p>
       </div>
 
       <div class="p-3 rounded-2xl bg-slate-50/80 border border-slate-200/80">
-        <span class="text-[10.5px] uppercase font-semibold text-slate-400 block mb-1">Architecture Category</span>
+        <span class="text-[10.5px] uppercase font-semibold text-slate-400 block mb-1">Target Handoff Category</span>
         <span class="text-xs text-slate-800 font-medium">${node.category}</span>
       </div>
     </div>
@@ -479,7 +477,7 @@ function setStoryStep(stepNum) {
     renderNodeDetails(selectedNodeId);
   }
 
-  for (let i = 1; i <= 8; i++) {
+  for (let i = 1; i <= 10; i++) {
     const btn = document.getElementById(`storyBtn${i}`);
     if (btn) {
       if (i === stepNum) {
@@ -494,7 +492,7 @@ function setStoryStep(stepNum) {
 }
 
 function nextStoryStep() {
-  if (currentStoryStep < 8) {
+  if (currentStoryStep < 10) {
     setStoryStep(currentStoryStep + 1);
   } else {
     setStoryStep(1);
@@ -505,7 +503,7 @@ function prevStoryStep() {
   if (currentStoryStep > 1) {
     setStoryStep(currentStoryStep - 1);
   } else {
-    setStoryStep(8);
+    setStoryStep(10);
   }
 }
 

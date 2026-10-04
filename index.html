@@ -25,25 +25,25 @@
       <div>
         <h1 class="text-sm font-bold tracking-tight text-slate-900 flex items-center gap-2">
           <span>Multi-Agent Swarm Visualizer</span>
-          <span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 font-mono font-semibold">14 Skills</span>
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 font-mono font-semibold">PROJECT_BUILDER SDLC</span>
         </h1>
         <p class="text-[11px] text-slate-500 font-mono">/Volumes/Samsung 990 1TB/hp/projects/pm-skills</p>
       </div>
     </div>
 
-    <!-- UI/UX View Layout Switcher (Pick Your Favorite!) -->
+    <!-- UI/UX View Layout Switcher -->
     <nav class="flex items-center bg-slate-100 border border-slate-200 rounded-2xl p-1 gap-1">
       <button id="tab_pipeline" onclick="switchView('pipeline')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-blue-600 text-white shadow-sm transition-all">
-        📊 Pipeline Kanban
+        📊 SDLC Pipeline
       </button>
       <button id="tab_linear" onclick="switchView('linear')" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors">
-        🔀 Linear Flow
+        🔀 Step Sequence
       </button>
       <button id="tab_dashboard" onclick="switchView('dashboard')" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors">
         🗂️ Master-Detail
       </button>
       <button id="tab_grid" onclick="switchView('grid')" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors">
-        📦 Matrix Grid
+        📦 Skill Matrix
       </button>
       <button id="tab_wheel" onclick="switchView('wheel')" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors">
         🎡 Orbital Wheel
@@ -51,18 +51,18 @@
     </nav>
   </header>
 
-  <!-- Toolbar: Story Mode Controls & Zoom Controls -->
+  <!-- Toolbar: Step Navigation Controls -->
   <div class="bg-white border-b border-slate-200 px-4 py-2 flex flex-wrap items-center justify-between gap-3 text-xs shrink-0 z-20 shadow-sm">
     <div class="flex items-center gap-2">
-      <span class="font-bold text-slate-800 uppercase tracking-wider text-[11px]">📖 Keynote Story Step:</span>
+      <span class="font-bold text-slate-800 uppercase tracking-wider text-[11px]">📖 PROJECT_BUILDER Sequence:</span>
       <div class="flex items-center gap-1">
         <button onclick="prevStoryStep()" class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 font-medium">⏮ Prev</button>
         <button onclick="nextStoryStep()" class="px-3 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-sm">Next Step ⏭</button>
         <button onclick="setStoryStep(0)" class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200 text-slate-600 hover:bg-slate-200 font-medium">Clear Focus</button>
       </div>
 
-      <!-- Step Buttons (1-8) -->
-      <div class="hidden sm:flex items-center gap-1 ml-2">
+      <!-- Step Buttons (1-10) -->
+      <div class="hidden lg:flex items-center gap-1 ml-2">
         <span class="text-slate-400 text-[11px] mr-1">Step:</span>
         <button id="storyBtn1" onclick="setStoryStep(1)" class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 text-xs border border-slate-200 font-medium">1</button>
         <button id="storyBtn2" onclick="setStoryStep(2)" class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 text-xs border border-slate-200 font-medium">2</button>
@@ -72,16 +72,18 @@
         <button id="storyBtn6" onclick="setStoryStep(6)" class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 text-xs border border-slate-200 font-medium">6</button>
         <button id="storyBtn7" onclick="setStoryStep(7)" class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 text-xs border border-slate-200 font-medium">7</button>
         <button id="storyBtn8" onclick="setStoryStep(8)" class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 text-xs border border-slate-200 font-medium">8</button>
+        <button id="storyBtn9" onclick="setStoryStep(9)" class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 text-xs border border-slate-200 font-medium">9</button>
+        <button id="storyBtn10" onclick="setStoryStep(10)" class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 text-xs border border-slate-200 font-medium">10</button>
       </div>
     </div>
   </div>
 
-  <!-- Story Banner (Clean Header Block ABOVE the Canvas - NO Overlapping!) -->
+  <!-- Story Banner (Clean Header Block ABOVE Canvas) -->
   <div id="storyBanner" class="hidden bg-blue-50/90 border-b border-blue-200 px-6 py-3 text-xs shrink-0 transition-all">
     <div class="max-w-6xl mx-auto flex items-center justify-between gap-4">
       <div>
-        <span class="text-blue-700 font-bold uppercase tracking-wider text-[10.5px]">📖 Active Keynote Story Step</span>
-        <h3 id="storyTitle" class="text-sm font-bold text-slate-900 mt-0.5">1. Swarm Controller Kickoff</h3>
+        <span class="text-blue-700 font-bold uppercase tracking-wider text-[10.5px]">📖 Active SDLC Handoff Step</span>
+        <h3 id="storyTitle" class="text-sm font-bold text-slate-900 mt-0.5">1. State: Orchestrator State Engine</h3>
         <p id="storyDesc" class="text-xs text-slate-600 mt-0.5 leading-relaxed font-normal"></p>
       </div>
       <button onclick="setStoryStep(0)" class="text-slate-400 hover:text-slate-700 font-bold px-2 py-1">✕</button>
@@ -91,9 +93,9 @@
   <!-- Main Viewport -->
   <main class="flex-1 flex overflow-hidden relative">
 
-    <!-- VIEW 1: SDLC Pipeline Board (Kanban Columns) -->
+    <!-- VIEW 1: SDLC Pipeline Board -->
     <div id="view_pipeline" class="flex-1 flex overflow-x-auto p-6 bg-slate-50 gap-4">
-      <div id="pipelineBoard" class="flex gap-4 w-full min-w-[1200px]"></div>
+      <div id="pipelineBoard" class="flex gap-3 w-full min-w-[1400px]"></div>
     </div>
 
     <!-- VIEW 2: Linear Flow Storyboard -->
@@ -111,8 +113,8 @@
     <div id="view_grid" class="hidden flex-1 flex flex-col p-6 overflow-y-auto bg-slate-50">
       <div class="pb-4 flex items-center justify-between">
         <div>
-          <h2 class="text-base font-bold text-slate-900">14 Skills Matrix</h2>
-          <p class="text-xs text-slate-500">Categorized agents across the SDLC Swarm system</p>
+          <h2 class="text-base font-bold text-slate-900">PROJECT_BUILDER Agent Matrix</h2>
+          <p class="text-xs text-slate-500">Categorized agent skills across Phase 1 - 7, Release, State, and Audit</p>
         </div>
       </div>
       <div id="gridMatrixContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
@@ -120,15 +122,12 @@
 
     <!-- VIEW 5: Concentric Wheel Diagram Viewport -->
     <div id="view_wheel" class="hidden flex-1 flex overflow-hidden w-full relative">
-      <!-- Canvas Container -->
       <div class="flex-1 relative bg-slate-50 overflow-auto flex items-center justify-center p-4">
-        <!-- Scalable Wheel Wrapper -->
         <div id="zoomWrapper" class="relative w-[840px] h-[580px] shrink-0 transition-transform duration-150">
           <svg id="wheelSvg" class="absolute inset-0 w-[840px] h-[580px] pointer-events-none z-0"></svg>
           <div id="wheelNodes" class="absolute inset-0 w-[840px] h-[580px]"></div>
         </div>
 
-        <!-- Zoom Controls -->
         <div class="absolute bottom-4 right-4 flex items-center gap-1 bg-white border border-slate-200 rounded-xl p-1 shadow-md z-30">
           <button onclick="zoomOut()" title="Zoom Out" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs">🔍 -</button>
           <span class="text-[11px] font-mono px-2 font-semibold text-slate-700" id="zoomLabel">100%</span>
@@ -137,7 +136,6 @@
         </div>
       </div>
 
-      <!-- Right Inspector Drawer -->
       <aside class="w-full md:w-[360px] bg-white border-l border-slate-200 p-5 flex flex-col shrink-0 overflow-y-auto z-20 shadow-lg">
         <div id="nodeDetailContainer"></div>
       </aside>
