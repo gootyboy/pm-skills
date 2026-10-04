@@ -1,10 +1,11 @@
-// Apple Human Interface Guidelines (HIG) Design Architecture & Data Engine
+// Multi-View SDLC Swarm Skills Visualizer — Engine & UI Controller
+
 const APPLE_SWARM_NODES = [
   // --- Central Hub (Controller & Orchestrator) ---
   { id: 'skill_builder', label: 'PROJECT_BUILDER_SKILL.md', isCenter: true, category: 'Swarm Controller', icon: '👑', desc: 'Lead System Architect & Engineering Director. Sets autonomy modes and manages system lifecycle.' },
   { id: 'skill_orchestrator', label: 'orchestrator', isCenter: true, category: 'State Engine', icon: '🎼', desc: 'State machine engine routing handoffs and keeping PROJECT_STATUS.md & progress.html synchronized.' },
 
-  // --- 12 Concentric Orbital Spokes (Clockwise SDLC Flow) ---
+  // --- 12 SDLC Roles ---
   { id: 'skill_pm', label: 'pm', category: 'Phase 1: Discovery', icon: '📋', desc: 'Project Manager: Conducts scope discovery, locks trade-offs, and creates PROJECT_CONTRACT.md.' },
   { id: 'skill_po', label: 'product_owner', category: 'Phase 2: Requirements', icon: '🎯', desc: 'Product Owner: Transforms contract into PRD.md and full-stack USER_STORIES.md.' },
   { id: 'skill_architect', label: 'techincal_architect', category: 'Phase 3: Architecture', icon: '📐', desc: 'Technical Architect: Defines component architecture, database schemas, and API contracts.' },
@@ -20,8 +21,6 @@ const APPLE_SWARM_NODES = [
 ];
 
 const APPLE_CENTER = { cx: 450, cy: 300, radius: 210 };
-
-// Calculate Concentric Coordinates with Spatial Buffer
 const outerSkills = APPLE_SWARM_NODES.filter(s => !s.isCenter);
 const totalOuter = outerSkills.length;
 
@@ -45,7 +44,7 @@ const GRAPH_NODES = APPLE_SWARM_NODES.map((skill) => {
   }
 });
 
-// Apple Keynote-Style Guided Story Steps (1 to 8)
+// Keynote-Style Guided Story Steps (1 to 8)
 const STORY_STEPS = [
   { step: 1, title: '1. Swarm Controller & State Engine Kickoff', focusNodes: ['skill_builder', 'skill_orchestrator'], desc: 'The Swarm Controller (PROJECT_BUILDER_SKILL) initializes workspace autonomy and engages Orchestrator.' },
   { step: 2, title: '2. Scope Discovery & Capability Contract', focusNodes: ['skill_pm'], desc: 'Project Manager (pm) conducts discovery, negotiates trade-offs, and locks PROJECT_CONTRACT.md.' },
@@ -60,14 +59,269 @@ const STORY_STEPS = [
 let currentStoryStep = 0;
 let selectedNodeId = 'skill_pm';
 let currentZoom = 1.0;
+let currentActiveView = 'pipeline'; // Default: Pipeline Kanban
 
 function initApp() {
-  renderAppleWheel();
+  switchView('pipeline');
   renderNodeDetails(selectedNodeId);
-  renderSkillsDirectory();
 }
 
-// Zoom Controls with Fluid Spring Feedback
+// View Switcher
+function switchView(viewName) {
+  currentActiveView = viewName;
+
+  const views = ['pipeline', 'linear', 'dashboard', 'grid', 'wheel'];
+  views.forEach(v => {
+    const el = document.getElementById(`view_${v}`);
+    const tabBtn = document.getElementById(`tab_${v}`);
+    if (el) {
+      if (v === viewName) {
+        el.classList.remove('hidden');
+        el.classList.add('flex');
+      } else {
+        el.classList.add('hidden');
+        el.classList.remove('flex');
+      }
+    }
+    if (tabBtn) {
+      if (v === viewName) {
+        tabBtn.className = "px-3.5 py-1.5 rounded-xl text-xs font-bold bg-blue-600 text-white shadow-sm transition-all";
+      } else {
+        tabBtn.className = "px-3.5 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors";
+      }
+    }
+  });
+
+  // Render content for active view
+  if (viewName === 'pipeline') renderPipelineView();
+  if (viewName === 'linear') renderLinearView();
+  if (viewName === 'dashboard') renderDashboardView();
+  if (viewName === 'grid') renderGridMatrixView();
+  if (viewName === 'wheel') renderAppleWheel();
+}
+
+// -------------------------------------------------------------
+// VIEW 1: SDLC Pipeline Board (Kanban Columns)
+// -------------------------------------------------------------
+function renderPipelineView() {
+  const container = document.getElementById('pipelineBoard');
+  if (!container) return;
+
+  const columns = [
+    { title: '👑 Swarm Hub', phase: 'Hub', ids: ['skill_builder', 'skill_orchestrator'], color: 'border-purple-300 bg-purple-50/40' },
+    { title: '📋 Discovery & PRD', phase: 'Specs', ids: ['skill_pm', 'skill_po', 'skill_parser'], color: 'border-blue-300 bg-blue-50/40' },
+    { title: '📐 Architecture & UX', phase: 'Design', ids: ['skill_architect', 'skill_design', 'skill_arch_review'], color: 'border-indigo-300 bg-indigo-50/40' },
+    { title: '💻 Core Engineering', phase: 'Build', ids: ['skill_frontend', 'skill_service', 'skill_it'], color: 'border-emerald-300 bg-emerald-50/40' },
+    { title: '🧪 QA & Cloud UAT', phase: 'Testing', ids: ['skill_qa', 'skill_uat'], color: 'border-amber-300 bg-amber-50/40' },
+    { title: '🚀 Release & Ops', phase: 'Deploy', ids: ['skill_deploy'], color: 'border-rose-300 bg-rose-50/40' }
+  ];
+
+  const storyStepObj = currentStoryStep > 0 ? STORY_STEPS[currentStoryStep - 1] : null;
+
+  container.innerHTML = columns.map(col => {
+    const colSkills = GRAPH_NODES.filter(n => col.ids.includes(n.id));
+
+    const cardHtml = colSkills.map(s => {
+      const isSelected = selectedNodeId === s.id;
+      const isStoryFocused = storyStepObj && storyStepObj.focusNodes.includes(s.id);
+      
+      return `
+        <div onclick="selectNode('${s.id}')" class="p-3.5 rounded-2xl border transition-all cursor-pointer shadow-sm ${
+          isStoryFocused
+            ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-400 scale-[1.02]'
+            : isSelected
+            ? 'bg-white border-blue-500 ring-2 ring-blue-500/20 shadow-md'
+            : 'bg-white/90 border-slate-200 hover:border-slate-300 hover:shadow'
+        }">
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <span class="text-lg">${s.icon}</span>
+              <h4 class="font-bold text-xs ${isStoryFocused ? 'text-white' : 'text-slate-900'}">${s.label}</h4>
+            </div>
+            ${s.isCenter ? `<span class="text-[9px] font-mono px-2 py-0.5 rounded-full ${isStoryFocused ? 'bg-purple-400/30 text-white' : 'bg-purple-100 text-purple-700 font-semibold'}">HUB</span>` : ''}
+          </div>
+          <p class="text-[11px] ${isStoryFocused ? 'text-blue-100' : 'text-slate-500'} mt-2 leading-relaxed line-clamp-2">${s.desc}</p>
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div class="flex-1 min-w-[240px] rounded-3xl border ${col.color} p-3 flex flex-col gap-3">
+        <div class="flex items-center justify-between pb-2 border-b border-slate-200/60 px-1">
+          <h3 class="font-bold text-xs text-slate-800 tracking-tight">${col.title}</h3>
+          <span class="text-[10px] font-mono font-bold text-slate-500 bg-white px-2 py-0.5 rounded-full border border-slate-200">${colSkills.length}</span>
+        </div>
+        <div class="flex flex-col gap-2.5 flex-1">
+          ${cardHtml}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// -------------------------------------------------------------
+// VIEW 2: Linear Flow Storyboard (Step-by-Step Sequence Map)
+// -------------------------------------------------------------
+function renderLinearView() {
+  const container = document.getElementById('linearFlowContainer');
+  if (!container) return;
+
+  const storyStepObj = currentStoryStep > 0 ? STORY_STEPS[currentStoryStep - 1] : null;
+
+  container.innerHTML = STORY_STEPS.map((stepObj) => {
+    const isActiveStep = currentStoryStep === stepObj.step;
+    const focusSkills = GRAPH_NODES.filter(n => stepObj.focusNodes.includes(n.id));
+
+    return `
+      <div onclick="setStoryStep(${stepObj.step})" class="relative flex-1 min-w-[260px] max-w-[320px] rounded-3xl border p-4 cursor-pointer transition-all ${
+        isActiveStep
+          ? 'bg-gradient-to-b from-blue-600 to-blue-700 text-white border-blue-700 shadow-xl ring-4 ring-blue-500/30 scale-[1.03]'
+          : 'bg-white border-slate-200 hover:border-blue-400 hover:shadow-md'
+      }">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+            isActiveStep ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600 border border-slate-200'
+          }">Step ${stepObj.step}</span>
+          <span class="text-xs font-mono font-semibold ${isActiveStep ? 'text-blue-100' : 'text-slate-400'}">${focusSkills.length} Agents</span>
+        </div>
+
+        <h3 class="font-bold text-xs ${isActiveStep ? 'text-white' : 'text-slate-900'} leading-snug">${stepObj.title}</h3>
+        <p class="text-[11px] ${isActiveStep ? 'text-blue-100' : 'text-slate-500'} mt-1.5 leading-relaxed">${stepObj.desc}</p>
+
+        <!-- Focus Skill Badges -->
+        <div class="mt-4 pt-3 border-t ${isActiveStep ? 'border-white/20' : 'border-slate-100'} flex flex-wrap gap-1.5">
+          ${focusSkills.map(s => `
+            <div onclick="event.stopPropagation(); selectNode('${s.id}')" class="px-2 py-1 rounded-xl text-[10.5px] font-semibold flex items-center gap-1 transition-transform hover:scale-105 ${
+              isActiveStep ? 'bg-white/20 text-white border border-white/30' : 'bg-slate-100 text-slate-700 border border-slate-200'
+            }">
+              <span>${s.icon}</span>
+              <span>${s.label}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// -------------------------------------------------------------
+// VIEW 3: Master-Detail Dashboard View
+// -------------------------------------------------------------
+function renderDashboardView() {
+  const sidebar = document.getElementById('dashboardSidebar');
+  const mainCanvas = document.getElementById('dashboardMainCanvas');
+  if (!sidebar || !mainCanvas) return;
+
+  const categories = ['Swarm Controller', 'State Engine', 'Phase 1: Discovery', 'Phase 2: Requirements', 'Phase 3: Architecture', 'Phase 3: UI/UX System', 'Phase 4: Frontend', 'Phase 4: Backend', 'Phase 5: Quality', 'Phase 6: Cloud UAT', 'Phase 7: Release', 'Support: Audit', 'Support: Ops', 'Support: Ingestion'];
+
+  sidebar.innerHTML = GRAPH_NODES.map(s => {
+    const isSel = selectedNodeId === s.id;
+    return `
+      <div onclick="selectNode('${s.id}')" class="p-2.5 rounded-xl border text-xs font-medium cursor-pointer transition-all flex items-center justify-between ${
+        isSel ? 'bg-blue-600 text-white border-blue-600 font-bold shadow-md' : 'bg-white text-slate-800 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+      }">
+        <div class="flex items-center gap-2 truncate">
+          <span>${s.icon}</span>
+          <span class="truncate">${s.label}</span>
+        </div>
+        <span class="text-[9px] opacity-75 font-mono shrink-0">${s.category.split(':')[0]}</span>
+      </div>
+    `;
+  }).join('');
+
+  const node = GRAPH_NODES.find(n => n.id === selectedNodeId) || GRAPH_NODES[0];
+  const storyStepObj = currentStoryStep > 0 ? STORY_STEPS[currentStoryStep - 1] : null;
+
+  mainCanvas.innerHTML = `
+    <div class="max-w-3xl w-full mx-auto space-y-6">
+      <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+          <div class="flex items-center gap-3">
+            <span class="text-3xl">${node.icon}</span>
+            <div>
+              <h2 class="text-lg font-bold text-slate-900">${node.label}</h2>
+              <span class="text-xs text-blue-600 font-mono font-semibold">${node.category}</span>
+            </div>
+          </div>
+          <span class="px-3 py-1 rounded-full text-xs font-mono font-bold ${node.isCenter ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-700'}">
+            ${node.isCenter ? 'HUB CONTROLLER' : 'SDLC AGENT'}
+          </span>
+        </div>
+
+        <div class="mt-4">
+          <h3 class="text-xs uppercase font-bold text-slate-400 tracking-wider">Role & Capabilities Directive</h3>
+          <p class="text-slate-700 mt-1.5 leading-relaxed text-sm">${node.desc}</p>
+        </div>
+
+        ${storyStepObj ? `
+          <div class="mt-5 p-4 rounded-2xl bg-blue-50 border border-blue-200">
+            <span class="text-xs font-bold text-blue-700 uppercase tracking-wider block mb-1">Active Story Focus (Step ${storyStepObj.step})</span>
+            <p class="text-xs text-slate-800 leading-relaxed">${storyStepObj.desc}</p>
+          </div>
+        ` : ''}
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div class="p-5 rounded-3xl bg-white border border-slate-200 shadow-sm">
+          <span class="text-xs uppercase font-bold text-slate-400 block mb-1">Execution Mode</span>
+          <span class="text-sm font-semibold text-slate-800">Autonomous Reactive Agent</span>
+          <p class="text-xs text-slate-500 mt-1">Operates within the Antigravity multi-agent workspace loop.</p>
+        </div>
+        <div class="p-5 rounded-3xl bg-white border border-slate-200 shadow-sm">
+          <span class="text-xs uppercase font-bold text-slate-400 block mb-1">Artifact Deliverable</span>
+          <span class="text-sm font-semibold text-slate-800 font-mono">${node.label}.md</span>
+          <p class="text-xs text-slate-500 mt-1">Creates & maintains structured Markdown specs in workspace.</p>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// -------------------------------------------------------------
+// VIEW 4: Categorized Grid Matrix View
+// -------------------------------------------------------------
+function renderGridMatrixView() {
+  const container = document.getElementById('gridMatrixContainer');
+  if (!container) return;
+
+  const storyStepObj = currentStoryStep > 0 ? STORY_STEPS[currentStoryStep - 1] : null;
+
+  container.innerHTML = GRAPH_NODES.map(s => {
+    const isSel = selectedNodeId === s.id;
+    const isStoryFocused = storyStepObj && storyStepObj.focusNodes.includes(s.id);
+
+    return `
+      <div onclick="selectNode('${s.id}')" class="p-5 rounded-3xl border transition-all cursor-pointer shadow-sm flex flex-col justify-between ${
+        isStoryFocused
+          ? 'bg-blue-600 text-white border-blue-600 shadow-lg ring-2 ring-blue-400 scale-[1.02]'
+          : isSel
+          ? 'bg-white border-blue-500 ring-2 ring-blue-500/20 shadow-md'
+          : 'bg-white border-slate-200 hover:border-blue-400 hover:shadow-md'
+      }">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-2xl">${s.icon}</span>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded-full ${
+              isStoryFocused ? 'bg-white/20 text-white font-bold' : 'bg-slate-100 text-slate-600 border border-slate-200'
+            }">${s.category}</span>
+          </div>
+
+          <h3 class="font-bold text-sm ${isStoryFocused ? 'text-white' : 'text-slate-900'}">${s.label}</h3>
+          <p class="text-xs ${isStoryFocused ? 'text-blue-100' : 'text-slate-500'} mt-2 leading-relaxed">${s.desc}</p>
+        </div>
+
+        <div class="mt-4 pt-3 border-t ${isStoryFocused ? 'border-white/20' : 'border-slate-100'} flex items-center justify-between text-[11px]">
+          <span class="font-mono ${isStoryFocused ? 'text-blue-100' : 'text-slate-400'}">${s.isCenter ? 'Hub Directive' : 'SDLC Skill'}</span>
+          <span class="font-bold ${isStoryFocused ? 'text-white' : 'text-blue-600'}">Inspect ↗</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// -------------------------------------------------------------
+// VIEW 5: Concentric Orbital Wheel View
+// -------------------------------------------------------------
 function zoomIn() {
   currentZoom = Math.min(1.8, currentZoom + 0.15);
   applyZoom();
@@ -104,13 +358,9 @@ function renderAppleWheel() {
   const isStoryActive = currentStoryStep > 0;
   const storyStepObj = isStoryActive ? STORY_STEPS[currentStoryStep - 1] : null;
 
-  // Render Apple Concentric Glass Rings & Beams
   let svgContent = `
-    <!-- Outer Concentric Orbit Ring -->
     <circle cx="${APPLE_CENTER.cx}" cy="${APPLE_CENTER.cy}" r="${APPLE_CENTER.radius}" stroke="rgba(0, 122, 255, 0.18)" stroke-width="2" fill="none" stroke-dasharray="6 6"/>
-    <!-- Inner Concentric Orbit Ring -->
     <circle cx="${APPLE_CENTER.cx}" cy="${APPLE_CENTER.cy}" r="${APPLE_CENTER.radius * 0.55}" stroke="rgba(142, 142, 147, 0.12)" stroke-width="1.5" fill="none"/>
-    <!-- Center Hub Aura -->
     <circle cx="${APPLE_CENTER.cx}" cy="${APPLE_CENTER.cy}" r="78" stroke="rgba(88, 86, 214, 0.2)" stroke-width="2" fill="url(#hubGradient)"/>
     <defs>
       <radialGradient id="hubGradient" cx="50%" cy="50%" r="50%">
@@ -120,7 +370,6 @@ function renderAppleWheel() {
     </defs>
   `;
 
-  // Draw Radial Ray Beams from Center Hub to Outer Nodes
   GRAPH_NODES.filter(n => !n.isCenter).forEach(node => {
     const isSelected = selectedNodeId === node.id;
     const isStoryFocused = storyStepObj && storyStepObj.focusNodes.includes(node.id);
@@ -140,7 +389,6 @@ function renderAppleWheel() {
   svg.innerHTML = svgContent;
   nodesContainer.innerHTML = '';
 
-  // Render Apple-Style Glass Capsules
   GRAPH_NODES.forEach(node => {
     const isSelected = selectedNodeId === node.id;
     const isStoryFocused = storyStepObj && storyStepObj.focusNodes.includes(node.id);
@@ -172,8 +420,12 @@ function renderAppleWheel() {
 
 function selectNode(nodeId) {
   selectedNodeId = nodeId;
-  renderAppleWheel();
   renderNodeDetails(nodeId);
+  if (currentActiveView === 'pipeline') renderPipelineView();
+  if (currentActiveView === 'linear') renderLinearView();
+  if (currentActiveView === 'dashboard') renderDashboardView();
+  if (currentActiveView === 'grid') renderGridMatrixView();
+  if (currentActiveView === 'wheel') renderAppleWheel();
 }
 
 function renderNodeDetails(nodeId) {
@@ -198,19 +450,18 @@ function renderNodeDetails(nodeId) {
 
     <div class="mt-3 space-y-3 text-xs">
       <div>
-        <label class="text-[10.5px] uppercase font-semibold text-slate-400 tracking-wider">Apple HIG Skill Directive</label>
+        <label class="text-[10.5px] uppercase font-semibold text-slate-400 tracking-wider">Skill Directive</label>
         <p class="text-slate-700 mt-1 leading-relaxed font-normal">${node.desc}</p>
       </div>
 
       <div class="p-3 rounded-2xl bg-slate-50/80 border border-slate-200/80">
-        <span class="text-[10.5px] uppercase font-semibold text-slate-400 block mb-1">Position in Concentric System</span>
-        <span class="text-xs text-slate-800 font-medium">${node.isCenter ? 'Frosted Glass Central Core' : 'Concentric Orbital Circle (SDLC Lifecycle)'}</span>
+        <span class="text-[10.5px] uppercase font-semibold text-slate-400 block mb-1">Architecture Category</span>
+        <span class="text-xs text-slate-800 font-medium">${node.category}</span>
       </div>
     </div>
   `;
 }
 
-// Keynote Scrubber Controls
 function setStoryStep(stepNum) {
   currentStoryStep = stepNum;
   const banner = document.getElementById('storyBanner');
@@ -218,12 +469,12 @@ function setStoryStep(stepNum) {
   const desc = document.getElementById('storyDesc');
 
   if (stepNum === 0) {
-    banner.classList.add('hidden');
+    if (banner) banner.classList.add('hidden');
   } else {
-    banner.classList.remove('hidden');
+    if (banner) banner.classList.remove('hidden');
     const stepObj = STORY_STEPS[stepNum - 1];
-    title.innerText = stepObj.title;
-    desc.innerText = stepObj.desc;
+    if (title) title.innerText = stepObj.title;
+    if (desc) desc.innerText = stepObj.desc;
     selectedNodeId = stepObj.focusNodes[0];
     renderNodeDetails(selectedNodeId);
   }
@@ -232,14 +483,14 @@ function setStoryStep(stepNum) {
     const btn = document.getElementById(`storyBtn${i}`);
     if (btn) {
       if (i === stepNum) {
-        btn.className = "px-3 py-1 rounded-full bg-[#007aff] text-white font-bold text-xs shadow-md shadow-blue-500/20";
+        btn.className = "px-3 py-1 rounded-full bg-blue-600 text-white font-bold text-xs shadow-md shadow-blue-500/20";
       } else {
         btn.className = "px-3 py-1 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 text-xs font-medium border border-slate-200/80";
       }
     }
   }
 
-  renderAppleWheel();
+  switchView(currentActiveView);
 }
 
 function nextStoryStep() {
@@ -256,24 +507,6 @@ function prevStoryStep() {
   } else {
     setStoryStep(8);
   }
-}
-
-function renderSkillsDirectory() {
-  const container = document.getElementById('allSkillsGrid');
-  if (!container) return;
-
-  container.innerHTML = GRAPH_NODES.map(s => `
-    <div class="p-4 rounded-3xl bg-white/90 border border-slate-200/90 shadow-sm hover:shadow-md transition-all flex items-center justify-between">
-      <div class="min-w-0 pr-2">
-        <div class="flex items-center gap-2">
-          <span class="text-base">${s.icon}</span>
-          <span class="font-mono text-xs font-bold text-slate-900 truncate">${s.label}</span>
-        </div>
-        <span class="text-[11px] text-slate-500 block mt-1 truncate">${s.desc}</span>
-      </div>
-      <span class="text-[10px] px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 font-mono border border-slate-200 shrink-0 font-medium">${s.category}</span>
-    </div>
-  `).join('');
 }
 
 window.addEventListener('DOMContentLoaded', initApp);
