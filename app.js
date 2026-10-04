@@ -300,14 +300,24 @@ function switchAutonomyMode(mode, triggerRender = true) {
 function selectRole(id) {
   if (!ALL_ROLES.some(role => role.id === id)) return;
   selectedRoleId = id;
-  renderVModelView();
+
   const detailPanel = document.getElementById('roleDetail');
   if (detailPanel) {
+    document.querySelectorAll('[data-role-id]').forEach(btn => {
+      const isInspected = btn.getAttribute('data-role-id') === id;
+      btn.classList.toggle('inspected', isInspected);
+      btn.setAttribute('aria-pressed', isInspected ? 'true' : 'false');
+    });
+
+    const selected = ALL_ROLES.find(role => role.id === selectedRoleId);
+    detailPanel.innerHTML = renderDetailPanelContent(selected);
+    detailPanel.scrollTop = 0;
     detailPanel.style.animation = 'none';
     void detailPanel.offsetHeight;
-    detailPanel.style.animation = 'appleSpringSlide 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards';
+    detailPanel.style.animation = 'contentFadeIn 0.2s ease-out forwards';
+  } else {
+    renderVModelView();
   }
-  document.querySelector('[data-role-id="' + id + '"]')?.focus({ preventScroll: true });
 }
 
 const CARD_LABELS = {
@@ -352,27 +362,22 @@ function renderCard(role) {
   return `<button type="button" class="${classList}" data-role-id="${role.id}" aria-pressed="${isInspected}" aria-controls="roleDetail" onclick="selectRole('${role.id}')">
     ${checkmarkHtml}
     <span class="card-heading">
-      <span class="card-role"><span aria-hidden="true">${role.icon}</span> ${escapeHtml(role.skill)} ${activePill}</span>
+      <span class="card-role"><span aria-hidden="true">${role.icon}</span> ${escapeHtml(role.skill)}</span>
       <span class="badge" aria-label="${badgeLabel}" title="${badgeLabel}">${badge}</span>
     </span>
     <span class="card-label">${CARD_LABELS[role.id]}</span>
-    ${gatePill}
+    <div class="card-pills-row">
+      ${gatePill}
+      ${activePill}
+    </div>
   </button>`;
 }
 
-function renderVModelView() {
-  const container = document.getElementById('vModelContainer');
-  if (!container) return;
+function renderDetailPanelContent(selected) {
+  const isCompleted = projectState.completedStageIds.includes(selected.id);
+  const isActiveProjectStage = projectState.activeStageId === selected.id;
+  const isStartedOrCompleted = isCompleted || isActiveProjectStage;
 
-  const selected = ALL_ROLES.find(role => role.id === selectedRoleId);
-  const groups = [
-    ['specification', 'Specification (Verification)', ['discovery', 'scope', 'architecture', 'schemas']],
-    ['implementation', 'Implementation Apex', ['frontend', 'services']],
-    ['validation', 'Validation (Testing)', ['qa', 'uat', 'release']]
-  ];
-  const reviewer = ALL_ROLES.find(role => role.id === 'reviewer');
-
-  // Render Consistent Gate Callout Banner
   let stopBannerHtml = '';
   const hasGate = isGateActive(selected.id, currentAutonomyMode);
   
@@ -403,120 +408,170 @@ function renderVModelView() {
     `;
   }
 
-  // Render Document Links Pills
   let docPillsHtml = '';
   if (selected.artifacts && selected.artifacts.length > 0) {
     docPillsHtml = `
       <div class="doc-links-section">
-        <div class="section-label">Generated Stage Documents & Artifacts</div>
+        <div class="section-label">Stage Deliverables & Artifacts</div>
         <div class="doc-pills">
-          ${selected.artifacts.map(art => `
-            <a href="${art.path}" class="doc-pill" target="_blank" title="${escapeHtml(art.desc)}">
-              📄 ${escapeHtml(art.name)}
-            </a>
+          ${selected.artifacts.map(art => {
+            if (isStartedOrCompleted) {
+              return `<a href="${art.path}" class="doc-pill" target="_blank" title="${escapeHtml(art.desc)}">📄 ${escapeHtml(art.name)}</a>`;
+            } else {
+              return `<span class="doc-pill disabled" title="Pending execution of ${escapeHtml(selected.title || selected.role)}">🔒 ${escapeHtml(art.name)} (Pending)</span>`;
+            }
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  let storiesHtml = '';
+  if (selected.id === 'scope') {
+    if (isStartedOrCompleted && selected.userStories && selected.userStories.length > 0) {
+      storiesHtml = `
+        <div style="margin-top: 14px;">
+          <div class="section-label">Created User Stories & Acceptance Criteria</div>
+          <div class="stories-scroll-box">
+            <div class="stories-grid">
+              ${selected.userStories.map(story => `
+                <div class="story-card">
+                  <div class="story-header">
+                    <span class="story-id">${escapeHtml(story.id)}</span>
+                    <span class="story-status">${escapeHtml(story.status)}</span>
+                  </div>
+                  <div class="story-title">${escapeHtml(story.title)}</div>
+                  <div class="story-statement">${escapeHtml(story.persona)}, ${escapeHtml(story.goal)} ${escapeHtml(story.benefit)}</div>
+                  <div class="story-ac-title">Acceptance Criteria</div>
+                  <ul class="story-ac-list">
+                    ${story.ac.map(criterion => `<li>${escapeHtml(criterion)}</li>`).join('')}
+                  </ul>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    } else {
+      storiesHtml = `
+        <div class="pending-stage-box">
+          <div class="pending-stage-header">
+            <span>⏳ USER STORIES PENDING</span>
+            <span class="pending-badge">PHASE 2 INTAKE REQUIRED</span>
+          </div>
+          <p class="pending-stage-desc">
+            Full-stack user stories and acceptance criteria will be created dynamically by the <strong>Product Owner</strong> when Phase 2 starts.
+          </p>
+        </div>
+      `;
+    }
+  }
+
+  let qaResultsHtml = '';
+  if (selected.id === 'qa') {
+    if (isStartedOrCompleted) {
+      qaResultsHtml = `
+        <div class="qa-summary-box">
+          <div class="qa-summary-header">
+            <div class="qa-verdict-title">
+              <span>✅ QA VERIFIED</span>
+              <span style="color: #404040; font-size: 11px; font-weight: 500;">(All Automated Suites Passed)</span>
+            </div>
+            <span class="qa-coverage-tag">COVERAGE: 85.4%</span>
+          </div>
+
+          <div class="qa-metrics-grid">
+            <div class="qa-metric-card">
+              <div class="qa-metric-value">26 / 26</div>
+              <div class="qa-metric-label">Automated Tests</div>
+            </div>
+            <div class="qa-metric-card">
+              <div class="qa-metric-value" style="color: #166534;">100%</div>
+              <div class="qa-metric-label">Pass Rate</div>
+            </div>
+            <div class="qa-metric-card">
+              <div class="qa-metric-value">0</div>
+              <div class="qa-metric-label">Failures</div>
+            </div>
+          </div>
+
+          <ul class="qa-list">
+            <li><span>🧪 Unit &amp; Service Tests (Vitest / MSW)</span> <strong>14 Passed</strong></li>
+            <li><span>🛡️ Multi-Tenant &amp; IDOR Isolation Checks</span> <strong>4 Passed</strong></li>
+            <li><span>💻 Component UI Access &amp; ARIA Roles</span> <strong>5 Passed</strong></li>
+            <li><span>📸 Visual Snapshot Baselines (Playwright)</span> <strong>3 Passed</strong></li>
+          </ul>
+        </div>
+      `;
+    } else {
+      qaResultsHtml = `
+        <div class="pending-stage-box">
+          <div class="pending-stage-header">
+            <span>⏳ AUTOMATED QA SUITES PENDING</span>
+            <span class="pending-badge">PHASE 7 VERIFICATION REQUIRED</span>
+          </div>
+          <p class="pending-stage-desc">
+            Automated unit/service tests, IDOR security isolation checks, component ARIA access, and visual snapshot baselines will execute when <strong>QA Agent</strong> runs Phase 7.
+          </p>
+        </div>
+      `;
+    }
+  }
+
+  return `
+    <div class="detail-header">
+      <div class="detail-title-group">
+        <span class="detail-icon" aria-hidden="true">${selected.icon}</span>
+        <div>
+          <h3 class="detail-title">${selected.phase ? 'Phase ' + selected.phase + ' — ' : ''}${escapeHtml(selected.title || selected.role)}</h3>
+          <p class="detail-subtitle">Lead Skill: <code>${escapeHtml(selected.skill || selected.role)}</code></p>
+        </div>
+      </div>
+    </div>
+    
+    ${stopBannerHtml}
+    <p style="color: #404040; font-size: 12px; line-height: 18px; margin-bottom: 16px;">${escapeHtml(selected.description)}</p>
+    ${docPillsHtml}
+    ${storiesHtml}
+    ${qaResultsHtml}
+  `;
+}
+
+function renderVModelView() {
+  const container = document.getElementById('vModelContainer');
+  if (!container) return;
+
+  const selected = ALL_ROLES.find(role => role.id === selectedRoleId);
+  const groups = [
+    ['specification', 'Specification (Verification)', ['discovery', 'scope', 'architecture', 'schemas']],
+    ['implementation', 'Implementation Apex', ['frontend', 'services']],
+    ['validation', 'Validation (Testing)', ['qa', 'uat', 'release']]
+  ];
+  const reviewer = ALL_ROLES.find(role => role.id === 'reviewer');
+
+  container.innerHTML = `
+    <div class="v-split-layout">
+      <div class="v-left-pane">
+        <button type="button" class="audit-strip ${selectedRoleId === 'reviewer' ? 'selected' : ''}" data-role-id="reviewer" aria-pressed="${selectedRoleId === 'reviewer'}" aria-controls="roleDetail" onclick="selectRole('reviewer')">
+          <span><span aria-hidden="true">${reviewer.icon}</span> architecture_reviewer</span>
+          <span>Zero-trust architecture audit</span>
+        </button>
+        <div class="v-grid">
+          ${groups.map(([group, title, ids]) => `
+            <section class="phase-column ${group}" aria-label="${title}">
+              <h2>${title}</h2>
+              <div class="phase-cards">${ids.map(id => renderCard(ALL_ROLES.find(role => role.id === id))).join('')}</div>
+            </section>
           `).join('')}
         </div>
       </div>
-    `;
-  }
 
-  // Render User Stories List if Phase 2 / Scope is selected
-  let storiesHtml = '';
-  if (selected.id === 'scope' && selected.userStories && selected.userStories.length > 0) {
-    storiesHtml = `
-      <div style="margin-top: 14px;">
-        <div class="section-label">Created User Stories & Acceptance Criteria</div>
-        <div class="stories-scroll-box">
-          <div class="stories-grid">
-            ${selected.userStories.map(story => `
-              <div class="story-card">
-                <div class="story-header">
-                  <span class="story-id">${escapeHtml(story.id)}</span>
-                  <span class="story-status">${escapeHtml(story.status)}</span>
-                </div>
-                <div class="story-title">${escapeHtml(story.title)}</div>
-                <div class="story-statement">${escapeHtml(story.persona)}, ${escapeHtml(story.goal)} ${escapeHtml(story.benefit)}</div>
-                <div class="story-ac-title">Acceptance Criteria</div>
-                <ul class="story-ac-list">
-                  ${story.ac.map(criterion => `<li>${escapeHtml(criterion)}</li>`).join('')}
-                </ul>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  // Render Automated QA Test Run Results Summary if Phase 7 / QA is selected
-  let qaResultsHtml = '';
-  if (selected.id === 'qa') {
-    qaResultsHtml = `
-      <div class="qa-summary-box">
-        <div class="qa-summary-header">
-          <div class="qa-verdict-title">
-            <span>✅ QA VERIFIED</span>
-            <span style="color: #404040; font-size: 11px; font-weight: 500;">(All Automated Suites Passed)</span>
-          </div>
-          <span class="qa-coverage-tag">COVERAGE: 85.4%</span>
-        </div>
-
-        <div class="qa-metrics-grid">
-          <div class="qa-metric-card">
-            <div class="qa-metric-value">26 / 26</div>
-            <div class="qa-metric-label">Automated Tests</div>
-          </div>
-          <div class="qa-metric-card">
-            <div class="qa-metric-value" style="color: #166534;">100%</div>
-            <div class="qa-metric-label">Pass Rate</div>
-          </div>
-          <div class="qa-metric-card">
-            <div class="qa-metric-value">0</div>
-            <div class="qa-metric-label">Failures</div>
-          </div>
-        </div>
-
-        <ul class="qa-list">
-          <li><span>🧪 Unit &amp; Service Tests (Vitest / MSW)</span> <strong>14 Passed</strong></li>
-          <li><span>🛡️ Multi-Tenant &amp; IDOR Isolation Checks</span> <strong>4 Passed</strong></li>
-          <li><span>💻 Component UI Access &amp; ARIA Roles</span> <strong>5 Passed</strong></li>
-          <li><span>📸 Visual Snapshot Baselines (Playwright)</span> <strong>3 Passed</strong></li>
-        </ul>
-      </div>
-    `;
-  }
-
-  container.innerHTML = `
-    <button type="button" class="audit-strip ${selectedRoleId === 'reviewer' ? 'selected' : ''}" data-role-id="reviewer" aria-pressed="${selectedRoleId === 'reviewer'}" aria-controls="roleDetail" onclick="selectRole('reviewer')">
-      <span><span aria-hidden="true">${reviewer.icon}</span> architecture_reviewer</span>
-      <span>Cross-phase zero-trust audit · validates contract compliance at every phase</span>
-    </button>
-    <div class="v-grid">
-      ${groups.map(([group, title, ids]) => `
-        <section class="phase-column ${group}" aria-label="${title}">
-          <h2>${title}</h2>
-          <div class="phase-cards">${ids.map(id => renderCard(ALL_ROLES.find(role => role.id === id))).join('')}</div>
+      <div class="v-right-pane">
+        <section id="roleDetail" class="detail-panel" aria-live="polite" aria-atomic="true">
+          ${renderDetailPanelContent(selected)}
         </section>
-      `).join('')}
-    </div>
-    
-    <section id="roleDetail" class="detail-panel" aria-live="polite" aria-atomic="true">
-      <div class="detail-header">
-        <div class="detail-title-group">
-          <span class="detail-icon" aria-hidden="true">${selected.icon}</span>
-          <div>
-            <h3 class="detail-title">${selected.phase ? 'Phase ' + selected.phase + ' — ' : ''}${escapeHtml(selected.title || selected.role)}</h3>
-            <p class="detail-subtitle">Lead Skill: <code>${escapeHtml(selected.skill || selected.role)}</code></p>
-          </div>
-        </div>
       </div>
-      
-      ${stopBannerHtml}
-      <p style="color: #404040; font-size: 12px; line-height: 18px; margin-bottom: 16px;">${escapeHtml(selected.description)}</p>
-      ${docPillsHtml}
-      ${storiesHtml}
-      ${qaResultsHtml}
-    </section>
+    </div>
   `;
 }
 
