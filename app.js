@@ -1,4 +1,4 @@
-// SDLC Swarm Skills Visualizer — Pressman & Sommerville V-Model Engine
+// SDLC Swarm Skills Visualizer — V-Model Engine
 
 const SDLC_SWARM_NODES = [
   { id: 'skill_builder', stop: 1, label: 'PROJECT_BUILDER_SKILL.md', category: 'Swarm Hub Controller', icon: '👑', desc: 'Master Swarm Controller: Sets autonomy modes (BALANCED / AUTOPILOT / SUPERVISED) and manages system lifecycle.' },
@@ -43,7 +43,7 @@ function setStoryStep(stepNumber) {
 }
 
 // -------------------------------------------------------------
-// TEXTBOOK MODEL: ✌️ The V-Model (Validation & Verification — Pressman / Sommerville Standard)
+// TEXTBOOK MODEL: ✌️ The V-Model Engine
 // -------------------------------------------------------------
 function renderVModelView() {
   const container = document.getElementById('vModelContainer');
@@ -72,12 +72,6 @@ function renderVModelView() {
 
   container.innerHTML = `
     <div class="w-full max-w-5xl mx-auto bg-white border border-slate-200 rounded-3xl p-8 shadow-xl space-y-6">
-      <div class="pb-3 border-b border-slate-200 flex items-center justify-between">
-        <div>
-          <h2 class="text-base font-bold text-slate-900">THE V-MODEL (VERIFICATION & VALIDATION)</h2>
-          <p class="text-xs text-slate-500">Standard Pressman & Sommerville Software Engineering Lifecycle</p>
-        </div>
-      </div>
 
       <!-- V-Shape Grid Layout -->
       <div class="grid grid-cols-3 gap-6 relative p-4 bg-slate-50 rounded-2xl border border-slate-200">
