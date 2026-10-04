@@ -6,7 +6,7 @@ const SDLC_SWARM_NODES = [
 
   { id: 'skill_it', stop: 2, label: 'it_consultant', phase: 'Phase 1', mta: 'A', color: 'bg-[#0039A6] text-white', border: 'border-[#0039A6]', line: 'A 8th Ave Express', category: 'Phase 1: IT Consultant', icon: '💼', desc: 'Phase 1 — IT Consultant (Solutions Architect): Scope discovery, trade-off negotiation, & 01_ARCH_BRIEF.md.' },
   { id: 'skill_po', stop: 3, label: 'product_owner', phase: 'Phase 2', mta: 'C', color: 'bg-[#0039A6] text-white', border: 'border-[#0039A6]', line: 'C 8th Ave Local', category: 'Phase 2: Product Owner', icon: '🎯', desc: 'Phase 2 — Product Owner: 02_PRD.md & full-stack vertical 03_USER_STORIES.md.' },
-  { id: 'skill_architect', stop: 4, label: 'techincal_architect', phase: 'Phase 3', mta: 'F', color: 'bg-[#FF6319] text-white', border: 'border-[#FF6319]', line: 'F 6th Ave Express', category: 'Phase 3: Technical Architect', icon: '📐', desc: 'Phase 3 — Technical Architect: 04_TECHNICAL_SPEC.md & 05_TASK_MANIFEST.md.' },
+  { id: 'skill_architect', stop: 4, label: 'techincal_architect', phase: 'Phase 3', mta: 'F', color: 'bg-[#FF6319] text-white', border: 'border-[#FF6319]', line: 'F 6th Ave Express', category: 'Phase 3: Technical Architect', icon: '📐', desc: 'Phase 3 — Technical Architect: Defines system architecture, 04_TECHNICAL_SPEC.md, and 05_TASK_MANIFEST.md.' },
   { id: 'skill_design', stop: 5, label: 'apple_design', phase: 'Phase 3 UX', mta: 'B', color: 'bg-[#FF6319] text-white', border: 'border-[#FF6319]', line: 'B 6th Ave Local', category: 'Phase 3: UI/UX System', icon: '🎨', desc: 'Apple Design Rules: HIG design specs, SF typography, & glassmorphism tokens.' },
   { id: 'skill_parser', stop: 6, label: 'content_parser', phase: 'Phase 4', mta: 'M', color: 'bg-[#FF6319] text-white', border: 'border-[#FF6319]', line: 'M 6th Ave Local', category: 'Phase 4: Content Parser', icon: '📄', desc: 'Phase 4 — Content Parser: JSON Schemas & Zod Contracts in src/assets/schemas/.' },
   { id: 'skill_frontend', stop: 7, label: 'frontend_developer', phase: 'Phase 5', mta: '1', color: 'bg-[#EE352E] text-white', border: 'border-[#EE352E]', line: '1 Broadway Local', category: 'Phase 5: Frontend Developer', icon: '💻', desc: 'Phase 5 — Frontend Developer: UI Slices & Step 0 Visual Gate mockups.' },
@@ -302,14 +302,43 @@ function renderJunctionTerminalView() {
   const container = document.getElementById('junctionTerminalContainer');
   if (!container) return;
 
-  const activeStation = SUBWAY_STATIONS[currentStoryStep - 1] || SUBWAY_STATIONS[1];
-
   const junctions = [
     { title: '🏢 Times Sq-42 St Hub (Discovery)', stops: [1, 2, 3] },
     { title: '📐 Grand Central Terminal (Architecture)', stops: [4, 5, 6] },
     { title: '💻 Fulton St Terminal (Engineering)', stops: [7, 8] },
     { title: '🚀 Union Sq Station (QA, UAT & Release)', stops: [9, 10, 11, 12] }
   ];
+
+  const junctionCardsHtml = junctions.map(j => {
+    const stopsHtml = j.stops.map(stNum => {
+      const st = SUBWAY_STATIONS[stNum - 1];
+      const isCur = st.stop === currentStoryStep;
+
+      return `
+        <div onclick="setStoryStep(${st.stop})" class="p-3 rounded-xl border cursor-pointer transition-all flex items-center justify-between ${
+          isCur ? 'bg-blue-600 text-white border-blue-600 font-bold shadow-md' : 'bg-white border-slate-200 text-slate-800 hover:border-slate-300'
+        }">
+          <div class="flex items-center gap-2.5">
+            <span class="w-7 h-7 rounded-full flex items-center justify-center font-black text-xs ${
+              isCur ? 'bg-white text-blue-600' : 'bg-slate-100 text-slate-700 border border-slate-300'
+            }">${st.stop}</span>
+            <span class="text-base">${st.icon}</span>
+            <span class="text-xs font-bold">${st.name}</span>
+          </div>
+          <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded ${isCur ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'}">MTA (${st.mta})</span>
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+        <h3 class="font-bold text-xs text-slate-800 uppercase tracking-tight pb-2 border-b border-slate-200">${j.title}</h3>
+        <div class="space-y-2">
+          ${stopsHtml}
+        </div>
+      </div>
+    `;
+  }).join('');
 
   container.innerHTML = `
     <div class="w-full max-w-6xl mx-auto bg-white border border-slate-200 rounded-3xl p-6 shadow-xl space-y-6">
@@ -319,33 +348,7 @@ function renderJunctionTerminalView() {
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        ${junctions.map(j => `
-          <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
-            <h3 class="font-bold text-xs text-slate-800 uppercase tracking-tight pb-2 border-b border-slate-200">${j.title}</h3>
-            <div class="space-y-2">
-              ${j.stops.map(stNum => {
-                const st = SUBWAY_STATIONS[stNum - 1];
-                const isCur = st.stop === currentStoryStep;
-
-                return `
-                  <div onclick="setStoryStep(${st.stop})" class="p-3 rounded-xl border cursor-pointer transition-all flex items-center justify-between ${
-                    isCur ? 'bg-blue-600 text-white border-blue-600 font-bold shadow-md' : 'bg-white border-slate-200 text-slate-800 hover:border-slate-300'
-                  }">
-                    <div class="flex items-center gap-2.5">
-                      <span class="w-7 h-7 rounded-full flex items-center justify-center font-black text-xs ${
-                        isCur ? 'bg-white text-blue-600' : 'bg-slate-100 text-slate-700 border border-slate-300'
-                      }">${st.stop}</span>
-                      <span class="text-base">${st.icon}</span>
-                      <span class="text-xs font-bold">${st.name}</span>
-                    </div>
-                    <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded ${isCur ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'}">MTA (${st.mta})</span>
-                  </div>
-                `;
-              }).join('')}
-            </div>
-          </div>
-        `).join('');
-      }
+        ${junctionCardsHtml}
       </div>
     </div>
   `;
