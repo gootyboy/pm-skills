@@ -1,41 +1,44 @@
 // SDLC Swarm Skills Visualizer — Engine & UI Controller
-// Supports SDLC Pipeline Board + Authentic NYC Subway In-Car Digital LED Station Strip
+// Features SDLC Pipeline Board + Pure Light-Theme NYC Subway In-Car LED Strip Map
 
 const SDLC_SWARM_NODES = [
-  { id: 'skill_builder', stop: 1, label: 'PROJECT_BUILDER_SKILL.md', mta: 'S', line: 'Shuttle Bus', category: 'Swarm Hub Controller', icon: '👑', desc: 'Master Swarm Controller: Sets autonomy modes (BALANCED / AUTOPILOT / SUPERVISED) and manages system lifecycle.' },
-  { id: 'skill_orchestrator', stop: 1, label: 'orchestrator', mta: 'S', line: 'Shuttle Bus', category: 'State Engine', icon: '🎼', desc: 'State Engine: Overwrites docs/PROJECT_STATUS.md every turn to maintain rolling 3-session state and routing.' },
+  { id: 'skill_builder', stop: 1, label: 'PROJECT_BUILDER_SKILL.md', category: 'Swarm Hub Controller', icon: '👑', desc: 'Master Swarm Controller: Sets autonomy modes (BALANCED / AUTOPILOT / SUPERVISED) and manages system lifecycle.' },
+  { id: 'skill_orchestrator', stop: 1, label: 'orchestrator', category: 'State Engine', icon: '🎼', desc: 'State Engine: Overwrites docs/PROJECT_STATUS.md every turn to maintain rolling 3-session state and routing.' },
 
-  { id: 'skill_it', stop: 2, label: 'it_consultant', phase: 'Phase 1', mta: 'A', line: '8th Ave Express', category: 'Phase 1: IT Consultant', icon: '💼', desc: 'Phase 1 — IT Consultant (Solutions Architect): Conducts scope discovery, technology evaluation, and outputs 01_ARCH_BRIEF.md.' },
-  { id: 'skill_po', stop: 3, label: 'product_owner', phase: 'Phase 2', mta: 'C', line: '8th Ave Local', category: 'Phase 2: Product Owner', icon: '🎯', desc: 'Phase 2 — Product Owner: Transforms architectural brief into 02_PRD.md and full-stack vertical 03_USER_STORIES.md.' },
-  { id: 'skill_architect', stop: 4, label: 'techincal_architect', phase: 'Phase 3', mta: 'F', line: '6th Ave Express', category: 'Phase 3: Technical Architect', icon: '📐', desc: 'Phase 3 — Technical Architect: Defines system architecture, 04_TECHNICAL_SPEC.md, and 05_TASK_MANIFEST.md.' },
-  { id: 'skill_parser', stop: 5, label: 'content_parser', phase: 'Phase 4', mta: 'M', line: '6th Ave Local', category: 'Phase 4: Content Parser', icon: '📄', desc: 'Phase 4 — Content Parser (Schema Engine): Generates strict JSON Schemas & Zod Contracts in src/assets/schemas/.' },
-  { id: 'skill_frontend', stop: 6, label: 'frontend_developer', phase: 'Phase 5', mta: '1', line: 'Broadway Local', category: 'Phase 5: Frontend Developer', icon: '💻', desc: 'Phase 5 — Frontend Developer: Implements visual components (Step 0: Visual Gate mockups -> UI component code).' },
-  { id: 'skill_design', stop: 6, label: 'apple_design', phase: 'Phase 5 Guide', mta: '2', line: 'Broadway Express', category: 'Phase 5: UI/UX Rules', icon: '🎨', desc: 'Apple Design System Rules: Provides Apple HIG tokens, SF typography, and glassmorphism specs for Frontend Dev.' },
-  { id: 'skill_service', stop: 7, label: 'service_engineer', phase: 'Phase 6', mta: '3', line: '7th Ave Express', category: 'Phase 6: Service Engineer', icon: '⚙️', desc: 'Phase 6 — Service Engineer: Database setup first, followed by backend services, data access layers, and API endpoints.' },
-  { id: 'skill_qa', stop: 8, label: 'qa_agent', phase: 'Phase 7', mta: '7', line: 'Flushing Express', category: 'Phase 7: QA Agent', icon: '🧪', desc: 'Phase 7 — QA Agent: Automated test suites, visual diff checks against mockups, and 07_TEST_MANIFEST.md.' },
-  { id: 'skill_deploy', stop: 9, label: 'deployment', phase: 'Release', mta: '4', line: 'Lexington Express', category: 'Release: Deployment Lead', icon: '🚀', desc: 'Release — Deployment Lead: Handles provider setup, approval checkpoints, EAS OTA / Native, and Vercel cloud deployment.' },
-  { id: 'skill_arch_review', stop: 10, label: 'architecture_reviewer', phase: 'Audit', mta: 'L', line: 'Canarsie Local', category: 'Audit: Architecture Reviewer', icon: '🔍', desc: 'Audit — Architecture Reviewer: Zero-Trust Security & Quality Gatekeeper auditing all deliverables against contracts.' }
+  { id: 'skill_it', stop: 2, label: 'it_consultant', phase: 'Phase 1', category: 'Phase 1: IT Consultant', icon: '💼', desc: 'Phase 1 — IT Consultant (Solutions Architect): Scope discovery, trade-off negotiation, & 01_ARCH_BRIEF.md.' },
+  { id: 'skill_po', stop: 3, label: 'product_owner', phase: 'Phase 2', category: 'Phase 2: Product Owner', icon: '🎯', desc: 'Phase 2 — Product Owner: 02_PRD.md & full-stack vertical 03_USER_STORIES.md.' },
+  { id: 'skill_architect', stop: 4, label: 'techincal_architect', phase: 'Phase 3', category: 'Phase 3: Technical Architect', icon: '📐', desc: 'Phase 3 — Technical Architect: 04_TECHNICAL_SPEC.md & 05_TASK_MANIFEST.md.' },
+  { id: 'skill_design', stop: 5, label: 'apple_design', phase: 'Phase 3 UX', category: 'Phase 3: UI/UX System', icon: '🎨', desc: 'Apple Design Rules: HIG design specs, SF typography, & glassmorphism tokens.' },
+  { id: 'skill_parser', stop: 6, label: 'content_parser', phase: 'Phase 4', category: 'Phase 4: Content Parser', icon: '📄', desc: 'Phase 4 — Content Parser: JSON Schemas & Zod Contracts in src/assets/schemas/.' },
+  { id: 'skill_frontend', stop: 7, label: 'frontend_developer', phase: 'Phase 5', category: 'Phase 5: Frontend Developer', icon: '💻', desc: 'Phase 5 — Frontend Developer: UI Slices & Step 0 Visual Gate mockups.' },
+  { id: 'skill_service', stop: 8, label: 'service_engineer', phase: 'Phase 6', category: 'Phase 6: Service Engineer', icon: '⚙️', desc: 'Phase 6 — Service Engineer: Database setup first, followed by backend services & APIs.' },
+  { id: 'skill_qa', stop: 9, label: 'qa_agent', phase: 'Phase 7', category: 'Phase 7: QA Agent', icon: '🧪', desc: 'Phase 7 — QA Agent: Automated test suites, visual diff checks, & 07_TEST_MANIFEST.md.' },
+  { id: 'skill_uat', stop: 10, label: 'uat', phase: 'Phase 6 UAT', category: 'Cloud UAT Coordinator', icon: '⚡', desc: 'Cloud UAT Coordinator: Deploys temporary zero-config StackBlitz cloud sandbox.' },
+  { id: 'skill_deploy', stop: 11, label: 'deployment', phase: 'Release', category: 'Release: Deployment Lead', icon: '🚀', desc: 'Release — Deployment Lead: Provider setup, approval gates, EAS OTA, & Vercel release.' },
+  { id: 'skill_arch_review', stop: 12, label: 'architecture_reviewer', phase: 'Audit', category: 'Audit: Architecture Reviewer', icon: '🔍', desc: 'Audit — Architecture Reviewer: Zero-Trust Security Gatekeeper & audit log report.' }
 ];
 
 const SUBWAY_STATIONS = [
-  { stop: 1, name: 'Swarm Hub Station', mta: 'S', line: 'Shuttle Loop', focusNodes: ['skill_builder', 'skill_orchestrator'], desc: 'State Engine initializes workspace state in docs/PROJECT_STATUS.md.' },
-  { stop: 2, name: 'Scope Discovery Station', mta: 'A', line: '8th Ave Line', focusNodes: ['skill_it'], desc: 'it_consultant conducts scope discovery and locks 01_ARCH_BRIEF.md.' },
-  { stop: 3, name: 'PRD & Stories Station', mta: 'C', line: '8th Ave Line', focusNodes: ['skill_po'], desc: 'product_owner converts brief into 02_PRD.md and 03_USER_STORIES.md.' },
-  { stop: 4, name: 'Tech Spec Station', mta: 'F', line: '6th Ave Line', focusNodes: ['skill_architect'], desc: 'techincal_architect defines 04_TECHNICAL_SPEC.md and 05_TASK_MANIFEST.md.' },
-  { stop: 5, name: 'Data Schemas Station', mta: 'M', line: '6th Ave Line', focusNodes: ['skill_parser'], desc: 'content_parser generates JSON Schemas & Zod Contracts.' },
-  { stop: 6, name: 'UI Component Station', mta: '1', line: 'Broadway Line', focusNodes: ['skill_frontend', 'skill_design'], desc: 'frontend_developer creates Visual Gate mockups and UI code.' },
-  { stop: 7, name: 'Database & Service Station', mta: '3', line: '7th Ave Line', focusNodes: ['skill_service'], desc: 'service_engineer performs DB setup first, then backend APIs.' },
-  { stop: 8, name: 'QA Verification Station', mta: '7', line: 'Flushing Line', focusNodes: ['skill_qa'], desc: 'qa_agent executes automated test suites & visual diff checks.' },
-  { stop: 9, name: 'Cloud Release Station', mta: '4', line: 'Lexington Line', focusNodes: ['skill_deploy'], desc: 'deployment manages provider setup and publishes release.' },
-  { stop: 10, name: 'Zero-Trust Audit Terminal', mta: 'L', line: 'Canarsie Line', focusNodes: ['skill_arch_review'], desc: 'architecture_reviewer enforces zero-trust audit gate.' }
+  { stop: 1, name: 'orchestrator', icon: '🎼', focusNodes: ['skill_builder', 'skill_orchestrator'], desc: 'State Engine initializes state in docs/PROJECT_STATUS.md.' },
+  { stop: 2, name: 'it_consultant', icon: '💼', focusNodes: ['skill_it'], desc: 'it_consultant conducts scope discovery and locks 01_ARCH_BRIEF.md.' },
+  { stop: 3, name: 'product_owner', icon: '🎯', focusNodes: ['skill_po'], desc: 'product_owner creates 02_PRD.md and 03_USER_STORIES.md.' },
+  { stop: 4, name: 'techincal_architect', icon: '📐', focusNodes: ['skill_architect'], desc: 'techincal_architect defines 04_TECHNICAL_SPEC.md and 05_TASK_MANIFEST.md.' },
+  { stop: 5, name: 'apple_design', icon: '🎨', focusNodes: ['skill_design'], desc: 'apple_design specifies HIG UI design rules and SF typography.' },
+  { stop: 6, name: 'content_parser', icon: '📄', focusNodes: ['skill_parser'], desc: 'content_parser extracts JSON Schemas & Zod Contracts.' },
+  { stop: 7, name: 'frontend_developer', icon: '💻', focusNodes: ['skill_frontend'], desc: 'frontend_developer creates Visual Gate mockups & UI code.' },
+  { stop: 8, name: 'service_engineer', icon: '⚙️', focusNodes: ['skill_service'], desc: 'service_engineer performs DB setup first, then backend APIs.' },
+  { stop: 9, name: 'qa_agent', icon: '🧪', focusNodes: ['skill_qa'], desc: 'qa_agent executes automated test suites & visual diff checks.' },
+  { stop: 10, name: 'uat', icon: '⚡', focusNodes: ['skill_uat'], desc: 'uat deploys temporary StackBlitz cloud sandbox for evaluation.' },
+  { stop: 11, name: 'deployment', icon: '🚀', focusNodes: ['skill_deploy'], desc: 'deployment manages provider setup and publishes release.' },
+  { stop: 12, name: 'architecture_reviewer', icon: '🔍', focusNodes: ['skill_arch_review'], desc: 'architecture_reviewer enforces zero-trust audit gate.' }
 ];
 
-let currentStoryStep = 2; // Default Stop 2: Scope Discovery Station
+let currentStoryStep = 2; // Default Stop 2: it_consultant
 let selectedNodeId = 'skill_it';
-let currentActiveView = 'pipeline';
+let currentActiveView = 'subway'; // Default: Subway LED Strip
 
 function initApp() {
-  switchView('pipeline');
+  switchView('subway');
   renderNodeDetails(selectedNodeId);
 }
 
@@ -79,10 +82,11 @@ function renderPipelineView() {
     { title: '🎮 Swarm Hub & State', phase: 'State', ids: ['skill_builder', 'skill_orchestrator'], color: 'border-purple-300 bg-purple-50/40' },
     { title: '💡 Phase 1: Scope Discovery', phase: 'Phase 1', ids: ['skill_it'], color: 'border-blue-300 bg-blue-50/40' },
     { title: '🎯 Phase 2: Requirements', phase: 'Phase 2', ids: ['skill_po'], color: 'border-cyan-300 bg-cyan-50/40' },
-    { title: '📐 Phase 3: Tech Architecture', phase: 'Phase 3', ids: ['skill_architect'], color: 'border-indigo-300 bg-indigo-50/40' },
+    { title: '📐 Phase 3: Tech Architecture', phase: 'Phase 3', ids: ['skill_architect', 'skill_design'], color: 'border-indigo-300 bg-indigo-50/40' },
     { title: '📄 Phase 4: Data Contracts', phase: 'Phase 4', ids: ['skill_parser'], color: 'border-teal-300 bg-teal-50/40' },
-    { title: '💻 Phase 5: Frontend UI', phase: 'Phase 5', ids: ['skill_frontend', 'skill_design'], color: 'border-emerald-300 bg-emerald-50/40' },
+    { title: '💻 Phase 5: Frontend UI', phase: 'Phase 5', ids: ['skill_frontend'], color: 'border-emerald-300 bg-emerald-50/40' },
     { title: '⚙️ Phase 6: Service & DB', phase: 'Phase 6', ids: ['skill_service'], color: 'border-amber-300 bg-amber-50/40' },
+    { title: '⚡ Phase 6: Cloud UAT', phase: 'UAT', ids: ['skill_uat'], color: 'border-amber-400 bg-amber-100/40' },
     { title: '🧪 Phase 7: QA Verification', phase: 'Phase 7', ids: ['skill_qa'], color: 'border-orange-300 bg-orange-50/40' },
     { title: '🚀 Release: Deployment Lead', phase: 'Release', ids: ['skill_deploy'], color: 'border-rose-300 bg-rose-50/40' },
     { title: '🛡️ Audit: Architecture Review', phase: 'Audit', ids: ['skill_arch_review'], color: 'border-slate-300 bg-slate-100/60' }
@@ -118,7 +122,7 @@ function renderPipelineView() {
     }).join('');
 
     return `
-      <div class="flex-1 min-w-[230px] rounded-3xl border ${col.color} p-3 flex flex-col gap-3">
+      <div class="flex-1 min-w-[220px] rounded-3xl border ${col.color} p-3 flex flex-col gap-3">
         <div class="flex items-center justify-between pb-2 border-b border-slate-200/60 px-1">
           <h3 class="font-bold text-xs text-slate-800 tracking-tight">${col.title}</h3>
           <span class="text-[10px] font-mono font-bold text-slate-500 bg-white px-2 py-0.5 rounded-full border border-slate-200">${colSkills.length}</span>
@@ -132,103 +136,82 @@ function renderPipelineView() {
 }
 
 // -------------------------------------------------------------
-// VIEW 2: NYC Subway In-Car Digital LED Station Indicator Bar
+// VIEW 2: Pure Light-Theme NYC Subway In-Car LED Indicator Strip
+// (NO Title, NO Footer, NO Downtown/Uptown, Numbers INSIDE Circles, Includes UAT)
 // -------------------------------------------------------------
 function renderSubwayCarView() {
   const container = document.getElementById('nycSubwayContainer');
   if (!container) return;
 
   const activeStation = SUBWAY_STATIONS[currentStoryStep - 1] || SUBWAY_STATIONS[1];
-  const activeAgents = SDLC_SWARM_NODES.filter(n => activeStation.focusNodes.includes(n.id));
 
   container.innerHTML = `
-    <div class="w-full max-w-6xl mx-auto bg-slate-900 text-white rounded-3xl p-6 border-4 border-slate-700 shadow-2xl space-y-6 font-sans select-none">
+    <div class="w-full max-w-6xl mx-auto bg-white border border-slate-200 rounded-3xl p-6 shadow-xl space-y-6 select-none font-sans">
       
-      <!-- In-Car Metallic Overhead Banner -->
-      <div class="bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 p-4 rounded-2xl border border-slate-600 flex items-center justify-between shadow-lg">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-full bg-blue-600 font-black text-white text-base flex items-center justify-center border-2 border-white shadow">MTA</div>
-          <div>
-            <div class="text-[10px] font-mono text-slate-300 uppercase tracking-widest">N.Y.C. SUBWAY CAR #7420 • R211 IN-CAR DISPLAY</div>
-            <h2 class="text-sm font-black tracking-tight text-white uppercase">SDLC EXPRESS LINE — UPTOWN & THE BRONX</h2>
-          </div>
+      <!-- Top Step Controls Bar -->
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+        <div class="flex items-center gap-2">
+          <button onclick="prevStoryStep()" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors">⏮ Prev Stop</button>
+          <button onclick="nextStoryStep()" class="px-4 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition-colors">Next Stop 🚆</button>
         </div>
 
-        <!-- Next Stop Digital Matrix Screen -->
-        <div class="bg-black border-2 border-emerald-500/80 px-4 py-2 rounded-xl text-right font-mono shadow-[0_0_15px_rgba(16,185,129,0.3)]">
-          <span class="text-[10px] text-emerald-400 block font-bold uppercase tracking-widest animate-pulse">📢 NEXT STOP</span>
-          <span class="text-xs font-bold text-emerald-300">STOP ${activeStation.stop}: ${activeStation.name.toUpperCase()}</span>
+        <div class="flex items-center gap-2 text-xs font-bold text-slate-800">
+          <span>Active Station:</span>
+          <span class="px-3 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 font-mono">
+            ${activeStation.stop}. ${activeStation.name}
+          </span>
         </div>
       </div>
 
-      <!-- IN-CAR DIGITAL STATIONS LED ROUTE STRIP -->
-      <div class="bg-slate-950 p-6 rounded-3xl border-2 border-slate-800 shadow-inner space-y-4">
-        <div class="flex items-center justify-between text-xs font-mono text-slate-400 border-b border-slate-800 pb-2">
-          <span>DOWNTOWN BROOKLYN ◄</span>
-          <span class="text-blue-400 font-bold">ROUTE PROGRESS: STOP ${currentStoryStep} OF 10</span>
-          <span>► UPTOWN BRONX</span>
-        </div>
-
-        <!-- Horizontal Track Line & LED Stations -->
-        <div class="relative py-8 flex items-center justify-between px-4">
-          <!-- Background Connecting Track Line -->
-          <div class="absolute left-6 right-6 top-1/2 -translate-y-1/2 h-3 bg-slate-800 rounded-full z-0"></div>
+      <!-- Pure Light Theme NYC Subway LED Station Strip -->
+      <div class="bg-slate-50 p-6 rounded-3xl border border-slate-200 shadow-inner relative">
+        <div class="relative py-12 flex items-center justify-between px-4">
           
-          <!-- Active Green Passed Line Progress Bar -->
-          <div class="absolute left-6 top-1/2 -translate-y-1/2 h-3 bg-emerald-500 rounded-full z-0 transition-all duration-500" style="width: ${((currentStoryStep - 1) / 9) * 100}%"></div>
+          <!-- Background Neutral Track Line -->
+          <div class="absolute left-6 right-6 top-1/2 -translate-y-1/2 h-3 bg-slate-200 rounded-full z-0"></div>
+          
+          <!-- Active Blue Progress Track Bar -->
+          <div class="absolute left-6 top-1/2 -translate-y-1/2 h-3 bg-blue-600 rounded-full z-0 transition-all duration-300" style="width: ${((currentStoryStep - 1) / 11) * 100}%"></div>
 
-          <!-- 10 Sequential LED Station Nodes -->
+          <!-- 12 Station Circles with NUMBERS INSIDE -->
           ${SUBWAY_STATIONS.map((st) => {
             const isPassed = st.stop < currentStoryStep;
             const isCurrent = st.stop === currentStoryStep;
-            const isUpcoming = st.stop > currentStoryStep;
 
             return `
               <div onclick="setStoryStep(${st.stop})" class="relative z-10 flex flex-col items-center cursor-pointer group">
                 
-                <!-- Station LED Circle -->
+                <!-- Station Circle with NUMBER INSIDE -->
                 <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs transition-all ${
                   isCurrent
-                    ? 'bg-yellow-400 text-slate-950 ring-4 ring-yellow-400/50 scale-125 shadow-[0_0_20px_rgba(250,204,21,0.8)] font-black'
+                    ? 'bg-blue-600 text-white ring-4 ring-blue-500/30 scale-125 font-black shadow-lg z-20'
                     : isPassed
-                    ? 'bg-emerald-500 text-slate-950 shadow-md font-bold'
-                    : 'bg-slate-800 text-slate-400 border border-slate-700 hover:border-slate-500'
+                    ? 'bg-blue-500 text-white font-bold shadow-sm'
+                    : 'bg-white text-slate-700 border-2 border-slate-300 hover:border-blue-400'
                 }">
-                  ${st.mta}
+                  ${st.stop}
                 </div>
 
-                <!-- Station Number & Name Tag -->
+                <!-- Station Name Label Below Circle -->
                 <div class="absolute top-12 flex flex-col items-center w-20 text-center">
-                  <span class="text-[10px] font-mono font-bold ${isCurrent ? 'text-yellow-400' : isPassed ? 'text-emerald-400' : 'text-slate-500'}">STOP ${st.stop}</span>
-                  <span class="text-[9.5px] font-semibold ${isCurrent ? 'text-white font-bold' : 'text-slate-400'} truncate w-full mt-0.5">${st.name.replace(' Station', '')}</span>
+                  <span class="text-[10px] font-bold mt-1 ${isCurrent ? 'text-blue-600 font-extrabold' : 'text-slate-700'} truncate w-full">
+                    ${st.icon} ${st.name}
+                  </span>
                 </div>
 
               </div>
             `;
           }).join('')}
+
         </div>
       </div>
 
-      <!-- Station Detail Inspector Box (Matches NYC Subway Car Info Panel) -->
-      <div class="bg-slate-950 border border-slate-800 rounded-2xl p-5 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div class="flex items-center gap-4">
-          <div class="w-12 h-12 rounded-full bg-yellow-400 text-slate-950 font-black text-lg flex items-center justify-center shadow-lg shrink-0">
-            ${activeStation.mta}
-          </div>
-          <div>
-            <div class="flex items-center gap-2">
-              <span class="text-xs font-bold text-yellow-400 uppercase tracking-wider">CURRENT TRAIN POSITION</span>
-              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-900 text-blue-200 border border-blue-700">${activeStation.line}</span>
-            </div>
-            <h3 class="text-base font-bold text-white mt-0.5">${activeStation.name} (${activeStation.focusNodes[0]})</h3>
-            <p class="text-xs text-slate-300 mt-1 leading-relaxed">${activeStation.desc}</p>
-          </div>
-        </div>
-
-        <!-- Train Controls -->
-        <div class="flex items-center gap-2 shrink-0">
-          <button onclick="prevStoryStep()" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs transition-colors">⏮ Prev Stop</button>
-          <button onclick="nextStoryStep()" class="px-4 py-2 rounded-xl bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-bold text-xs shadow-md transition-colors">Train Moving to Next Stop 🚆</button>
+      <!-- Active Station Directive Card -->
+      <div class="p-4 rounded-2xl bg-blue-50/60 border border-blue-200/80 flex items-center gap-3 text-xs">
+        <span class="text-2xl">${activeStation.icon}</span>
+        <div>
+          <h4 class="font-bold text-slate-900">Station ${activeStation.stop}: ${activeStation.name}</h4>
+          <p class="text-slate-600 mt-0.5 leading-relaxed">${activeStation.desc}</p>
         </div>
       </div>
 
@@ -261,8 +244,8 @@ function renderNodeDetails(nodeId) {
           <span class="text-xs text-slate-500 font-mono">${node.category}</span>
         </div>
       </div>
-      <span class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-yellow-400 text-slate-950">
-        STOP ${node.stop || 1} (${node.mta})
+      <span class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-blue-600 text-white">
+        STOP ${node.stop || 1}
       </span>
     </div>
 
@@ -296,12 +279,12 @@ function setStoryStep(stepNum) {
 }
 
 function nextStoryStep() {
-  currentStoryStep = currentStoryStep < 10 ? currentStoryStep + 1 : 1;
+  currentStoryStep = currentStoryStep < 12 ? currentStoryStep + 1 : 1;
   setStoryStep(currentStoryStep);
 }
 
 function prevStoryStep() {
-  currentStoryStep = currentStoryStep > 1 ? currentStoryStep - 1 : 10;
+  currentStoryStep = currentStoryStep > 1 ? currentStoryStep - 1 : 12;
   setStoryStep(currentStoryStep);
 }
 
