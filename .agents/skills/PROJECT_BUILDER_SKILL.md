@@ -5,7 +5,7 @@ See `.agents/rules/GLOBAL_RULES.md` and `.agents/rules/PROJECT_CONTRACT.md` for 
 
 ## Operating Model & Defaults
 - **1-Person Company:** Single founder + AI swarm. Features built as vertical slices (UI through DB per story).
-- **Capability-Driven Scaffolding:** During Phase 1, ask ONLY *Mobile or Web?* and construct `docs/00_PROJECT_CONTRACT.md` (`capabilities` and `targets`). Agents skip infrastructure marked `none` (`N/A — CAPABILITY NOT REQUIRED`).
+- **Capability-Driven Scaffolding:** During Phase 1, start with *Mobile or Web?* if unknown, distinguish confirmed decisions from assumptions, and construct `docs/00_PROJECT_CONTRACT.md` (`capabilities` and `targets`). Agents skip infrastructure marked `none` (`N/A — CAPABILITY NOT REQUIRED`).
 - **Data Tier:** Dual-layered local-first (SQLite/IndexedDB local + Cloud PostgreSQL sync) when persistence/sync is `required`.
 
 ## Autonomy Gateways
@@ -24,7 +24,7 @@ See `.agents/rules/GLOBAL_RULES.md` and `.agents/rules/PROJECT_CONTRACT.md` for 
 | **Phase 5** | Frontend Developer | `docs/06_DESIGN_REGISTER.md`, `src/components/` | Visual mockup approval, web (DOM/focus) vs native (Expo) HIG audit |
 | **Phase 6** | Service Engineer | `src/services/`, `src/hooks/`, `src/db/` | Memory safety, sync retry, outbox isolation, auth guard audit |
 | **Phase 7** | QA Agent | `tests/07_TEST_MANIFEST.md` | ≥80% coverage, automated P1, multi-tenant & IDOR test signoff |
-| **Phase 8** | UAT Coordinator | `docs/10_UAT_CHECKLIST.md`, `progress.html`, sandbox launchers | Stakeholder acceptance (Gate 3); feedback returns through PM to the responsible phase lead |
+| **Phase 8** | UAT Coordinator | `docs/10_UAT_CHECKLIST.md`, `progress.html`, target-platform test access | Stakeholder acceptance (Gate 3); feedback returns through PM to the responsible phase lead |
 | **Release** | Deployment Lead | `docs/08_SETUP_REGISTER.md`, `docs/09_RELEASE_PLAN.md` | Provider setup, Gate 4 approval, verified release or user-managed handoff |
 
 PM routes commands, Orchestrator maintains state/dashboard, Architecture Reviewer audits throughout, and Apple Design supports Phase 5. These are support roles, not numbered phases. This controller document is not an additional skill. The authoritative registry is in Global Rules.
@@ -32,9 +32,12 @@ PM routes commands, Orchestrator maintains state/dashboard, Architecture Reviewe
 ## Interactive Setup, Skip Paths & Final Release
 - **Mockup Review (Phase 5):** Pause for generated mockup review before writing UI code.
 - **Database Setup (Phase 6):** Offer free DB or user provider; record progress in `docs/08_SETUP_REGISTER.md`. Explicit skip continues with mocks (`[SKIPPED — MOCKS ONLY]`); production deploy remains BLOCKED until DB configured.
-- **UAT (Phase 8):** After Phase 7 QA passes, UAT Coordinator gathers acceptance sign-off at Gate 3 before handing off to Release.
+- **UAT (Phase 8):** After all slices and aggregate Phase 7 QA pass, UAT Coordinator gathers acceptance sign-off at Gate 3 before handing off to Release.
 - **Deployment & Release (Release):** Ask destination (Vercel/EAS/Other) or accept explicit skip (`[SKIPPED — USER MANAGED]`). On skip, execute no commands and set `NEXT_STEP_POINTER: COMPLETE — USER MANAGED HANDOFF`. Otherwise prepare `docs/09_RELEASE_PLAN.md` for Gate 4 sign-off.
 
 ## Invalidation & Resumption
 - **Revision Cascade:** Upstream artifact changes invalidate downstream deliverables and reset execution pointer to earliest affected phase.
 - **Resumption:** Parse `NEXT_STEP_POINTER` from `docs/PROJECT_STATUS.md` and execute the next actionable step, respecting pending setup and sign-offs.
+
+## Iteration & Evidence
+Apply Global Rules §8: validate scope assumptions; plan acceptance, integration, and contract tests in Phases 2–4; execute Phases 5–7 per story; require measured NFR evidence and integrated QA before target-platform UAT. Keep the eight phases, existing four gates, and current skills.

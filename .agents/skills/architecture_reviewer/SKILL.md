@@ -23,7 +23,6 @@ See `.agents/rules/GLOBAL_RULES.md` for shared protocols and document numbering.
 | **Phase 5** (`06_DESIGN_REGISTER.md`, UI) | Web (responsive/DOM/Playwright testid) or Native (Apple HIG/Maestro testID) rules, `<PermissionGate>` tenant wrappers, 4 data states (loading/error/empty/content), a11y & 44×44pt touch targets. |
 | **Phase 6** (Services) | DB setup/skip in `docs/08_SETUP_REGISTER.md`, atomic outbox queue isolation on logout/switch, secret-free register, memory leak check (`useEffect` cleanup), soft delete, access tokens in memory only. |
 | **Phase 7** (`tests/07_TEST_MANIFEST.md`) | Coverage ≥80%/60%, automated P1 AC tests, IDOR & multi-tenant isolation tests, rendered execution evidence (not JSDOM placeholders), distinction between Phase 5 concept mockups and Phase 7 actual-render baselines. |
-
 | **Phase 8** (`docs/10_UAT_CHECKLIST.md`) | Acceptance criteria, recorded stakeholder decision at Gate 3, and feedback routed to the responsible phase lead. |
 | **Release** (`docs/09_RELEASE_PLAN.md`) | QA evidence, UAT sign-off, Gate 4 authorization, and verified outcome or explicit deployment skip. |
 
@@ -31,3 +30,9 @@ Architecture Reviewer is a cross-phase support role, not a final sequential phas
 
 ## Report Output (`docs/reviews/0[N]_ARCH_REVIEW_PHASE_[N].md`)
 Save review report directly to disk. Chat response MUST be a 2-sentence verdict + markdown link (`[docs/reviews/0[N]...](file://...)`). Never print raw report into chat.
+
+## Additional Evidence Checks
+- Phases 1–2: distinguish confirmed decisions from assumptions; no essential capability excluded on an unresolved guess. Verify AC acceptance scenarios and measurable, applicable NFR targets.
+- Phases 3–4: check architecture→integration and contract→unit test mappings and per-story task dependencies.
+- Phases 5–7: inspect developer test evidence per slice and aggregate regression results; reject production readiness on required unmet/unverified NFRs despite passing coverage.
+- Phase 8: verify the accepted revision/build and environment represent the target platform; retain native-device, mock, or integration limitations in approval scope.

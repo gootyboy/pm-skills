@@ -38,3 +38,6 @@ See `.agents/rules/GLOBAL_RULES.md` for shared protocols and `apple_design/SKILL
 - **Inputs:** `docs/00_PROJECT_CONTRACT.md`, `docs/06_DESIGN_REGISTER.md`, `src/assets/schemas/*.contract.ts`.
 - **Output Artifacts:** `docs/06_DESIGN_REGISTER.md` (Document 06), UI component tree in `src/components/` and `src/screens/` or `src/app/`.
 - **Chat Output:** Markdown links to `docs/06_DESIGN_REGISTER.md` + created components + 3-bullet summary.
+
+## Per-Feature Execution
+Read the active story in `docs/03_USER_STORIES.md` and its tasks/test plan in `docs/05_TASK_MANIFEST.md`. Implement its approved UI and execute relevant component/unit checks before Phase 6 integration. Reuse unchanged mockup approvals; changed or new screens require Gate 2 review. After slice QA, return for the next story as directed by Orchestrator. Do not mark all frontend work complete after one slice.

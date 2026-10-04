@@ -1,14 +1,14 @@
 // Workflow visualizer. Mirrors the canonical registry in GLOBAL_RULES.md.
 // Only phases have numbers; release and supporting roles are not extra phases.
 const WORKFLOW_STAGES = [
-  { id: 'discovery', phase: 1, role: 'IT Consultant', skill: 'it_consultant', path: 'it_consultant/SKILL.md', group: 'specification', icon: '💼', title: 'Discovery & Contract', description: 'Define capabilities and create the architecture brief. Document 00 is part of Phase 1.', artifacts: ['docs/00_PROJECT_CONTRACT.md', 'docs/01_ARCH_BRIEF.md'], checkpoint: 'Review capabilities and architecture.' },
-  { id: 'scope', phase: 2, role: 'Product Owner', skill: 'product_owner', path: 'product_owner/SKILL.md', group: 'specification', icon: '🎯', title: 'Scope', description: 'Define the PRD and complete user stories within the agreed capabilities.', artifacts: ['docs/02_PRD.md', 'docs/03_USER_STORIES.md'], checkpoint: 'Gate 1 — Scope approval in BALANCED and SUPERVISED.' },
-  { id: 'architecture', phase: 3, role: 'Technical Architect', skill: 'technical_architect', path: 'techincal_architect/SKILL.md', group: 'specification', icon: '📐', title: 'Technical Specification', description: 'Define architecture, contracts, and the executable task manifest.', artifacts: ['docs/04_TECHNICAL_SPEC.md', 'docs/05_TASK_MANIFEST.md'], checkpoint: 'Architecture Reviewer checks technical deliverables.' },
-  { id: 'schemas', phase: 4, role: 'Content Parser', skill: 'content_parser', path: 'content_parser/SKILL.md', group: 'specification', icon: '📄', title: 'Schemas', description: 'Generate applicable JSON schemas, Zod contracts, and mock fixtures.', artifacts: ['src/assets/schemas/'], checkpoint: 'Mark schema work N/A when persistence is not required.' },
-  { id: 'frontend', phase: 5, role: 'Frontend Developer', skill: 'frontend_developer', path: 'frontend_developer/SKILL.md', group: 'implementation', icon: '💻', title: 'UI/UX', description: 'Create screen inventory, generate mockups, then implement approved UI. Apple Design supports this phase.', artifacts: ['docs/06_DESIGN_REGISTER.md', 'docs/design/mockups/', 'src/components/'], checkpoint: 'Gate 2 — Mockup approval before UI code, in every mode.' },
-  { id: 'services', phase: 6, role: 'Service Engineer', skill: 'service_engineer', path: 'service_engineer/SKILL.md', group: 'implementation', icon: '⚙️', title: 'Database Setup & Services', description: 'Complete database setup or record the explicit mock-only skip, then implement applicable backend services.', artifacts: ['docs/08_SETUP_REGISTER.md', 'src/services/', 'src/hooks/', 'src/db/', 'src/sync/'], checkpoint: 'Database setup/skip at phase entry, in every mode.' },
-  { id: 'qa', phase: 7, role: 'QA Agent', skill: 'qa_agent', path: 'qa_agent/SKILL.md', group: 'validation', icon: '🧪', title: 'QA', description: 'Verify applicable tests and evidence. Passing QA hands off to Phase 8 UAT.', artifacts: ['tests/07_TEST_MANIFEST.md'], checkpoint: 'Preserve any mock-only qualification; QA is not release authorization.' },
-  { id: 'uat', phase: 8, role: 'UAT Coordinator', skill: 'uat', path: 'uat/SKILL.md', group: 'validation', icon: '⚡', title: 'UAT', description: 'Coordinate stakeholder acceptance through the existing StackBlitz review. Revisions return through PM to the responsible phase lead, then QA and UAT are rechecked.', artifacts: ['docs/10_UAT_CHECKLIST.md', 'open_stackblitz.html', 'redirect_stackblitz.html', 'UAT_FEEDBACK.md'], checkpoint: 'Gate 3 — UAT sign-off in every mode. Feedback file is created only when revisions are requested.' },
+  { id: 'discovery', phase: 1, role: 'IT Consultant', skill: 'it_consultant', path: 'it_consultant/SKILL.md', group: 'specification', icon: '💼', title: 'Discovery & Contract', description: 'Record confirmed capabilities, assumptions, and open questions before architecture decisions. Document 00 belongs to Phase 1.', artifacts: ['docs/00_PROJECT_CONTRACT.md', 'docs/01_ARCH_BRIEF.md'], checkpoint: 'Review capabilities and architecture.' },
+  { id: 'scope', phase: 2, role: 'Product Owner', skill: 'product_owner', path: 'product_owner/SKILL.md', group: 'specification', icon: '🎯', title: 'Scope', description: 'Confirm users, workflows, constraints, and uncertain capabilities. Map each AC to acceptance scenarios and define measurable NFR targets.', artifacts: ['docs/02_PRD.md', 'docs/03_USER_STORIES.md'], checkpoint: 'Gate 1 — Scope approval in BALANCED and SUPERVISED.' },
+  { id: 'architecture', phase: 3, role: 'Technical Architect', skill: 'technical_architect', path: 'techincal_architect/SKILL.md', group: 'specification', icon: '📐', title: 'Technical Specification', description: 'Map architecture and API boundaries to integration checks and NFR evidence. Schedule Phase 5 → 6 → 7 tasks per feature.', artifacts: ['docs/04_TECHNICAL_SPEC.md', 'docs/05_TASK_MANIFEST.md'], checkpoint: 'Architecture Reviewer checks technical deliverables.' },
+  { id: 'schemas', phase: 4, role: 'Content Parser', skill: 'content_parser', path: 'content_parser/SKILL.md', group: 'specification', icon: '📄', title: 'Schemas', description: 'Generate applicable schemas and contracts; map boundaries and rejected inputs to unit/contract checks.', artifacts: ['src/assets/schemas/'], checkpoint: 'Mark schema work N/A when persistence is not required.' },
+  { id: 'frontend', phase: 5, role: 'Frontend Developer', skill: 'frontend_developer', path: 'frontend_developer/SKILL.md', group: 'implementation', icon: '💻', title: 'UI/UX', description: 'For the active feature, implement approved UI and run component checks. Continue to services and QA; repeat for the next feature. Apple Design supports this phase.', artifacts: ['docs/06_DESIGN_REGISTER.md', 'docs/design/mockups/', 'src/components/'], checkpoint: 'Gate 2 — Mockup approval before UI code, in every mode.' },
+  { id: 'services', phase: 6, role: 'Service Engineer', skill: 'service_engineer', path: 'service_engineer/SKILL.md', group: 'implementation', icon: '⚙️', title: 'Database Setup & Services', description: 'Integrate the active feature and run unit/integration checks. Reuse verified database setup; preserve any mock-only qualification.', artifacts: ['docs/08_SETUP_REGISTER.md', 'src/services/', 'src/hooks/', 'src/db/', 'src/sync/'], checkpoint: 'Database setup/skip at phase entry, in every mode.' },
+  { id: 'qa', phase: 7, role: 'QA Agent', skill: 'qa_agent', path: 'qa_agent/SKILL.md', group: 'validation', icon: '🧪', title: 'QA', description: 'Verify AC/NFR results and developer evidence. Slice QA returns to the next feature; aggregate regression QA across all slices hands off to UAT. Coverage alone is insufficient.', artifacts: ['tests/07_TEST_MANIFEST.md'], checkpoint: 'Preserve any mock-only qualification; QA is not release authorization.' },
+  { id: 'uat', phase: 8, role: 'UAT Coordinator', skill: 'uat', path: 'uat/SKILL.md', group: 'validation', icon: '⚡', title: 'UAT', description: 'Validate acceptance scenarios on the target platform: compatible web preview or native build/device. Record revision, environment, results, and limitations; preserve mock-only scope.', artifacts: ['docs/10_UAT_CHECKLIST.md', 'open_stackblitz.html', 'redirect_stackblitz.html', 'UAT_FEEDBACK.md'], checkpoint: 'Gate 3 — UAT sign-off in every mode. Feedback file is created only when revisions are requested.' },
   { id: 'release', phase: null, role: 'Deployment Lead', skill: 'deployment', path: 'deployment/SKILL.md', group: 'validation', icon: '🚀', title: 'Release', description: 'After UAT sign-off, choose a provider or skip deployment. Prepare and verify the selected release, or record the user-managed handoff.', artifacts: ['docs/08_SETUP_REGISTER.md', 'docs/09_RELEASE_PLAN.md'], checkpoint: 'Deployment selection/skip, then Gate 4 — Release approval if deploying, in every mode.' }
 ];
 
@@ -42,12 +42,23 @@ const CARD_LABELS = {
   scope: 'PRD & Full-Stack User Stories',
   architecture: 'Technical Spec & Task Manifest',
   schemas: 'Data Contracts & Schemas',
-  frontend: 'Frontend UI Slices',
-  services: 'Service & Database Setup',
-  qa: 'Automated Test Suites',
-  uat: 'Cloud UAT Sandbox',
+  frontend: 'Feature UI & Component Tests',
+  services: 'Feature Integration & Tests',
+  qa: 'Slice QA & Integrated Regression',
+  uat: 'Target-Platform Acceptance',
   reviewer: 'Zero-Trust Audit Gate',
   release: 'Production Cloud Release'
+};
+
+const TEST_RELATIONSHIPS = {
+  discovery: 'Confirm consequential assumptions during scope clarification.',
+  scope: 'Requirements / ACs ↔ acceptance tests (Phase 8)',
+  architecture: 'Architecture / APIs ↔ integration tests (Phases 6–7)',
+  schemas: 'Contracts ↔ unit / contract tests (Phases 5–7)',
+  frontend: 'Per feature: UI → Services → QA ↺ next feature',
+  services: 'Per feature: UI → Services → QA ↺ next feature',
+  qa: 'All slices + integrated regression + required NFR evidence → UAT',
+  uat: 'Accept the tested build and environment; web preview does not prove native behavior.'
 };
 
 function renderCard(role) {
@@ -70,7 +81,7 @@ function renderVModelView() {
     ['validation', 'Validation (Testing)', ['qa', 'uat', 'release']]
   ];
   const description = selected.id === 'discovery'
-    ? 'it_consultant conducts scope discovery and locks 00_PROJECT_CONTRACT.md and 01_ARCH_BRIEF.md.'
+    ? 'it_consultant records confirmed decisions, assumptions, and open questions in the contract and architecture brief.'
     : selected.description;
   const reviewer = ALL_ROLES.find(role => role.id === 'reviewer');
   container.innerHTML = `
@@ -87,7 +98,7 @@ function renderVModelView() {
     <section id="roleDetail" class="detail" aria-live="polite" aria-atomic="true">
       <span class="detail-icon" aria-hidden="true">${selected.icon}</span>
       <div><h2>${selected.phase ? 'Phase ' + selected.phase : selected.id === 'release' ? 'Release' : 'Cross-phase support'}: ${escapeHtml(selected.skill || selected.role)}</h2>
-      <p>${escapeHtml(description)}</p></div>
+      <p>${escapeHtml(description)}</p><p class="test-mapping">${escapeHtml(TEST_RELATIONSHIPS[selected.id] || selected.checkpoint || 'Audits requirements, implementation evidence, and target-platform acceptance throughout.')}</p></div>
     </section>`;
 }
 

@@ -36,3 +36,6 @@ See `.agents/rules/GLOBAL_RULES.md` for shared protocols and document numbering.
 - **Inputs:** `docs/00_PROJECT_CONTRACT.md` (Document 00), `docs/04_TECHNICAL_SPEC.md` (Document 04), `docs/05_TASK_MANIFEST.md` (Document 05), `src/assets/schemas/`, and `docs/08_SETUP_REGISTER.md` (Document 08).
 - **Output Artifacts:** `docs/08_SETUP_REGISTER.md` (Document 08), code in `src/db/`, `src/services/`, `src/hooks/`, and `src/sync/`.
 - **Chat Output:** Return markdown links to modified files + short functional summary.
+
+## Per-Feature Integration
+Implement the active story from the task manifest, connect its UI to applicable services, and execute unit/contract and integration checks planned in the technical spec, including relevant NFR checks. Hand the working slice and recorded evidence to Phase 7 QA. Reuse verified DB setup on subsequent slices; reopen it only for incomplete or changed setup. Preserve explicit mock-only qualification.

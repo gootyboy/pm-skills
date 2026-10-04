@@ -12,13 +12,14 @@ See `.agents/rules/GLOBAL_RULES.md` for shared protocols and document numbering.
 - **Invisible Execution:** Overwrite `docs/PROJECT_STATUS.md` silently on disk at the end of *every user turn*. Never dump raw table in chat unless requested.
 - **Line Limit & Session Cap:** Keep `PROJECT_STATUS.md` under 65 lines. Maintain rolling **3-session log cap** (delete oldest rows).
 - **Status Enums:** Use the authoritative vocabulary in Global Rules, including `[AWAITING USER SETUP]`, `[AWAITING UAT SIGN-OFF]`, and `[STALE — REVISION REQUIRED]`.
-- **Visual Progress Synchronization:** Keep project root `progress.html` updated at every turn with current phase, deliverables index, and StackBlitz sandbox link.
+- **Visual Progress Synchronization:** Keep project root `progress.html` updated at every turn with current phase, deliverables index, and selected UAT environment link.
+- **Dashboard Template:** Use `references/progress-template.html`; populate active story and UAT environment summary/access from recorded evidence. Before access exists, render a disabled pending-access label instead of an empty or placeholder link.
 
 ## Template: `docs/PROJECT_STATUS.md`
 ```markdown
 # PROJECT STATUS — [Project Name]
 **Autonomy Mode:** [BALANCED|AUTOPILOT|SUPERVISED] | **Last Updated:** [ISO 8601]
-### 🎯 NEXT_STEP_POINTER: Phase [N] or Release, Step [N] — [Agent] to [action]. [Execute immediately | Awaiting user].
+### 🎯 NEXT_STEP_POINTER: Phase [N] or Release, Story [US-NNN or aggregate], Step [N] — [Agent] to [action]. [Execute immediately | Awaiting user].
 
 ## Phase Progress
 - [ ] Phase 1 (Discovery & Contract): `docs/00_PROJECT_CONTRACT.md`, `docs/01_ARCH_BRIEF.md` — [Status] | Agent: IT Consultant
@@ -53,10 +54,10 @@ See `.agents/rules/GLOBAL_RULES.md` for shared protocols and document numbering.
 ```
 
 ## Gateway & Revision Transition Logic
-1. **Phase 1 Contract Check:** Read `docs/00_PROJECT_CONTRACT.md` (Document 00). Any capability declared `none` sets downstream phases to `[N/A — CAPABILITY NOT REQUIRED]`.
+1. **Phase 1 Contract Check:** Read `docs/00_PROJECT_CONTRACT.md` (Document 00). Confirmed capabilities declared `none` set only corresponding downstream work to `[N/A — CAPABILITY NOT REQUIRED]`.
 2. **Revision Invalidation Cascade:** If an upstream document is edited (e.g. `02_PRD.md` modified), mark all downstream artifacts as `[STALE — REVISION REQUIRED]` until reviewed and re-verified.
 3. At the mockup checkpoint, set `[AWAITING MANAGER APPROVAL]` with a review pointer before UI implementation.
-4. After Phase 7 QA and peer review pass, set Phase 8 UAT Coordinator as the next lead. Gate 3 uses `[AWAITING UAT SIGN-OFF]`. Approved UAT hands off to Release; revisions return through PM to the responsible phase lead, then QA and UAT are rechecked.
+4. Track active/remaining stories in the task manifest. After slice QA passes, return to Phase 5 for the next story; keep aggregate Phase 5–7 progress open until all scoped slices finish. After all slices and integrated release regression QA and peer review pass, set Phase 8 UAT Coordinator as the next lead. Gate 3 uses `[AWAITING UAT SIGN-OFF]`. Approved UAT hands off to Release; revisions return through PM to the responsible phase lead, then QA and UAT are rechecked.
 5. Database setup/skip stays at Phase 6 entry. Deployment selection/skip stays in Release. Gate 4 approves the prepared release plan; successful verification completes Release. Apply autonomy modes and terminal pointers from Global Rules.
 6. On explicit deployment skip, record `[SKIPPED — USER MANAGED]` for Release and set `NEXT_STEP_POINTER: COMPLETE — USER MANAGED HANDOFF`.
 

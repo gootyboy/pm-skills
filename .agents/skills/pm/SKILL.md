@@ -38,4 +38,6 @@ PM is the entry/routing skill. Audit, state, and design support are not sequenti
 ## Execution Protocol
 1. **Start:** If `PROJECT_STATUS.md` exists → suggest `/pm resume`. Else prompt pitch, set `NEXT_STEP_POINTER: Phase 1`, run IT Consultant.
 2. **Resume/Next:** Load `NEXT_STEP_POINTER` agent skill → execute step → run Architecture Reviewer → run Orchestrator to update `PROJECT_STATUS.md`.
-3. **Gate Rules:** Follow Global Rules: Gate 1 = scope, Gate 2 = mockups, Gate 3 = UAT, Gate 4 = release plan. After Phase 7 QA passes, route to Phase 8 UAT Coordinator; after UAT sign-off, route to Deployment Lead for Release. Database setup/skip remains at Phase 6 entry; deployment selection/skip remains in Release. `/pm next` and resume cannot bypass required setup or approvals.
+3. **Gate Rules:** Follow Global Rules: Gate 1 = scope, Gate 2 = mockups, Gate 3 = UAT, Gate 4 = release plan. After slice QA, route to Phase 5 for the next story. After all slices and aggregate Phase 7 QA pass, route to Phase 8 UAT Coordinator; after UAT sign-off, route to Deployment Lead for Release. Database setup/skip remains at Phase 6 entry; deployment selection/skip remains in Release. `/pm next` and resume cannot bypass required setup or approvals.
+
+Apply Global Rules §8 for discovery uncertainty, per-story routing, early verification planning, NFR evidence, and target-platform UAT. Resume the active story recorded in the state pointer; do not treat a passing slice as a completed release.

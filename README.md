@@ -22,7 +22,7 @@ For a **1-Person Company**, this model creates crippling coordination overhead. 
 
 ## 👥 The Agent Swarm
 
-The framework consists of specialized agent skills operating under a linear Software Development Life Cycle of eight phases followed by Release:
+The framework consists of specialized agent skills operating under a Software Development Life Cycle of eight phases followed by Release, with Phases 5–7 repeated per feature slice:
 
 ```mermaid
 flowchart TB
@@ -33,7 +33,8 @@ flowchart TB
     CP --> FE["5. Frontend Developer: mockups — Gate 2, then UI"]
     FE --> SE["6. Service Engineer: database setup/skip & services"]
     SE --> QA["7. QA Agent: verification"]
-    QA --> UAT["8. UAT Coordinator: acceptance — Gate 3"]
+    QA -->|All slices and aggregate QA pass| UAT["8. UAT Coordinator: acceptance — Gate 3"]
+    QA -->|Next feature slice| FE
     UAT --> DEP["Release: Deployment Lead — setup/skip, Gate 4 if deploying"]
     UAT -->|Revision feedback via PM| PM
     APPLE["Apple Design: design support"] -.-> FE
@@ -48,12 +49,12 @@ There are 13 skills. Supporting roles do not add phases; document prefixes are a
 
 | Role | Skill / controller document | Responsibilities |
 |---|---|---|
-| 🎮 **Workflow Controller (document)** | [`PROJECT_BUILDER_SKILL.md`](.agents/skills/PROJECT_BUILDER_SKILL.md) | Coordinates the linear SDLC, human-in-the-loop gateways, and agent orchestration. |
+| 🎮 **Workflow Controller (document)** | [`PROJECT_BUILDER_SKILL.md`](.agents/skills/PROJECT_BUILDER_SKILL.md) | Coordinates the SDLC, per-feature iterations, human approval gates, and agent orchestration. |
 | 🧭 **PM** | [`pm`](.agents/skills/pm/SKILL.md) | Entry point and routing across existing phases. |
 | 📐 **Technical Architect** | [`technical_architect`](.agents/skills/techincal_architect/SKILL.md) | Phase 3 technical specification and task manifest. |
 | 🎨 **Apple Design** | [`apple-design`](.agents/skills/apple_design/SKILL.md) | Design standards supporting Phase 5. |
 | ⚡ **UAT Coordinator** | [`uat`](.agents/skills/uat/SKILL.md) | Phase 8 stakeholder acceptance at Gate 3 before Release. |
-| 💡 **IT Consultant** | [`it_consultant`](.agents/skills/it_consultant/SKILL.md) | Solution architect for Phase 1. Asks **one question** (*Mobile or Web?*) and scaffolds full tech stack & permission matrix into `00_PROJECT_CONTRACT.md` and `01_ARCH_BRIEF.md`. |
+| 💡 **IT Consultant** | [`it_consultant`](.agents/skills/it_consultant/SKILL.md) | Solution architect for Phase 1. Starts with *Mobile or Web?* and records confirmed decisions and assumptions and scaffolds full tech stack & permission matrix into `00_PROJECT_CONTRACT.md` and `01_ARCH_BRIEF.md`. |
 | 📋 **Product Owner** | [`product_owner`](.agents/skills/product_owner/SKILL.md) | Phase 2 spec writer. Translates scope into `02_PRD.md` and full-stack INVEST user stories in `03_USER_STORIES.md`. |
 | ⚖️ **Architecture Reviewer** | [`architecture_reviewer`](.agents/skills/architecture_reviewer/SKILL.md) | Zero-trust auditor across all phases. Evaluates security vectors, IDOR leaks, Apple design rules, and coverage. |
 | 📐 **Content Parser** | [`content_parser`](.agents/skills/content_parser/SKILL.md) | Generates deterministic JSON Schemas, Zod contracts, and mock fixtures saved to `src/assets/schemas/`. |
@@ -107,7 +108,7 @@ tests/
 Provide your raw project pitch to the swarm:
 > *"Scaffold a mobile app for local food trucks to update their daily menu and location in real-time."*
 
-The **IT Consultant** will process the pitch and ask the single scoping question: *"Mobile App or Website?"*
+The **IT Consultant** will process the pitch and start with the scoping question: *"Mobile App or Website?"*
 
 ### 2. Resuming an Ongoing Session
 If you pause or resume work after hours or days, simply tell the AI:
@@ -127,8 +128,12 @@ Every mode stops for generated mockup approval, then offers guided database and 
 
 Use clickable choices when the host supports them. Each prerequisite offers **Done — check it**, **Help**, or **Later**, with a direct dashboard link or copyable command. Typed input is needed only for missing identifiers/details. Users enter passwords and secrets through provider workflows or ignored local environment files, never chat or committed documents. Saved progress resumes at the first incomplete step.
 
-`docs/08_SETUP_REGISTER.md` stores non-secret choices, prerequisite progress, and validation evidence. `docs/09_RELEASE_PLAN.md` stores the concrete release plan, approval scope, and verified outcome. Both are generated in an active project at the relevant stage. Passing QA starts Phase 8 UAT; Gate 3 records acceptance in `docs/10_UAT_CHECKLIST.md`. Release then starts deployment setup; Gate 4 approves the prepared release before publication. Missing setup information pauses every autonomy mode. Logging and monitoring setup are excluded.
+`docs/08_SETUP_REGISTER.md` stores non-secret choices, prerequisite progress, and validation evidence. `docs/09_RELEASE_PLAN.md` stores the concrete release plan, approval scope, and verified outcome. Both are generated in an active project at the relevant stage. Passing aggregate QA after all feature slices starts target-platform Phase 8 UAT; Gate 3 records acceptance in `docs/10_UAT_CHECKLIST.md`. Release then starts deployment setup; Gate 4 approves the prepared release before publication. Missing setup information pauses every autonomy mode. Logging and monitoring setup are excluded.
 
 Provider instructions live in `.agents/skills/deployment/references/`; database onboarding lives in `.agents/skills/service_engineer/references/database-setup.md`. Add a provider guide and link it from the deployment skill to extend supported destinations. Current provider prerequisites and free-plan eligibility are checked against official documentation when used.
 
 **Explicit skip paths:** Skipping the database continues with typed models, mock fixtures, and a mock adapter. The agent tells the user to return and finish persistence/auth/sync integration; QA marks that work unverified and production stays blocked. Skipping deployment runs no deployment commands and ends with a user-managed handoff stating nothing was deployed. **Later** instead leaves a pending checkpoint. These choices are never inferred from silence or autonomy mode.
+
+## Verification within the existing phases
+
+Discovery records confirmed decisions and assumptions; the scope review resolves consequential uncertainty. Phase 2 defines acceptance scenarios and measurable NFRs, Phase 3 plans integration checks, and Phase 4 plans contract/unit checks. Developers test each feature during Phases 5–6; Phase 7 verifies the slice, then checks the integrated release before UAT. Coverage alone cannot establish readiness. Phase 8 uses a compatible web preview or native test build/device and records the exact build, environment, evidence, and limitations. Existing mockup, database, UAT, and release checkpoints remain in force.
