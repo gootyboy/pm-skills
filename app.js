@@ -1,355 +1,308 @@
-// Data model for SDLC Swarm Skills, Interactions, and Produced Documentation
-const SWARM_DATA = {
-  phases: [
-    {
-      id: 1,
-      name: "Discovery & Contract",
-      agent: "pm",
-      agentName: "Project Manager",
-      icon: "📋",
-      color: "blue",
-      desc: "Discovers user intent, scopes features, and locks the project contract.",
-      inputs: ["User Request / Idea", "Constraints"],
-      outputs: ["Project Contract", "Workspace Initialization"],
-      docsCreated: [
-        { name: "PROJECT_CONTRACT.md", desc: "Locked scope, platform choice, constraints & milestones" },
-        { name: "progress.html", desc: "Visual project dashboard initialized in project root" }
-      ],
-      downstream: ["product_owner"]
-    },
-    {
-      id: 2,
-      name: "Product Definition",
-      agent: "product_owner",
-      agentName: "Product Owner",
-      icon: "🎯",
-      color: "purple",
-      desc: "Transforms project scope into functional requirements and acceptance criteria.",
-      inputs: ["PROJECT_CONTRACT.md"],
-      outputs: ["PRD", "User Stories", "Acceptance Criteria"],
-      docsCreated: [
-        { name: "PRD.md", desc: "Detailed functional requirements, constraints, and success metrics" },
-        { name: "USER_STORIES.md", desc: "Actionable feature breakdown with edge cases" }
-      ],
-      downstream: ["techincal_architect", "apple_design"]
-    },
-    {
-      id: 3,
-      name: "Architecture & Design",
-      agent: "techincal_architect",
-      agentName: "Technical Architect & Apple Design",
-      icon: "📐",
-      color: "indigo",
-      desc: "Selects technology stack, schemas, and crafts Apple HIG-compliant UI/UX specifications.",
-      inputs: ["PRD.md", "USER_STORIES.md"],
-      outputs: ["System Architecture", "Data Schemas", "UI Design System"],
-      docsCreated: [
-        { name: "ARCHITECTURE.md", desc: "Component architecture, data flows, and tech stack choices" },
-        { name: "DESIGN_SPEC.md", desc: "Apple HIG typography, color palette, glassmorphism tokens" }
-      ],
-      downstream: ["frontend_developer", "service_engineer"]
-    },
-    {
-      id: 4,
-      name: "Implementation",
-      agent: "frontend_developer",
-      agentName: "Frontend & Service Engineer",
-      icon: "💻",
-      color: "emerald",
-      desc: "Executes clean, modular application code, APIs, and client-side interactions.",
-      inputs: ["ARCHITECTURE.md", "DESIGN_SPEC.md"],
-      outputs: ["Application Source Code", "Local Live Server"],
-      docsCreated: [
-        { name: "README.md", desc: "Project overview, run scripts, and keyboard shortcuts" },
-        { name: "index.html / Source", desc: "Production-ready application code" }
-      ],
-      downstream: ["qa_agent"]
-    },
-    {
-      id: 5,
-      name: "Quality Assurance",
-      agent: "qa_agent",
-      agentName: "QA Agent",
-      icon: "🧪",
-      color: "amber",
-      desc: "Runs automated unit tests, validates edge cases, and verifies PRD compliance.",
-      inputs: ["Application Code", "PRD.md"],
-      outputs: ["Automated Test Suite", "QA Verification Report"],
-      docsCreated: [
-        { name: "TEST_PLAN.md", desc: "Test matrix, boundary values, and automated assertions" },
-        { name: "QA_REPORT.md", desc: "Verification scorecard (Passing vs. Failing test cases)" }
-      ],
-      downstream: ["uat"]
-    },
-    {
-      id: 6,
-      name: "User Acceptance Testing",
-      agent: "uat",
-      agentName: "UAT Coordinator",
-      icon: "⚡",
-      color: "cyan",
-      desc: "Deploys application to temporary StackBlitz cloud sandbox for stakeholder evaluation.",
-      inputs: ["Application Code", "QA_REPORT.md", "PRD.md"],
-      outputs: ["StackBlitz WebContainer", "UAT Checklist", "Stakeholder Sign-off"],
-      docsCreated: [
-        { name: "UAT_CHECKLIST.md", desc: "Interactive verification steps for stakeholders" },
-        { name: "open_stackblitz.html", desc: "Zero-config temporary cloud container launcher" },
-        { name: "UAT_FEEDBACK.md", desc: "Structured user feedback (if revisions requested)" }
-      ],
-      downstream: ["deployment"]
-    },
-    {
-      id: 7,
-      name: "Production Release",
-      agent: "deployment",
-      agentName: "Deployment Agent",
-      icon: "🚀",
-      color: "rose",
-      desc: "Publishes final release to production hosting (Vercel, Netlify, Cloudflare).",
-      inputs: ["UAT Sign-off", "Verified Code"],
-      outputs: ["Live Production URL", "CI/CD Pipeline"],
-      docsCreated: [
-        { name: "DEPLOYMENT.md", desc: "Production release notes, domain records, and build logs" }
-      ],
-      downstream: []
-    }
-  ],
+// Complete Network Graph Data: All 14 Skills (Zero Rules, Clean Light Theme)
+const GRAPH_NODES = [
+  // --- CORE CONTROLLERS ---
+  { id: 'skill_builder', label: 'PROJECT_BUILDER_SKILL.md', type: 'controller', category: 'Controllers', icon: '👑', x: 120, y: 140, desc: 'Multi-Agent SDLC Swarm Lead System Architect & Engineering Director Controller.' },
+  { id: 'skill_orchestrator', label: 'orchestrator', type: 'controller', category: 'Controllers', icon: '🎼', x: 380, y: 140, desc: 'State machine engine routing handoffs and managing PROJECT_STATUS.md & progress.html.' },
 
-  supportingSkills: [
-    {
-      id: "orchestrator",
-      name: "Swarm Orchestrator",
-      icon: "🎼",
-      desc: "Master workflow coordinator directing phase handoffs and multi-agent state.",
-      docsCreated: ["TASK_LIST.md", "progress.html"]
-    },
-    {
-      id: "architecture_reviewer",
-      name: "Architecture Reviewer",
-      icon: "🔍",
-      desc: "Independent reviewer validating scalability, security, and component coupling.",
-      docsCreated: ["ARCH_REVIEW.md"]
-    },
-    {
-      id: "it_consultant",
-      name: "IT Consultant",
-      icon: "💼",
-      desc: "Recommends third-party tooling, APIs, database architectures, and services.",
-      docsCreated: ["VENDOR_EVALUATION.md"]
-    },
-    {
-      id: "content_parser",
-      name: "Content Parser",
-      icon: "📄",
-      desc: "Ingests raw briefs, PDFs, API specs, and transforms them into clean prompts.",
-      docsCreated: ["EXTRACTED_SPECS.md"]
-    }
-  ]
-};
+  // --- PHASE SKILLS (SDLC Pipeline) ---
+  { id: 'skill_pm', label: 'pm', type: 'phase', phaseNum: 1, category: 'SDLC Pipeline', icon: '📋', x: 80, y: 290, desc: 'Project Manager: Scope discovery, feature trade-offs, and project contract creation.' },
+  { id: 'skill_po', label: 'product_owner', type: 'phase', phaseNum: 2, category: 'SDLC Pipeline', icon: '🎯', x: 240, y: 290, desc: 'Product Owner: Generates PRD.md, full-stack user stories, and acceptance criteria.' },
+  { id: 'skill_architect', label: 'techincal_architect', type: 'phase', phaseNum: 3, category: 'SDLC Pipeline', icon: '📐', x: 400, y: 290, desc: 'Technical Architect: Selects tech stack, data schemas, and API contracts.' },
+  { id: 'skill_design', label: 'apple_design', type: 'phase', phaseNum: 3, category: 'SDLC Pipeline', icon: '🎨', x: 560, y: 290, desc: 'Apple Design: Crafts Apple HIG-compliant UI design specs, typography, and glassmorphism.' },
+  { id: 'skill_frontend', label: 'frontend_developer', type: 'phase', phaseNum: 4, category: 'SDLC Pipeline', icon: '💻', x: 720, y: 290, desc: 'Frontend Developer: Builds modular UI components, interactions, and client logic.' },
+  { id: 'skill_service', label: 'service_engineer', type: 'phase', phaseNum: 4, category: 'SDLC Pipeline', icon: '⚙️', x: 880, y: 290, desc: 'Service Engineer: Implements backend services, database connections, and REST/GraphQL APIs.' },
+  { id: 'skill_qa', label: 'qa_agent', type: 'phase', phaseNum: 5, category: 'SDLC Pipeline', icon: '🧪', x: 720, y: 460, desc: 'QA Agent: Generates automated test suites, executes boundary checks, and produces QA_REPORT.md.' },
+  { id: 'skill_uat', label: 'uat', type: 'phase', phaseNum: 6, category: 'SDLC Pipeline', icon: '⚡', x: 520, y: 460, desc: 'UAT Coordinator: Deploys temporary StackBlitz cloud sandbox for stakeholder evaluation.' },
+  { id: 'skill_deploy', label: 'deployment', type: 'phase', phaseNum: 7, category: 'SDLC Pipeline', icon: '🚀', x: 320, y: 460, desc: 'Deployment Agent: Configures production cloud hosting (Vercel, Netlify, Cloudflare).' },
 
-// UI State
-let activeSkillId = 1;
-let currentView = 'flow'; // 'flow', 'docs', 'dashboard'
+  // --- SUPPORTING SKILLS ---
+  { id: 'skill_arch_review', label: 'architecture_reviewer', type: 'support', category: 'Specialized Support', icon: '🔍', x: 620, y: 140, desc: 'Architecture Reviewer: Audits deliverables against contract, checking scalability and zero-trust security.' },
+  { id: 'skill_it', label: 'it_consultant', type: 'support', category: 'Specialized Support', icon: '💼', x: 800, y: 140, desc: 'IT Consultant: Evaluates third-party vendor APIs, database setups, and infrastructure requirements.' },
+  { id: 'skill_parser', label: 'content_parser', type: 'support', category: 'Specialized Support', icon: '📄', x: 120, y: 460, desc: 'Content Parser: Extracts structured technical schemas from raw briefs and PDFs.' }
+];
 
-function initUI() {
-  renderFlowGraph();
-  renderSkillInspector(SWARM_DATA.phases[0]);
-  renderDocsMatrix();
-  renderDashboardPreview();
+// Network Edges / Connections
+const GRAPH_EDGES = [
+  // Pipeline Handoff Edges
+  { from: 'skill_builder', to: 'skill_pm', label: '1. Init Scope' },
+  { from: 'skill_pm', to: 'skill_po', label: '2. Contract Handoff' },
+  { from: 'skill_po', to: 'skill_architect', label: '3a. Specs' },
+  { from: 'skill_po', to: 'skill_design', label: '3b. UI Tokens' },
+  { from: 'skill_architect', to: 'skill_frontend', label: '4a. Tech Spec' },
+  { from: 'skill_architect', to: 'skill_service', label: '4b. DB Schema' },
+  { from: 'skill_design', to: 'skill_frontend', label: '4c. HIG Mockups' },
+  { from: 'skill_frontend', to: 'skill_qa', label: '5a. Code Base' },
+  { from: 'skill_service', to: 'skill_qa', label: '5b. API Endpoints' },
+  { from: 'skill_qa', to: 'skill_uat', label: '6. QA Verified' },
+  { from: 'skill_uat', to: 'skill_deploy', label: '7. UAT Approved' },
+
+  // Orchestration & Support Links
+  { from: 'skill_orchestrator', to: 'skill_pm', label: 'Sync State' },
+  { from: 'skill_orchestrator', to: 'skill_uat', label: 'Sync UAT Link' },
+  { from: 'skill_arch_review', to: 'skill_architect', label: 'Audit Arch' },
+  { from: 'skill_it', to: 'skill_service', label: 'Vendor Consult' },
+  { from: 'skill_parser', to: 'skill_po', label: 'Parse Specs' }
+];
+
+// Guided Story Steps
+const STORY_STEPS = [
+  {
+    step: 1,
+    title: "1. Swarm Controller & Orchestrator Kickoff",
+    focusNodes: ['skill_builder', 'skill_orchestrator'],
+    desc: "The SDLC Swarm Controller (PROJECT_BUILDER_SKILL) initializes the workspace, sets autonomy mode, and engages Orchestrator to track project state."
+  },
+  {
+    step: 2,
+    title: "2. Scope Discovery & Project Contract",
+    focusNodes: ['skill_pm'],
+    desc: "The Project Manager (pm) conducts requirement discovery, establishes feature trade-offs, and locks PROJECT_CONTRACT.md."
+  },
+  {
+    step: 3,
+    title: "3. PRD & User Stories Definition",
+    focusNodes: ['skill_po', 'skill_parser'],
+    desc: "The Product Owner (product_owner) expands scope into PRD.md and granular USER_STORIES.md with acceptance criteria."
+  },
+  {
+    step: 4,
+    title: "4. Technical Architecture & Apple Design",
+    focusNodes: ['skill_architect', 'skill_design', 'skill_arch_review'],
+    desc: "Technical Architect specifies tech stack and schemas while Apple Design crafts HIG typography, glassmorphism tokens, and layout specs."
+  },
+  {
+    step: 5,
+    title: "5. Parallel Engineering (Frontend & Service)",
+    focusNodes: ['skill_frontend', 'skill_service', 'skill_it'],
+    desc: "Frontend Developer builds modular UI components while Service Engineer implements backend APIs and database connections."
+  },
+  {
+    step: 6,
+    title: "6. Automated QA Verification",
+    focusNodes: ['skill_qa'],
+    desc: "QA Agent executes automated test suites, validates boundary conditions, and produces QA_REPORT.md."
+  },
+  {
+    step: 7,
+    title: "7. StackBlitz Temporary Cloud Sandbox UAT",
+    focusNodes: ['skill_uat'],
+    desc: "UAT Coordinator packages the build into a zero-config StackBlitz WebContainer cloud sandbox for stakeholder evaluation."
+  },
+  {
+    step: 8,
+    title: "8. Production Release Automation",
+    focusNodes: ['skill_deploy'],
+    desc: "Upon UAT sign-off, Deployment Agent publishes the final build to production cloud hosting (Vercel/Netlify)."
+  }
+];
+
+// App State
+let currentStoryStep = 0;
+let selectedNodeId = 'skill_pm';
+
+function initApp() {
+  renderNetworkGraph();
+  renderNodeDetails(selectedNodeId);
+  renderSkillsList();
 }
 
-function switchView(viewName) {
-  currentView = viewName;
-  document.getElementById('viewFlow').classList.toggle('hidden', viewName !== 'flow');
-  document.getElementById('viewDocs').classList.toggle('hidden', viewName !== 'docs');
-  document.getElementById('viewDashboard').classList.toggle('hidden', viewName !== 'dashboard');
+function renderNetworkGraph() {
+  const svg = document.getElementById('networkSvg');
+  const nodesContainer = document.getElementById('networkNodes');
+  
+  if (!svg || !nodesContainer) return;
 
-  ['btnTabFlow', 'btnTabDocs', 'btnTabDash'].forEach(id => {
-    document.getElementById(id).className = 'px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all text-neutral-400 hover:text-white';
+  svg.innerHTML = `
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="18" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+      </marker>
+      <marker id="arrow-active" viewBox="0 0 10 10" refX="18" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="#007aff"/>
+      </marker>
+    </defs>
+  `;
+  nodesContainer.innerHTML = '';
+
+  const isStoryActive = currentStoryStep > 0;
+  const storyStepObj = isStoryActive ? STORY_STEPS[currentStoryStep - 1] : null;
+
+  // Render Edges (Light Theme Slate / Blue Line)
+  GRAPH_EDGES.forEach(edge => {
+    const fromNode = GRAPH_NODES.find(n => n.id === edge.from);
+    const toNode = GRAPH_NODES.find(n => n.id === edge.to);
+
+    if (!fromNode || !toNode) return;
+
+    const isConnectedToSelected = (edge.from === selectedNodeId || edge.to === selectedNodeId);
+    const isStoryFocused = storyStepObj && (storyStepObj.focusNodes.includes(edge.from) || storyStepObj.focusNodes.includes(edge.to));
+    const isHighlighted = isConnectedToSelected || isStoryFocused;
+
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', fromNode.x);
+    line.setAttribute('y1', fromNode.y);
+    line.setAttribute('x2', toNode.x);
+    line.setAttribute('y2', toNode.y);
+    line.setAttribute('stroke', isHighlighted ? '#007aff' : '#cbd5e1');
+    line.setAttribute('stroke-width', isHighlighted ? '2.5' : '1.5');
+    line.setAttribute('marker-end', isHighlighted ? 'url(#arrow-active)' : 'url(#arrow)');
+    if (isHighlighted) line.setAttribute('stroke-dasharray', '4 4');
+
+    svg.appendChild(line);
   });
 
-  const activeBtn = viewName === 'flow' ? 'btnTabFlow' : viewName === 'docs' ? 'btnTabDocs' : 'btnTabDash';
-  document.getElementById(activeBtn).className = 'px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all bg-neutral-800 text-white shadow';
-}
+  // Render Nodes (Light Theme Cards)
+  GRAPH_NODES.forEach(node => {
+    const isSelected = selectedNodeId === node.id;
+    const isStoryFocused = storyStepObj && storyStepObj.focusNodes.includes(node.id);
+    const isActive = isSelected || isStoryFocused;
 
-function renderFlowGraph() {
-  const container = document.getElementById('flowContainer');
-  container.innerHTML = '';
-
-  SWARM_DATA.phases.forEach((phase, idx) => {
-    const isSelected = activeSkillId === phase.id;
-    const card = document.createElement('div');
-    card.className = `p-4 rounded-2xl border transition-all cursor-pointer relative flex flex-col justify-between ${
-      isSelected 
-        ? 'bg-neutral-800/90 border-blue-500 shadow-xl ring-2 ring-blue-500/30' 
-        : 'bg-neutral-900/70 hover:bg-neutral-800/60 border-neutral-800'
+    const el = document.createElement('div');
+    el.className = `absolute transform -translate-x-1/2 -translate-y-1/2 p-2.5 rounded-2xl cursor-pointer transition-all border select-none flex items-center gap-2 ${
+      isActive 
+        ? 'bg-blue-50/90 border-blue-500 text-blue-950 shadow-xl scale-105 ring-4 ring-blue-500/20 z-20 font-semibold' 
+        : node.type === 'controller'
+        ? 'bg-purple-50/90 border-purple-300 text-purple-950 hover:border-purple-400 shadow-sm z-10'
+        : node.type === 'support'
+        ? 'bg-amber-50/90 border-amber-300 text-amber-950 hover:border-amber-400 shadow-sm z-10'
+        : 'bg-white border-slate-200 text-slate-900 hover:border-slate-300 hover:shadow shadow-sm z-10'
     }`;
-    card.onclick = () => selectSkill(phase.id);
 
-    card.innerHTML = `
+    el.style.left = `${node.x}px`;
+    el.style.top = `${node.y}px`;
+    el.onclick = () => selectNode(node.id);
+
+    el.innerHTML = `
+      <span class="text-lg">${node.icon}</span>
       <div>
-        <div class="flex items-center justify-between mb-2">
-          <span class="text-xl">${phase.icon}</span>
-          <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-neutral-950/70 border border-neutral-800 text-neutral-400">Phase ${phase.id}</span>
-        </div>
-        <h4 class="text-sm font-bold text-white tracking-tight">${phase.name}</h4>
-        <p class="text-xs text-neutral-400 mt-1 line-clamp-2">${phase.agentName}</p>
-      </div>
-      
-      <div class="mt-3 pt-2.5 border-t border-neutral-800/60 flex items-center justify-between text-[11px] text-neutral-500">
-        <span>${phase.docsCreated.length} docs created</span>
-        <span class="text-blue-400 font-medium">Inspect →</span>
+        <div class="font-bold text-xs leading-none whitespace-nowrap">${node.label}</div>
+        <div class="text-[9.5px] text-slate-500 font-mono mt-0.5 whitespace-nowrap">${node.type === 'phase' ? `PHASE ${node.phaseNum}` : node.category.toUpperCase()}</div>
       </div>
     `;
 
-    container.appendChild(card);
+    nodesContainer.appendChild(el);
   });
 }
 
-function selectSkill(phaseId) {
-  activeSkillId = phaseId;
-  const phase = SWARM_DATA.phases.find(p => p.id === phaseId);
-  renderFlowGraph();
-  renderSkillInspector(phase);
+function selectNode(nodeId) {
+  selectedNodeId = nodeId;
+  renderNetworkGraph();
+  renderNodeDetails(nodeId);
 }
 
-function renderSkillInspector(phase) {
-  const inspector = document.getElementById('inspectorPanel');
-  if (!phase) return;
+function renderNodeDetails(nodeId) {
+  const node = GRAPH_NODES.find(n => n.id === nodeId);
+  const detailEl = document.getElementById('nodeDetailContainer');
 
-  let docsHtml = phase.docsCreated.map(doc => `
-    <div class="p-2.5 rounded-xl bg-neutral-950 border border-neutral-800/80 flex items-center justify-between">
-      <div class="min-w-0 pr-2">
-        <span class="font-mono text-xs text-blue-400 font-semibold truncate block">📄 ${doc.name}</span>
-        <span class="text-[11px] text-neutral-400 truncate block mt-0.5">${doc.desc}</span>
+  if (!node || !detailEl) return;
+
+  const connectedEdges = GRAPH_EDGES.filter(e => e.from === nodeId || e.to === nodeId);
+  
+  let handoffsHtml = connectedEdges.map(e => {
+    const isOut = e.from === nodeId;
+    const target = GRAPH_NODES.find(n => n.id === (isOut ? e.to : e.from));
+    return `
+      <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs">
+        <span class="text-slate-500 font-medium">${isOut ? 'Outputs To →' : '← Inputs From'}</span>
+        <span class="font-bold text-blue-600 font-mono">${target ? target.label : e.to}</span>
       </div>
-      <span class="text-[10px] px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 uppercase font-mono shrink-0">Artifact</span>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 
-  inspector.innerHTML = `
-    <div class="flex items-center justify-between pb-3 border-b border-neutral-800">
+  detailEl.innerHTML = `
+    <div class="flex items-center justify-between pb-3 border-b border-slate-200">
       <div class="flex items-center gap-2.5">
-        <span class="text-2xl">${phase.icon}</span>
+        <span class="text-2xl">${node.icon}</span>
         <div>
-          <h3 class="text-base font-bold text-white">${phase.agentName}</h3>
-          <span class="text-xs text-neutral-400">Phase ${phase.id}: ${phase.name}</span>
+          <h3 class="text-base font-bold text-slate-900">${node.label}</h3>
+          <span class="text-xs text-slate-500 font-mono">${node.category}</span>
         </div>
       </div>
-      <span class="text-xs px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/30 font-mono">.agents/skills/${phase.agent}</span>
+      <span class="px-2.5 py-1 rounded-full text-xs font-mono font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+        ${node.type.toUpperCase()}
+      </span>
     </div>
 
     <div class="mt-3 space-y-3 text-xs">
       <div>
-        <label class="text-[11px] font-semibold uppercase tracking-wider text-neutral-500">Role & Directive</label>
-        <p class="text-neutral-300 mt-1 leading-relaxed">${phase.desc}</p>
+        <label class="text-[10.5px] uppercase font-semibold text-slate-400 tracking-wider">Directive & Responsibility</label>
+        <p class="text-slate-700 mt-1 leading-relaxed font-normal">${node.desc}</p>
       </div>
 
-      <div class="grid grid-cols-2 gap-2 pt-1">
-        <div class="p-2.5 rounded-xl bg-neutral-950/70 border border-neutral-800">
-          <label class="text-[10px] uppercase font-semibold text-neutral-500">Inputs Required</label>
-          <ul class="mt-1 space-y-0.5 text-neutral-300 text-[11px]">
-            ${phase.inputs.map(i => `<li>• ${i}</li>`).join('')}
-          </ul>
-        </div>
-        <div class="p-2.5 rounded-xl bg-neutral-950/70 border border-neutral-800">
-          <label class="text-[10px] uppercase font-semibold text-neutral-500">Handoffs To</label>
-          <ul class="mt-1 space-y-0.5 text-neutral-300 text-[11px]">
-            ${phase.downstream.length ? phase.downstream.map(d => `<li>→ ${d}</li>`).join('') : '<li class="text-neutral-500">Final Phase</li>'}
-          </ul>
-        </div>
-      </div>
-
-      <div class="pt-1">
-        <label class="text-[11px] font-semibold uppercase tracking-wider text-neutral-500 mb-1.5 block">Documentation Produced by this Skill</label>
+      <div>
+        <label class="text-[10.5px] uppercase font-semibold text-slate-400 tracking-wider mb-1.5 block">Graph Connections</label>
         <div class="space-y-1.5">
-          ${docsHtml}
+          ${handoffsHtml}
         </div>
       </div>
     </div>
   `;
 }
 
-function renderDocsMatrix() {
-  const container = document.getElementById('docsMatrixContainer');
-  container.innerHTML = '';
+// Story Playback Controls
+function setStoryStep(stepNum) {
+  currentStoryStep = stepNum;
+  const banner = document.getElementById('storyBanner');
+  const title = document.getElementById('storyTitle');
+  const desc = document.getElementById('storyDesc');
 
-  SWARM_DATA.phases.forEach(phase => {
-    phase.docsCreated.forEach(doc => {
-      const card = document.createElement('div');
-      card.className = 'p-3.5 rounded-2xl bg-neutral-900 border border-neutral-800 flex flex-col justify-between';
+  if (stepNum === 0) {
+    banner.classList.add('hidden');
+  } else {
+    banner.classList.remove('hidden');
+    const stepObj = STORY_STEPS[stepNum - 1];
+    title.innerText = stepObj.title;
+    desc.innerText = stepObj.desc;
+    selectedNodeId = stepObj.focusNodes[0];
+    renderNodeDetails(selectedNodeId);
+  }
 
-      card.innerHTML = `
-        <div>
-          <div class="flex items-center justify-between mb-2">
-            <span class="font-mono text-xs font-bold text-white">📄 ${doc.name}</span>
-            <span class="text-[10px] px-2 py-0.5 rounded bg-neutral-950 border border-neutral-800 text-neutral-400 font-mono">Phase ${phase.id}</span>
-          </div>
-          <p class="text-xs text-neutral-400 leading-relaxed">${doc.desc}</p>
-        </div>
-        <div class="mt-3 pt-2 border-t border-neutral-800/80 flex items-center justify-between text-[11px] text-neutral-500">
-          <span>Author: <strong class="text-neutral-300 font-medium">${phase.agentName}</strong></span>
-          <span class="text-xs">${phase.icon}</span>
-        </div>
-      `;
-      container.appendChild(card);
-    });
-  });
+  for (let i = 1; i <= 8; i++) {
+    const btn = document.getElementById(`storyBtn${i}`);
+    if (btn) {
+      if (i === stepNum) {
+        btn.className = "px-2.5 py-1 rounded-lg bg-blue-600 text-white font-bold text-xs shadow";
+      } else {
+        btn.className = "px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 text-xs border border-slate-200";
+      }
+    }
+  }
+
+  renderNetworkGraph();
 }
 
-function renderDashboardPreview() {
-  const preview = document.getElementById('dashLivePreview');
-  preview.innerHTML = `
-    <div class="bg-neutral-950 border border-neutral-800 rounded-3xl p-5 shadow-2xl w-full max-w-xl text-xs space-y-4">
-      <div class="flex items-center justify-between pb-3 border-b border-neutral-800">
-        <div class="flex items-center gap-2">
-          <span class="w-3 h-3 rounded-full bg-cyan-400 animate-ping"></span>
-          <h3 class="font-bold text-white text-sm">Active Project: Apple Minimalist Calendar</h3>
-        </div>
-        <span class="px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 font-mono text-[11px]">Phase 6: UAT</span>
-      </div>
+function nextStoryStep() {
+  if (currentStoryStep < 8) {
+    setStoryStep(currentStoryStep + 1);
+  } else {
+    setStoryStep(1);
+  }
+}
 
-      <!-- Stepper -->
-      <div>
-        <label class="text-[10px] uppercase font-semibold text-neutral-500 tracking-wider">SDLC Swarm Milestones</label>
-        <div class="grid grid-cols-7 gap-1 mt-1.5 text-center font-mono text-[10px]">
-          <div class="p-1 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">1. PM ✓</div>
-          <div class="p-1 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">2. PO ✓</div>
-          <div class="p-1 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">3. Arch ✓</div>
-          <div class="p-1 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">4. Dev ✓</div>
-          <div class="p-1 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">5. QA ✓</div>
-          <div class="p-1 rounded bg-cyan-500/30 text-cyan-300 border border-cyan-400 font-bold animate-pulse">6. UAT ⚡</div>
-          <div class="p-1 rounded bg-neutral-900 text-neutral-600 border border-neutral-800">7. Deploy</div>
-        </div>
-      </div>
+function prevStoryStep() {
+  if (currentStoryStep > 1) {
+    setStoryStep(currentStoryStep - 1);
+  } else {
+    setStoryStep(8);
+  }
+}
 
-      <!-- Sandbox Link Card -->
-      <div class="p-3.5 rounded-2xl bg-cyan-950/30 border border-cyan-500/30 flex items-center justify-between">
-        <div>
-          <span class="text-cyan-400 font-bold text-xs block">⚡ StackBlitz Temporary UAT Sandbox Live</span>
-          <span class="text-[11px] text-neutral-400 mt-0.5 block">Review live application in isolated WebContainer</span>
-        </div>
-        <button class="px-3 py-1.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-semibold text-xs transition-colors">
-          Open UAT ↗
-        </button>
-      </div>
+function renderSkillsList() {
+  const container = document.getElementById('allSkillsGrid');
+  if (!container) return;
 
-      <!-- Documents Generated -->
-      <div>
-        <label class="text-[10px] uppercase font-semibold text-neutral-500 tracking-wider">Delivered Artifacts</label>
-        <div class="grid grid-cols-2 gap-2 mt-1.5">
-          <div class="p-2 rounded-xl bg-neutral-900 border border-neutral-800 flex items-center justify-between">
-            <span class="font-mono text-neutral-300">PRD.md</span>
-            <span class="text-emerald-400 text-[10px]">Verified</span>
-          </div>
-          <div class="p-2 rounded-xl bg-neutral-900 border border-neutral-800 flex items-center justify-between">
-            <span class="font-mono text-neutral-300">QA_REPORT.md</span>
-            <span class="text-emerald-400 text-[10px]">5/5 Passed</span>
-          </div>
+  container.innerHTML = GRAPH_NODES.map(s => `
+    <div class="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-between">
+      <div class="min-w-0 pr-2">
+        <div class="flex items-center gap-1.5">
+          <span>${s.icon}</span>
+          <span class="font-mono text-xs font-bold text-slate-900 truncate">${s.label}</span>
         </div>
+        <span class="text-[11px] text-slate-500 block mt-0.5 truncate">${s.desc}</span>
       </div>
+      <span class="text-[10px] px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-mono border border-slate-200 shrink-0">${s.category}</span>
     </div>
-  `;
+  `).join('');
 }
 
-window.addEventListener('DOMContentLoaded', initUI);
+window.addEventListener('DOMContentLoaded', initApp);
