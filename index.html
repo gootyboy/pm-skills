@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Multi-Agent SDLC Swarm — NYC Subway & Pipeline Visualizer</title>
+  <title>Multi-Agent SDLC Swarm — Visualizer</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700;800;900&display=swap');
@@ -16,22 +16,22 @@
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col antialiased">
 
-  <!-- Header -->
+  <!-- Header & View Switcher -->
   <header class="h-16 border-b border-slate-200/80 px-4 md:px-8 flex items-center justify-between shrink-0 bg-white/90 backdrop-blur-xl z-20 shadow-sm">
     <div class="flex items-center gap-3">
       <div class="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-600 font-bold text-lg">
-        🚇
+        ⚡
       </div>
       <div>
         <h1 class="text-sm font-bold tracking-tight text-slate-900 flex items-center gap-2">
           <span>Multi-Agent Swarm Visualizer</span>
-          <span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 font-mono font-semibold">Subway Strip & Pipeline</span>
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 font-mono font-semibold">12 SDLC Steps</span>
         </h1>
         <p class="text-[11px] text-slate-500 font-mono">/Volumes/Samsung 990 1TB/hp/projects/pm-skills</p>
       </div>
     </div>
 
-    <!-- UI/UX Layout Switcher Tabs -->
+    <!-- UI/UX View Switcher Tabs -->
     <nav class="flex items-center bg-slate-100 border border-slate-200 rounded-2xl p-1 gap-1">
       <button id="tab_subway" onclick="switchView('subway')" class="px-4 py-1.5 rounded-xl text-xs font-bold bg-blue-600 text-white shadow-sm transition-all">
         🚇 NYC Subway LED Strip
@@ -42,52 +42,11 @@
     </nav>
   </header>
 
-  <!-- Step Navigation Toolbar -->
-  <div class="bg-white border-b border-slate-200 px-4 py-2 flex flex-wrap items-center justify-between gap-3 text-xs shrink-0 z-20 shadow-sm">
-    <div class="flex items-center gap-2">
-      <span class="font-bold text-slate-800 uppercase tracking-wider text-[11px]">📖 Subway Station Sequence:</span>
-      <div class="flex items-center gap-1">
-        <button onclick="prevStoryStep()" class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 font-medium">⏮ Prev</button>
-        <button onclick="nextStoryStep()" class="px-3 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-sm">Next Stop 🚆</button>
-        <button onclick="setStoryStep(0)" class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200 text-slate-600 hover:bg-slate-200 font-medium">Clear Focus</button>
-      </div>
-
-      <!-- Step Buttons (1-12) -->
-      <div class="hidden lg:flex items-center gap-1 ml-2">
-        <span class="text-slate-400 text-[11px] mr-1">Station:</span>
-        <button id="storyBtn1" onclick="setStoryStep(1)" class="w-6 h-6 rounded-full bg-slate-100 text-slate-700 text-xs border border-slate-200 font-bold">1</button>
-        <button id="storyBtn2" onclick="setStoryStep(2)" class="w-6 h-6 rounded-full bg-slate-100 text-slate-700 text-xs border border-slate-200 font-bold">2</button>
-        <button id="storyBtn3" onclick="setStoryStep(3)" class="w-6 h-6 rounded-full bg-slate-100 text-slate-700 text-xs border border-slate-200 font-bold">3</button>
-        <button id="storyBtn4" onclick="setStoryStep(4)" class="w-6 h-6 rounded-full bg-slate-100 text-slate-700 text-xs border border-slate-200 font-bold">4</button>
-        <button id="storyBtn5" onclick="setStoryStep(5)" class="w-6 h-6 rounded-full bg-slate-100 text-slate-700 text-xs border border-slate-200 font-bold">5</button>
-        <button id="storyBtn6" onclick="setStoryStep(6)" class="w-6 h-6 rounded-full bg-slate-100 text-slate-700 text-xs border border-slate-200 font-bold">6</button>
-        <button id="storyBtn7" onclick="setStoryStep(7)" class="w-6 h-6 rounded-full bg-slate-100 text-slate-700 text-xs border border-slate-200 font-bold">7</button>
-        <button id="storyBtn8" onclick="setStoryStep(8)" class="w-6 h-6 rounded-full bg-slate-100 text-slate-700 text-xs border border-slate-200 font-bold">8</button>
-        <button id="storyBtn9" onclick="setStoryStep(9)" class="w-6 h-6 rounded-full bg-slate-100 text-slate-700 text-xs border border-slate-200 font-bold">9</button>
-        <button id="storyBtn10" onclick="setStoryStep(10)" class="w-6 h-6 rounded-full bg-slate-100 text-slate-700 text-xs border border-slate-200 font-bold">10</button>
-        <button id="storyBtn11" onclick="setStoryStep(11)" class="w-6 h-6 rounded-full bg-slate-100 text-slate-700 text-xs border border-slate-200 font-bold">11</button>
-        <button id="storyBtn12" onclick="setStoryStep(12)" class="w-6 h-6 rounded-full bg-slate-100 text-slate-700 text-xs border border-slate-200 font-bold">12</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Story Banner -->
-  <div id="storyBanner" class="hidden bg-blue-50/90 border-b border-blue-200 px-6 py-3 text-xs shrink-0 transition-all">
-    <div class="max-w-6xl mx-auto flex items-center justify-between gap-4">
-      <div>
-        <span class="text-blue-700 font-bold uppercase tracking-wider text-[10.5px]">📖 Active Subway Station Stop</span>
-        <h3 id="storyTitle" class="text-sm font-bold text-slate-900 mt-0.5">1. orchestrator</h3>
-        <p id="storyDesc" class="text-xs text-slate-600 mt-0.5 leading-relaxed font-normal"></p>
-      </div>
-      <button onclick="setStoryStep(0)" class="text-slate-400 hover:text-slate-700 font-bold px-2 py-1">✕</button>
-    </div>
-  </div>
-
-  <!-- Main Viewport Area -->
+  <!-- Main Viewport Area (Clean Views Only - Zero Toolbars/Banners) -->
   <main class="flex-1 flex overflow-hidden relative">
 
-    <!-- VIEW 1: Pure Light-Theme NYC Subway In-Car LED Strip -->
-    <div id="view_subway" class="flex-1 p-6 overflow-y-auto bg-slate-50 flex items-center justify-center">
+    <!-- VIEW 1: Ultra-Clean Light-Theme NYC Subway LED Strip -->
+    <div id="view_subway" class="flex-1 p-8 overflow-y-auto bg-slate-50 flex items-center justify-center">
       <div id="nycSubwayContainer" class="w-full"></div>
     </div>
 

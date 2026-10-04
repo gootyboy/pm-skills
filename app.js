@@ -1,5 +1,5 @@
 // SDLC Swarm Skills Visualizer — Engine & UI Controller
-// Features SDLC Pipeline Board + Pure Light-Theme NYC Subway In-Car LED Strip Map
+// Supports SDLC Pipeline Board + Ultra-Clean NYC Subway In-Car LED Strip Map
 
 const SDLC_SWARM_NODES = [
   { id: 'skill_builder', stop: 1, label: 'PROJECT_BUILDER_SKILL.md', category: 'Swarm Hub Controller', icon: '👑', desc: 'Master Swarm Controller: Sets autonomy modes (BALANCED / AUTOPILOT / SUPERVISED) and manages system lifecycle.' },
@@ -35,7 +35,7 @@ const SUBWAY_STATIONS = [
 
 let currentStoryStep = 2; // Default Stop 2: it_consultant
 let selectedNodeId = 'skill_it';
-let currentActiveView = 'subway'; // Default: Subway LED Strip
+let currentActiveView = 'subway';
 
 function initApp() {
   switchView('subway');
@@ -136,8 +136,8 @@ function renderPipelineView() {
 }
 
 // -------------------------------------------------------------
-// VIEW 2: Pure Light-Theme NYC Subway In-Car LED Indicator Strip
-// (NO Title, NO Footer, NO Downtown/Uptown, Numbers INSIDE Circles, Includes UAT)
+// VIEW 2: Ultra-Clean NYC Subway In-Car LED Station Strip
+// (NO Toolbar, NO Banner, NO Extra Buttons, NO Extra Headers)
 // -------------------------------------------------------------
 function renderSubwayCarView() {
   const container = document.getElementById('nycSubwayContainer');
@@ -146,32 +146,17 @@ function renderSubwayCarView() {
   const activeStation = SUBWAY_STATIONS[currentStoryStep - 1] || SUBWAY_STATIONS[1];
 
   container.innerHTML = `
-    <div class="w-full max-w-6xl mx-auto bg-white border border-slate-200 rounded-3xl p-6 shadow-xl space-y-6 select-none font-sans">
+    <div class="w-full max-w-6xl mx-auto bg-white border border-slate-200 rounded-3xl p-8 shadow-xl space-y-8 select-none font-sans">
       
-      <!-- Top Step Controls Bar -->
-      <div class="flex items-center justify-between pb-4 border-b border-slate-100">
-        <div class="flex items-center gap-2">
-          <button onclick="prevStoryStep()" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors">⏮ Prev Stop</button>
-          <button onclick="nextStoryStep()" class="px-4 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition-colors">Next Stop 🚆</button>
-        </div>
-
-        <div class="flex items-center gap-2 text-xs font-bold text-slate-800">
-          <span>Active Station:</span>
-          <span class="px-3 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 font-mono">
-            ${activeStation.stop}. ${activeStation.name}
-          </span>
-        </div>
-      </div>
-
-      <!-- Pure Light Theme NYC Subway LED Station Strip -->
-      <div class="bg-slate-50 p-6 rounded-3xl border border-slate-200 shadow-inner relative">
-        <div class="relative py-12 flex items-center justify-between px-4">
+      <!-- Ultra-Clean NYC Subway LED Station Strip -->
+      <div class="bg-slate-50 p-8 rounded-3xl border border-slate-200/80 shadow-inner relative">
+        <div class="relative py-12 flex items-center justify-between px-6">
           
           <!-- Background Neutral Track Line -->
-          <div class="absolute left-6 right-6 top-1/2 -translate-y-1/2 h-3 bg-slate-200 rounded-full z-0"></div>
+          <div class="absolute left-8 right-8 top-1/2 -translate-y-1/2 h-3 bg-slate-200 rounded-full z-0"></div>
           
           <!-- Active Blue Progress Track Bar -->
-          <div class="absolute left-6 top-1/2 -translate-y-1/2 h-3 bg-blue-600 rounded-full z-0 transition-all duration-300" style="width: ${((currentStoryStep - 1) / 11) * 100}%"></div>
+          <div class="absolute left-8 top-1/2 -translate-y-1/2 h-3 bg-blue-600 rounded-full z-0 transition-all duration-300" style="width: ${((currentStoryStep - 1) / 11) * 100}%"></div>
 
           <!-- 12 Station Circles with NUMBERS INSIDE -->
           ${SUBWAY_STATIONS.map((st) => {
@@ -182,7 +167,7 @@ function renderSubwayCarView() {
               <div onclick="setStoryStep(${st.stop})" class="relative z-10 flex flex-col items-center cursor-pointer group">
                 
                 <!-- Station Circle with NUMBER INSIDE -->
-                <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs transition-all ${
+                <div class="w-11 h-11 rounded-full flex items-center justify-center font-bold text-xs transition-all ${
                   isCurrent
                     ? 'bg-blue-600 text-white ring-4 ring-blue-500/30 scale-125 font-black shadow-lg z-20'
                     : isPassed
@@ -193,8 +178,8 @@ function renderSubwayCarView() {
                 </div>
 
                 <!-- Station Name Label Below Circle -->
-                <div class="absolute top-12 flex flex-col items-center w-20 text-center">
-                  <span class="text-[10px] font-bold mt-1 ${isCurrent ? 'text-blue-600 font-extrabold' : 'text-slate-700'} truncate w-full">
+                <div class="absolute top-14 flex flex-col items-center w-24 text-center">
+                  <span class="text-[10.5px] font-bold mt-1 ${isCurrent ? 'text-blue-600 font-extrabold' : 'text-slate-700'} truncate w-full">
                     ${st.icon} ${st.name}
                   </span>
                 </div>
@@ -206,12 +191,12 @@ function renderSubwayCarView() {
         </div>
       </div>
 
-      <!-- Active Station Directive Card -->
-      <div class="p-4 rounded-2xl bg-blue-50/60 border border-blue-200/80 flex items-center gap-3 text-xs">
-        <span class="text-2xl">${activeStation.icon}</span>
+      <!-- Station Directive Card -->
+      <div class="p-5 rounded-2xl bg-blue-50/70 border border-blue-200/80 flex items-center gap-4 text-xs">
+        <span class="text-3xl">${activeStation.icon}</span>
         <div>
-          <h4 class="font-bold text-slate-900">Station ${activeStation.stop}: ${activeStation.name}</h4>
-          <p class="text-slate-600 mt-0.5 leading-relaxed">${activeStation.desc}</p>
+          <h4 class="font-bold text-sm text-slate-900">${activeStation.stop}. ${activeStation.name}</h4>
+          <p class="text-slate-600 mt-1 leading-relaxed text-xs">${activeStation.desc}</p>
         </div>
       </div>
 
@@ -260,32 +245,12 @@ function renderNodeDetails(nodeId) {
 
 function setStoryStep(stepNum) {
   currentStoryStep = stepNum;
-  const banner = document.getElementById('storyBanner');
-  const title = document.getElementById('storyTitle');
-  const desc = document.getElementById('storyDesc');
-
-  if (stepNum === 0) {
-    if (banner) banner.classList.add('hidden');
-  } else {
-    if (banner) banner.classList.remove('hidden');
-    const stepObj = SUBWAY_STATIONS[stepNum - 1];
-    if (title) title.innerText = stepObj.name;
-    if (desc) desc.innerText = stepObj.desc;
+  const stepObj = SUBWAY_STATIONS[stepNum - 1];
+  if (stepObj) {
     selectedNodeId = stepObj.focusNodes[0];
     renderNodeDetails(selectedNodeId);
   }
-
   switchView(currentActiveView);
-}
-
-function nextStoryStep() {
-  currentStoryStep = currentStoryStep < 12 ? currentStoryStep + 1 : 1;
-  setStoryStep(currentStoryStep);
-}
-
-function prevStoryStep() {
-  currentStoryStep = currentStoryStep > 1 ? currentStoryStep - 1 : 12;
-  setStoryStep(currentStoryStep);
 }
 
 window.addEventListener('DOMContentLoaded', initApp);
