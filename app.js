@@ -77,7 +77,6 @@ function renderVModelView() {
           <h2 class="text-base font-bold text-slate-900">THE V-MODEL (VERIFICATION & VALIDATION)</h2>
           <p class="text-xs text-slate-500">Standard Pressman & Sommerville Software Engineering Lifecycle</p>
         </div>
-        <span class="px-3 py-1 rounded-full bg-blue-50 text-blue-700 font-mono text-xs font-bold border border-blue-200">ISO / IEEE 12207</span>
       </div>
 
       <!-- V-Shape Grid Layout -->
